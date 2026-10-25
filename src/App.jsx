@@ -1018,14 +1018,14 @@ export default function App() {
                   className={`terminal-mode-btn ${tradeMode === 'buy' ? 'buy-active' : ''}`}
                   onClick={() => setTradeMode('buy')}
                 >
-                  Buy / Long
+                  Buy
                 </button>
                 <button
                   type="button"
                   className={`terminal-mode-btn ${tradeMode === 'sell' ? 'sell-active' : ''}`}
                   onClick={() => setTradeMode('sell')}
                 >
-                  Sell / Short
+                  Sell
                 </button>
               </div>
 
@@ -1074,29 +1074,6 @@ export default function App() {
                     placeholder="0.00"
                   />
                   <span className="tag">RESET</span>
-                </div>
-              </div>
-
-              {/* Order Total Input (USDC) */}
-              <div style={{ padding: '0 14px', marginTop: '6px' }}>
-                <div className="terminal-input-group">
-                  <span className="lbl">Total</span>
-                  <input
-                    type="number"
-                    step="any"
-                    value={tradeAmount && parseFloat(tradeAmount) > 0 ? (parseFloat(tradeAmount) * activePrice).toFixed(2) : ''}
-                    onChange={(e) => {
-                      const v = e.target.value;
-                      if (!v || parseFloat(v) <= 0) {
-                        setTradeAmount('');
-                      } else {
-                        const effP = activePrice || 45;
-                        setTradeAmount((parseFloat(v) / effP).toFixed(4));
-                      }
-                    }}
-                    placeholder="0.00"
-                  />
-                  <span className="tag">USDC</span>
                 </div>
               </div>
 
