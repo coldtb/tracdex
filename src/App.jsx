@@ -438,25 +438,15 @@ export default function App() {
       {/* Top Header */}
       <header className="header">
         <div className="brand">
-          <div className="brand-logo">⚡</div>
-          <span className="brand-text">Trac<span style={{ color: 'var(--color-primary)' }}>DEX</span></span>
-          <div className="badge">
-            <span className="badge-dot"></span>
-            <span>Solana ⇄ Trac P2P</span>
+          <div className="brand-logo-mark">
+            <span>TX</span>
           </div>
-          <div 
-            className="badge" 
-            onClick={() => setShowTrustModal(true)}
-            style={{ 
-              cursor: 'pointer', 
-              background: 'rgba(16, 185, 129, 0.1)', 
-              borderColor: 'var(--color-green)', 
-              color: 'var(--color-green)' 
-            }}
-          >
-            <ShieldCheck size={14} />
-            <span>Escrow Protected (100% Safe)</span>
+          <div style={{ display: 'flex', flexDirection: 'column' }}>
+            <span className="brand-title">
+              Trac<span style={{ color: 'var(--color-accent)' }}>DEX</span>
+            </span>
           </div>
+          <span className="brand-badge">Solana · Trac P2P</span>
         </div>
 
         {/* 24h Ticker Strip */}
@@ -706,43 +696,33 @@ export default function App() {
         </div>
       </header>
 
-      {/* Trust Guarantee Banner */}
-      <div style={{ 
-        background: 'linear-gradient(90deg, rgba(16, 185, 129, 0.08) 0%, rgba(99, 102, 241, 0.08) 100%)', 
-        borderBottom: '1px solid var(--border-color)', 
-        padding: '10px 24px', 
-        display: 'flex', 
-        alignItems: 'center', 
-        justifyContent: 'space-between',
-        fontSize: '12px'
-      }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '6px', color: 'var(--color-green)', fontWeight: 'bold' }}>
-            <Lock size={14} />
-            <span>Non-Custodial P2P:</span>
-            <span style={{ color: 'var(--text-main)', fontWeight: 'normal' }}>
-              Funds never touch platform servers. All trades locked in Solana on-chain smart contract.
-            </span>
+      {/* Security Status Ribbon */}
+      <div className="security-ribbon">
+        <div className="ribbon-badges">
+          <div className="ribbon-item">
+            <Lock size={13} style={{ color: 'var(--color-green)' }} />
+            <span>Smart Contract Escrow</span>
           </div>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '6px', color: '#38bdf8', fontWeight: 'bold' }}>
-            <RotateCcw size={14} />
-            <span>10-Minute Auto-Refund:</span>
-            <span style={{ color: 'var(--text-main)', fontWeight: 'normal' }}>
-              If seller fails to deliver on Trac, 100% of your USDC is returned automatically.
-            </span>
+          <span style={{ color: 'var(--border-color)' }}>•</span>
+          <div className="ribbon-item">
+            <RotateCcw size={13} style={{ color: '#38bdf8' }} />
+            <span>10m Auto-Refund Guarantee</span>
+          </div>
+          <span style={{ color: 'var(--border-color)' }}>•</span>
+          <div className="ribbon-item">
+            <ShieldCheck size={13} style={{ color: '#a855f7' }} />
+            <span>PLONK ZK-SNARK 5-Signer Quorum</span>
           </div>
         </div>
-        <div style={{ display: 'flex', gap: '12px' }}>
-          <a 
-            href={`https://solscan.io/account/${PLATFORM_COLLECTOR}`}
-            target="_blank"
-            rel="noreferrer"
-            style={{ color: 'var(--color-solana)', textDecoration: 'none', display: 'flex', alignItems: 'center', gap: '4px', fontWeight: 'bold' }}
-          >
-            <span>Verified on Solscan</span>
-            <ExternalLink size={12} />
-          </a>
-        </div>
+        <a 
+          href={`https://solscan.io/account/${PLATFORM_COLLECTOR}`}
+          target="_blank"
+          rel="noreferrer"
+          style={{ color: 'var(--color-solana)', textDecoration: 'none', display: 'flex', alignItems: 'center', gap: '5px', fontSize: '11px', fontWeight: '600' }}
+        >
+          <span>Solana Mainnet Contract</span>
+          <ExternalLink size={11} />
+        </a>
       </div>
 
       {/* Main Trading Floor */}
@@ -1021,154 +1001,215 @@ export default function App() {
         {/* Right: Trading Terminal (BUY & SELL) with 1% Platform Fee */}
         <div className="card">
           {/* Main BUY / SELL Mode Switcher */}
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', borderBottom: '1px solid var(--border-color)' }}>
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', borderBottom: '1px solid var(--border-color)', background: 'rgba(0, 0, 0, 0.2)' }}>
             <button
               onClick={() => { setTradeMode('buy'); setSubTab('instant'); }}
               style={{
-                padding: '14px',
+                padding: '13px',
                 border: 'none',
                 cursor: 'pointer',
-                fontWeight: '800',
-                fontSize: '14px',
+                fontWeight: '700',
+                fontSize: '13px',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
                 gap: '8px',
-                background: tradeMode === 'buy' ? 'var(--color-green-glow)' : 'var(--bg-card)',
+                background: tradeMode === 'buy' ? 'var(--color-green-soft)' : 'transparent',
                 color: tradeMode === 'buy' ? 'var(--color-green)' : 'var(--text-dim)',
-                borderBottom: tradeMode === 'buy' ? '2px solid var(--color-green)' : 'none',
-                transition: 'all 0.15s'
+                borderBottom: tradeMode === 'buy' ? '2px solid var(--color-green)' : '2px solid transparent',
+                transition: 'all 0.15s ease'
               }}
             >
-              <ArrowDownLeft size={18} />
-              BUY RESET
+              <ArrowDownLeft size={16} />
+              <span>BUY RESET</span>
             </button>
             <button
               onClick={() => { setTradeMode('sell'); setSubTab('instant'); }}
               style={{
-                padding: '14px',
+                padding: '13px',
                 border: 'none',
                 cursor: 'pointer',
-                fontWeight: '800',
-                fontSize: '14px',
+                fontWeight: '700',
+                fontSize: '13px',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
                 gap: '8px',
-                background: tradeMode === 'sell' ? 'var(--color-red-glow)' : 'var(--bg-card)',
+                background: tradeMode === 'sell' ? 'var(--color-red-soft)' : 'transparent',
                 color: tradeMode === 'sell' ? 'var(--color-red)' : 'var(--text-dim)',
-                borderBottom: tradeMode === 'sell' ? '2px solid var(--color-red)' : 'none',
-                transition: 'all 0.15s'
+                borderBottom: tradeMode === 'sell' ? '2px solid var(--color-red)' : '2px solid transparent',
+                transition: 'all 0.15s ease'
               }}
             >
-              <ArrowUpRight size={18} />
-              SELL RESET
+              <ArrowUpRight size={16} />
+              <span>SELL RESET</span>
             </button>
           </div>
 
-          {/* Subtabs */}
-          <div style={{ display: 'flex', padding: '10px 18px', background: 'var(--bg-main)', borderBottom: '1px solid var(--border-color)', gap: '8px' }}>
+          {/* Execution Submode Pill */}
+          <div style={{ display: 'flex', padding: '10px 16px', background: 'var(--bg-surface)', borderBottom: '1px solid var(--border-color)', gap: '6px' }}>
             <button
               onClick={() => setSubTab('instant')}
               style={{
                 padding: '5px 12px',
                 borderRadius: '6px',
-                fontSize: '12px',
-                fontWeight: '700',
+                fontSize: '11px',
+                fontWeight: '600',
                 cursor: 'pointer',
                 border: 'none',
                 background: subTab === 'instant' ? 'var(--color-accent)' : 'transparent',
-                color: subTab === 'instant' ? '#fff' : 'var(--text-muted)'
+                color: subTab === 'instant' ? '#fff' : 'var(--text-dim)',
+                transition: 'all 0.12s ease'
               }}
             >
-              {tradeMode === 'buy' ? 'Quick Buy' : 'Instant Market Sell'}
+              {tradeMode === 'buy' ? 'Instant Fill' : 'Market Sell'}
             </button>
             <button
               onClick={() => setSubTab('limit')}
               style={{
                 padding: '5px 12px',
                 borderRadius: '6px',
-                fontSize: '12px',
-                fontWeight: '700',
+                fontSize: '11px',
+                fontWeight: '600',
                 cursor: 'pointer',
                 border: 'none',
                 background: subTab === 'limit' ? 'var(--color-accent)' : 'transparent',
-                color: subTab === 'limit' ? '#fff' : 'var(--text-muted)'
+                color: subTab === 'limit' ? '#fff' : 'var(--text-dim)',
+                transition: 'all 0.12s ease'
               }}
             >
-              {tradeMode === 'buy' ? 'Custom Amount' : 'List Sell Order (Your Price)'}
+              Limit Order
             </button>
           </div>
 
-          <div style={{ padding: '20px', display: 'flex', flexDirection: 'column', gap: '18px' }}>
+          <div style={{ padding: '16px', display: 'flex', flexDirection: 'column', gap: '14px' }}>
             {/* BUY MODE */}
             {tradeMode === 'buy' && (
               <>
-                {subTab === 'instant' && (
-                  <div>
-                    <label style={{ fontSize: '12px', fontWeight: 'bold', color: 'var(--text-muted)', marginBottom: '8px', display: 'block' }}>
-                      Select Starter Package:
-                    </label>
-                    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px' }}>
-                      {[
-                        { label: '0.1 RESET', sub: 'Starter Miner', val: '0.1' },
-                        { label: '0.2 RESET', sub: 'Double Power', val: '0.2' },
-                        { label: '0.5 RESET', sub: 'Pro Miner', val: '0.5' },
-                        { label: '1.0 RESET', sub: 'Whale Miner', val: '1.0' }
-                      ].map((pkg) => (
-                        <div
-                          key={pkg.val}
-                          onClick={() => setTradeAmount(pkg.val)}
-                          style={{
-                            padding: '10px',
-                            background: tradeAmount === pkg.val ? 'var(--color-green-glow)' : 'var(--bg-main)',
-                            border: tradeAmount === pkg.val ? '1px solid var(--color-green)' : '1px solid var(--border-color)',
-                            borderRadius: '8px',
-                            cursor: 'pointer',
-                            textAlign: 'center',
-                          }}
-                        >
-                          <div style={{ fontWeight: 'bold', fontSize: '13px' }}>{pkg.label}</div>
-                          <div style={{ fontSize: '10px', color: 'var(--text-dim)' }}>{pkg.sub}</div>
-                        </div>
-                      ))}
+                {/* You Pay Input Box */}
+                <div className="swap-input-container">
+                  <div className="swap-input-header">
+                    <span>You Pay</span>
+                    <span>
+                      Balance: <strong className="mono" style={{ color: '#fff' }}>${visitorUsdc || '0.00'}</strong> USDC
+                    </span>
+                  </div>
+                  <div className="swap-input-row">
+                    <input
+                      type="number"
+                      step="0.01"
+                      value={finalBuyTotal}
+                      readOnly
+                      className="swap-numeric-input"
+                      placeholder="0.00"
+                    />
+                    <div className="token-badge">
+                      <span style={{ width: '18px', height: '18px', borderRadius: '50%', background: '#2775ca', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', fontSize: '10px', fontWeight: 'bold' }}>$</span>
+                      <span>USDC</span>
                     </div>
                   </div>
-                )}
+                </div>
 
-                {subTab === 'limit' && (
-                  <div>
-                    <label style={{ fontSize: '12px', fontWeight: 'bold', color: 'var(--text-muted)', marginBottom: '6px', display: 'block' }}>
-                      Custom RESET Amount to Buy:
-                    </label>
-                    <input 
+                {/* Center Divider Arrow */}
+                <div style={{ display: 'flex', justifyContent: 'center', margin: '-6px 0' }}>
+                  <div style={{
+                    width: '28px',
+                    height: '28px',
+                    borderRadius: '50%',
+                    background: 'var(--bg-card-sub)',
+                    border: '1px solid var(--border-color)',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    color: 'var(--text-muted)'
+                  }}>
+                    <ArrowUpDown size={14} />
+                  </div>
+                </div>
+
+                {/* You Receive Input Box */}
+                <div className="swap-input-container">
+                  <div className="swap-input-header">
+                    <span>You Receive</span>
+                    <span>1 RESET ≈ ${parseFloat(bestAsk).toFixed(2)}</span>
+                  </div>
+                  <div className="swap-input-row">
+                    <input
                       type="number"
                       step="0.01"
                       value={tradeAmount}
                       onChange={(e) => setTradeAmount(e.target.value)}
-                      className="input-field mono"
-                      placeholder="e.g. 0.08"
+                      className="swap-numeric-input"
+                      placeholder="0.10"
                     />
+                    <div className="token-badge">
+                      <span style={{ width: '18px', height: '18px', borderRadius: '50%', background: '#f7931a', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', fontSize: '10px', fontWeight: 'bold' }}>R</span>
+                      <span>RESET</span>
+                    </div>
                   </div>
-                )}
+                </div>
 
-                {/* Transparent Price & Fee Breakdown */}
-                <div style={{ background: 'var(--bg-main)', padding: '14px', borderRadius: '8px', border: '1px solid var(--border-color)' }}>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '12px', marginBottom: '8px' }}>
-                    <span style={{ color: 'var(--text-dim)' }}>Seller Price:</span>
-                    <span className="mono" style={{ fontWeight: 'bold' }}>${parseFloat(bestAsk).toFixed(2)} USDC</span>
+                {/* Quick Amount Selector Chips */}
+                <div style={{ display: 'flex', gap: '6px' }}>
+                  {['0.05', '0.10', '0.25', '0.50', '1.00'].map((amt) => (
+                    <button
+                      key={amt}
+                      type="button"
+                      onClick={() => setTradeAmount(amt)}
+                      style={{
+                        flex: 1,
+                        padding: '6px 0',
+                        borderRadius: '6px',
+                        border: '1px solid',
+                        borderColor: tradeAmount === amt ? 'var(--color-accent)' : 'var(--border-color)',
+                        background: tradeAmount === amt ? 'var(--color-accent-soft)' : 'rgba(255, 255, 255, 0.02)',
+                        color: tradeAmount === amt ? '#fff' : 'var(--text-dim)',
+                        fontSize: '11px',
+                        fontFamily: "'JetBrains Mono', monospace",
+                        fontWeight: '600',
+                        cursor: 'pointer',
+                        transition: 'all 0.12s ease'
+                      }}
+                    >
+                      {amt}
+                    </button>
+                  ))}
+                </div>
+
+                {/* Destination Trac Address */}
+                <div>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '6px' }}>
+                    <label style={{ fontSize: '11px', fontWeight: '600', color: 'var(--text-dim)' }}>
+                      Destination Trac Address (Optional):
+                    </label>
                   </div>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '12px', marginBottom: '8px' }}>
-                    <span style={{ color: 'var(--text-dim)' }}>Subtotal:</span>
-                    <span className="mono">${subtotal.toFixed(2)} USDC</span>
+                  <input
+                    type="text"
+                    value={tracAddress}
+                    onChange={(e) => setTracAddress(e.target.value)}
+                    className="input-field mono"
+                    style={{ fontSize: '12px', padding: '10px 12px' }}
+                    placeholder="Enter your Trac recipient address"
+                  />
+                </div>
+
+                {/* Transparent Order Summary */}
+                <div style={{ background: 'var(--bg-input)', padding: '12px 14px', borderRadius: '8px', border: '1px solid var(--border-color)', display: 'flex', flexDirection: 'column', gap: '7px', fontSize: '11px' }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                    <span style={{ color: 'var(--text-dim)' }}>Rate</span>
+                    <span className="mono" style={{ color: 'var(--text-main)', fontWeight: '600' }}>1 RESET = ${parseFloat(bestAsk).toFixed(2)} USDC</span>
                   </div>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '11px', color: 'var(--color-solana)', marginBottom: '8px' }}>
-                    <span>Platform Fee (1.0%):</span>
-                    <span className="mono">+${platformFee.toFixed(3)} USDC</span>
+                  <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                    <span style={{ color: 'var(--text-dim)' }}>Protocol Fee (1.0%)</span>
+                    <span className="mono" style={{ color: 'var(--color-solana)', fontWeight: '600' }}>+${platformFee.toFixed(3)} USDC</span>
                   </div>
-                  <div style={{ borderTop: '1px solid var(--border-color)', paddingTop: '8px', display: 'flex', justifyContent: 'space-between', fontSize: '13px' }}>
-                    <span style={{ fontWeight: 'bold' }}>Total to Lock:</span>
-                    <span className="mono" style={{ color: 'var(--color-green)', fontWeight: 'bold', fontSize: '16px' }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                    <span style={{ color: 'var(--text-dim)' }}>Settlement</span>
+                    <span style={{ color: 'var(--text-muted)' }}>Solana Smart Escrow · P2P</span>
+                  </div>
+                  <div style={{ borderTop: '1px solid var(--border-color)', paddingTop: '7px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                    <span style={{ fontWeight: '600', color: '#fff' }}>Total to Escrow</span>
+                    <span className="mono" style={{ color: 'var(--color-green)', fontWeight: '700', fontSize: '15px' }}>
                       ${finalBuyTotal} USDC
                     </span>
                   </div>
@@ -1178,9 +1219,9 @@ export default function App() {
                   onClick={() => setShowPaymentModal(true)}
                   disabled={isTrading}
                   className="btn btn-primary"
-                  style={{ width: '100%', padding: '14px', fontSize: '15px' }}
+                  style={{ width: '100%', padding: '12px', fontSize: '14px', borderRadius: '8px' }}
                 >
-                  <Zap size={18} />
+                  <Zap size={16} />
                   <span>Buy {tradeAmount} RESET (${finalBuyTotal} USDC)</span>
                 </button>
               </>
@@ -1189,29 +1230,68 @@ export default function App() {
             {/* SELL MODE */}
             {tradeMode === 'sell' && (
               <>
-                <div>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '6px' }}>
-                    <label style={{ fontSize: '12px', fontWeight: 'bold', color: 'var(--text-muted)' }}>
-                      Amount to Sell (RESET):
-                    </label>
-                    <span style={{ fontSize: '11px', color: 'var(--text-dim)' }}>
-                      Enter amount to sell
-                    </span>
+                <div className="swap-input-container">
+                  <div className="swap-input-header">
+                    <span>You Sell</span>
+                    <span>1 RESET ≈ ${parseFloat(bestBid).toFixed(2)}</span>
                   </div>
-                  <input 
-                    type="number"
-                    step="0.01"
-                    value={tradeAmount}
-                    onChange={(e) => setTradeAmount(e.target.value)}
-                    className="input-field mono"
-                    placeholder="e.g. 0.08"
-                  />
+                  <div className="swap-input-row">
+                    <input 
+                      type="number"
+                      step="0.01"
+                      value={tradeAmount}
+                      onChange={(e) => setTradeAmount(e.target.value)}
+                      className="swap-numeric-input"
+                      placeholder="0.10"
+                    />
+                    <div className="token-badge">
+                      <span style={{ width: '18px', height: '18px', borderRadius: '50%', background: '#f7931a', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', fontSize: '10px', fontWeight: 'bold' }}>R</span>
+                      <span>RESET</span>
+                    </div>
+                  </div>
+                </div>
+
+                <div style={{ display: 'flex', justifyContent: 'center', margin: '-6px 0' }}>
+                  <div style={{
+                    width: '28px',
+                    height: '28px',
+                    borderRadius: '50%',
+                    background: 'var(--bg-card-sub)',
+                    border: '1px solid var(--border-color)',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    color: 'var(--text-muted)'
+                  }}>
+                    <ArrowUpDown size={14} />
+                  </div>
+                </div>
+
+                <div className="swap-input-container">
+                  <div className="swap-input-header">
+                    <span>You Receive</span>
+                    <span>Gross: ${subtotal.toFixed(2)}</span>
+                  </div>
+                  <div className="swap-input-row">
+                    <input
+                      type="number"
+                      step="0.01"
+                      value={finalSellProceeds}
+                      readOnly
+                      className="swap-numeric-input"
+                      placeholder="0.00"
+                    />
+                    <div className="token-badge">
+                      <span style={{ width: '18px', height: '18px', borderRadius: '50%', background: '#2775ca', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', fontSize: '10px', fontWeight: 'bold' }}>$</span>
+                      <span>USDC</span>
+                    </div>
+                  </div>
                 </div>
 
                 {subTab === 'limit' && (
                   <div>
-                    <label style={{ fontSize: '12px', fontWeight: 'bold', color: 'var(--text-muted)', marginBottom: '6px', display: 'block' }}>
-                      Set Your Desired Selling Price ($/RESET):
+                    <label style={{ fontSize: '11px', fontWeight: '600', color: 'var(--text-dim)', marginBottom: '6px', display: 'block' }}>
+                      Set Selling Price ($/RESET):
                     </label>
                     <input 
                       type="number"
@@ -1219,67 +1299,40 @@ export default function App() {
                       value={customPrice}
                       onChange={(e) => setCustomPrice(e.target.value)}
                       className="input-field mono"
-                      placeholder="e.g. 48.00"
+                      style={{ fontSize: '13px', padding: '10px 12px' }}
+                      placeholder="45.00"
                     />
-                    <span style={{ fontSize: '10px', color: 'var(--text-dim)', marginTop: '4px', display: 'block' }}>
-                      Will appear in the P2P order book for other buyers worldwide.
-                    </span>
                   </div>
                 )}
 
                 {/* Sell Breakdown */}
-                <div style={{ background: 'var(--bg-main)', padding: '14px', borderRadius: '8px', border: '1px solid var(--border-color)' }}>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '12px', marginBottom: '8px' }}>
-                    <span style={{ color: 'var(--text-dim)' }}>Selling Price:</span>
-                    <span className="mono" style={{ fontWeight: 'bold' }}>
+                <div style={{ background: 'var(--bg-input)', padding: '12px 14px', borderRadius: '8px', border: '1px solid var(--border-color)', display: 'flex', flexDirection: 'column', gap: '7px', fontSize: '11px' }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                    <span style={{ color: 'var(--text-dim)' }}>Price</span>
+                    <span className="mono" style={{ fontWeight: '600' }}>
                       ${subTab === 'instant' ? parseFloat(bestBid).toFixed(2) : parseFloat(customPrice || '0').toFixed(2)} USDC
                     </span>
                   </div>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '12px', marginBottom: '8px' }}>
-                    <span style={{ color: 'var(--text-dim)' }}>Gross Proceeds:</span>
-                    <span className="mono">${subtotal.toFixed(2)} USDC</span>
+                  <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                    <span style={{ color: 'var(--text-dim)' }}>Platform Fee (1.0%)</span>
+                    <span className="mono" style={{ color: 'var(--color-solana)', fontWeight: '600' }}>-${platformFee.toFixed(3)} USDC</span>
                   </div>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '11px', color: 'var(--color-solana)', marginBottom: '8px' }}>
-                    <span>Platform Fee (1.0%):</span>
-                    <span className="mono">-${platformFee.toFixed(3)} USDC</span>
-                  </div>
-                  <div style={{ borderTop: '1px solid var(--border-color)', paddingTop: '8px', display: 'flex', justifyContent: 'space-between', fontSize: '13px' }}>
-                    <span style={{ fontWeight: 'bold' }}>You Receive:</span>
-                    <span className="mono" style={{ color: 'var(--color-green)', fontWeight: 'bold', fontSize: '16px' }}>
+                  <div style={{ borderTop: '1px solid var(--border-color)', paddingTop: '7px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                    <span style={{ fontWeight: '600', color: '#fff' }}>Net Proceeds</span>
+                    <span className="mono" style={{ color: 'var(--color-green)', fontWeight: '700', fontSize: '15px' }}>
                       ${finalSellProceeds} USDC
                     </span>
                   </div>
                 </div>
 
                 <button 
-                  onClick={handleExecuteSell}
-                  disabled={isTrading}
                   onClick={() => setShowPaymentModal(true)}
                   disabled={isTrading}
-                  style={{
-                    width: '100%',
-                    padding: '14px',
-                    fontSize: '15px',
-                    borderRadius: '8px',
-                    fontWeight: '800',
-                    border: 'none',
-                    cursor: 'pointer',
-                    background: 'linear-gradient(135deg, #f43f5e 0%, #e11d48 100%)',
-                    color: '#fff',
-                    boxShadow: '0 4px 14px rgba(244, 63, 94, 0.35)',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    gap: '8px'
-                  }}
+                  className="btn btn-danger"
+                  style={{ width: '100%', padding: '12px', fontSize: '14px', borderRadius: '8px' }}
                 >
-                  <ArrowUpRight size={18} />
-                  <span>
-                    {subTab === 'instant' 
-                      ? `Instant Sell for $${finalSellProceeds} USDC`
-                      : `Place Sell Order at $${customPrice}`
-                    }
-                  </span>
+                  <ArrowUpRight size={16} />
+                  <span>Sell {tradeAmount} RESET (${finalSellProceeds} USDC)</span>
                 </button>
               </>
             )}
