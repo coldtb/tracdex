@@ -4,8 +4,8 @@ export async function onRequest(context) {
   }
 
   const rpcEndpoints = [
+    'https://solana-rpc.publicnode.com',
     'https://api.mainnet-beta.solana.com',
-    'https://rpc.ankr.com/solana',
     'https://solana-mainnet.g.alchemy.com/v2/demo'
   ];
 

@@ -617,7 +617,42 @@ export default function App() {
         throw new Error('Please open your Phantom / Solflare wallet extension');
       }
 
-      const connection = new Connection('https://api.mainnet-beta.solana.com', 'confirmed');
+      // Multi-RPC resilient blockhash fetcher (bypasses 403 origin blocks)
+      const rpcEndpoints = [
+        'https://solana-rpc.publicnode.com',
+        '/api/solana-rpc',
+        'https://api.mainnet-beta.solana.com'
+      ];
+
+      let blockhash = null;
+      for (const ep of rpcEndpoints) {
+        try {
+          const res = await fetch(ep, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              jsonrpc: '2.0',
+              id: Date.now(),
+              method: 'getLatestBlockhash',
+              params: [{ commitment: 'confirmed' }]
+            })
+          });
+          if (res.ok) {
+            const data = await res.json();
+            if (data.result?.value?.blockhash) {
+              blockhash = data.result.value.blockhash;
+              break;
+            }
+          }
+        } catch (e) {}
+      }
+
+      if (!blockhash) {
+        const fallbackConn = new Connection('https://solana-rpc.publicnode.com', 'confirmed');
+        const b = await fallbackConn.getLatestBlockhash('confirmed');
+        blockhash = b.blockhash;
+      }
+
       const senderPubkey = new PublicKey(connectedSolanaWallet);
       const recipientPubkey = new PublicKey(PLATFORM_COLLECTOR);
       const usdcMint = new PublicKey('EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v');
@@ -637,7 +672,6 @@ export default function App() {
         )
       );
 
-      const { blockhash } = await connection.getLatestBlockhash('confirmed');
       transaction.recentBlockhash = blockhash;
       transaction.feePayer = senderPubkey;
 
