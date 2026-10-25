@@ -82,6 +82,21 @@ const SOLANA_WALLETS = [
   }
 ];
 
+// Helper to calculate realistic relative time from Solana blockTime
+function formatTimeAgo(blockTimeSec) {
+  if (!blockTimeSec) return 'Just now';
+  const now = Math.floor(Date.now() / 1000);
+  const diff = Math.max(0, now - blockTimeSec);
+  if (diff < 60) return `${diff}s ago`;
+  const mins = Math.floor(diff / 60);
+  if (mins < 60) return `${mins}m ago`;
+  const hours = Math.floor(mins / 60);
+  const remMins = mins % 60;
+  if (hours < 24) return remMins > 0 ? `${hours}h ${remMins}m ago` : `${hours}h ago`;
+  const days = Math.floor(hours / 24);
+  return `${days}d ago`;
+}
+
 export default function App() {
   const [pair, setPair] = useState('RESET/USDC');
   const [data, setData] = useState(marketSnapshot);
@@ -110,13 +125,12 @@ export default function App() {
   const [visitorReset, setVisitorReset] = useState('0.0000');
   const [tradeHistoryTab, setTradeHistoryTab] = useState('market'); // 'market' | 'my'
   const [marketTrades, setMarketTrades] = useState([
-    { id: 'tx-1', side: 'buy', price: '36.00', amount: '0.1000', total: '3.60', fee: '0.036', time: '1m ago', sig: '2WjP6s6o1po66ZfayWG2WDWipjDftHDtk5CuAPRgeqfczWTAgqCGnnrEPuWrhBb9hPdQCUpLwEZ8dBxAv2AF2f6e' },
-    { id: 'tx-2', side: 'buy', price: '34.00', amount: '0.0050', total: '0.17', fee: '0.001', time: '4m ago', sig: 'KCe5LR8mRMsBkS2gRpVrq7EPPkE2zbgTSC3jNjJLxtbyM8jefTS52PcSe8gWMeZatzqp5e4DBMGMmiXX1HiQ8T4' },
-    { id: 'tx-3', side: 'sell', price: '36.50', amount: '0.2500', total: '9.12', fee: '0.091', time: '12m ago', sig: '5y4YVRvU5i89QU4t8a5PQkr6GFqSj3hEaU2JWoX19pHKkASmkBVNLfpkK4nW2PsqxjDufsAsehBWqCiGWtQXJkDb' },
-    { id: 'tx-4', side: 'buy', price: '36.00', amount: '0.5000', total: '18.00', fee: '0.180', time: '25m ago', sig: '5jH8HKcFQ4LyGmKzfQXxCBtasfpubxH9wjiV7HfD9cfXxerRL26DqVPBzsf1Pvo3jAoBLMdDJhsmykiQM3dNgTNq' },
-    { id: 'tx-5', side: 'buy', price: '35.80', amount: '0.0800', total: '2.86', fee: '0.028', time: '38m ago', sig: '2WjP6s6o1po66ZfayWG2WDWipjDftHDtk5CuAPRgeqfczWTAgqCGnnrEPuWrhBb9hPdQCUpLwEZ8dBxAv2AF2f6e' },
-    { id: 'tx-6', side: 'sell', price: '37.00', amount: '1.0000', total: '37.00', fee: '0.370', time: '1h ago', sig: 'KCe5LR8mRMsBkS2gRpVrq7EPPkE2zbgTSC3jNjJLxtbyM8jefTS52PcSe8gWMeZatzqp5e4DBMGMmiXX1HiQ8T4' },
-    { id: 'tx-7', side: 'buy', price: '36.00', amount: '0.2000', total: '7.20', fee: '0.072', time: '2h ago', sig: '5y4YVRvU5i89QU4t8a5PQkr6GFqSj3hEaU2JWoX19pHKkASmkBVNLfpkK4nW2PsqxjDufsAsehBWqCiGWtQXJkDb' }
+    { id: 'tx-1', side: 'buy', price: '36.00', amount: '0.0112', total: '0.40', fee: '0.004', blockTime: 1792932618, sig: '5gmTDj9S2SFum9cEpNqbyyK11Az35CUego6H7cBwCPNni3p5s79Lf3USFcu6txe7zPt6AytT7Rj7GX11mgozNQ7N' },
+    { id: 'tx-2', side: 'buy', price: '34.00', amount: '0.0050', total: '0.17', fee: '0.001', blockTime: 1792932121, sig: '5j9mC2DwZUbRLEVYd1GUgWHKfb7oeJbH45XJ2fxTsVvbsQEKY1g5ZhYsviZcsnTvjJ6KqvduwAiLvgNTvzKYgpQt' },
+    { id: 'tx-3', side: 'buy', price: '36.00', amount: '0.0969', total: '3.49', fee: '0.035', blockTime: 1792923658, sig: '2WjP6s6o1po66ZfayWG2WDWipjDftHDtk5CuAPRgeqfczWTAgqCGnnrEPuWrhBb9hPdQCUpLwEZ8dBxAv2AF2f6e' },
+    { id: 'tx-4', side: 'buy', price: '36.00', amount: '0.1212', total: '4.36', fee: '0.044', blockTime: 1792922151, sig: 'KCe5LR8mRMsBkS2gRpVrq7EPPkE2zbgTSC3jNjJLxtbyM8jefTS52PcSe8gWMeZatzqp5e4DBMGMmiXX1HiQ8T4' },
+    { id: 'tx-5', side: 'sell', price: '36.50', amount: '0.2500', total: '9.12', fee: '0.091', blockTime: 1792916899, sig: '5y4YVRvU5i89QU4t8a5PQkr6GFqSj3hEaU2JWoX19pHKkASmkBVNLfpkK4nW2PsqxjDufsAsehBWqCiGWtQXJkDb' },
+    { id: 'tx-6', side: 'buy', price: '36.00', amount: '0.5000', total: '18.00', fee: '0.180', blockTime: 1792916822, sig: '5jH8HKcFQ4LyGmKzfQXxCBtasfpubxH9wjiV7HfD9cfXxerRL26DqVPBzsf1Pvo3jAoBLMdDJhsmykiQM3dNgTNq' }
   ]);
 
   // Fetch real on-chain balance whenever user connects their Solana wallet
@@ -914,8 +928,8 @@ export default function App() {
                           <td className="mono" style={{ padding: '9px 16px', color: 'var(--color-solana)', fontSize: '11px' }}>
                             +${t.fee}
                           </td>
-                          <td style={{ padding: '9px 16px', color: 'var(--text-dim)', fontSize: '11px' }}>
-                            {t.time}
+                          <td style={{ padding: '9px 16px', color: 'var(--text-dim)', fontSize: '11px' }} title={t.blockTime ? new Date(t.blockTime * 1000).toUTCString() : ''}>
+                            {t.blockTime ? formatTimeAgo(t.blockTime) : t.time}
                           </td>
                           <td style={{ padding: '9px 16px', textAlign: 'right' }}>
                             <a
