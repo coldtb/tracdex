@@ -197,9 +197,10 @@ export default function App() {
   const [loading, setLoading] = useState(false);
   const [selectedOffer, setSelectedOffer] = useState(null);
   const [tradeMode, setTradeMode] = useState('buy'); // 'buy' | 'sell'
-  const [subTab, setSubTab] = useState('instant'); // 'instant' | 'limit'
+  const [orderType, setOrderType] = useState('market'); // 'market' | 'limit' | 'swap'
   const [tradeAmount, setTradeAmount] = useState('0.1');
-  const [customPrice, setCustomPrice] = useState('45.00');
+  const [customPrice, setCustomPrice] = useState('42.00');
+  const [sliderPct, setSliderPct] = useState(25);
   const [tracAddress, setTracAddress] = useState('');
   const [solWallet, setSolWallet] = useState('');
   const [tradeStatus, setTradeStatus] = useState(null);
@@ -537,13 +538,32 @@ export default function App() {
 
   // Fee Calculations
   const amountVal = parseFloat(tradeAmount || '0');
-  const activePrice = tradeMode === 'buy' 
-    ? parseFloat(bestAsk) 
-    : (subTab === 'instant' ? parseFloat(bestBid) : parseFloat(customPrice || '0'));
+  const activePrice = orderType === 'limit' 
+    ? parseFloat(customPrice || '42.00')
+    : (tradeMode === 'buy' ? parseFloat(bestAsk) : parseFloat(bestBid));
   const subtotal = amountVal * activePrice;
   const platformFee = (subtotal * (PLATFORM_FEE_PCT / 100));
   const finalBuyTotal = (subtotal + platformFee).toFixed(2);
   const finalSellProceeds = (subtotal - platformFee).toFixed(2);
+
+  // Percentage slider change handler (0%, 25%, 50%, 75%, 100%)
+  const handleSliderChange = (pct) => {
+    setSliderPct(pct);
+    const p = Math.max(0, Math.min(100, Number(pct)));
+    if (tradeMode === 'buy') {
+      const avail = parseFloat(visitorUsdc || '0.40');
+      const effP = orderType === 'limit' ? parseFloat(customPrice || '42.00') : parseFloat(bestAsk || '42.00');
+      if (effP > 0) {
+        const maxReset = avail / (effP * 1.01);
+        const calcAmt = (maxReset * (p / 100)).toFixed(4);
+        setTradeAmount(Math.max(0.0001, parseFloat(calcAmt)).toString());
+      }
+    } else {
+      const avail = parseFloat(visitorReset || '0.0863');
+      const calcAmt = (avail * (p / 100)).toFixed(4);
+      setTradeAmount(Math.max(0.0001, parseFloat(calcAmt)).toString());
+    }
+  };
 
   // Handle Buy execution (Native Web3 Phantom / Solflare Escrow Transfer)
   const handleExecuteBuy = async () => {
@@ -943,45 +963,208 @@ export default function App() {
           </div>
         </div>
 
-        {/* Column 3: Pro DEX Swap Terminal */}
-        <div className="pro-swap-card">
-          {/* Header: Title & Network Badge */}
-          <div className="pro-swap-header">
-            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-              <span style={{ fontSize: '12px', fontWeight: '800', letterSpacing: '0.4px', color: '#fff' }}>
-                SWAP TERMINAL
-              </span>
-              <span style={{ display: 'inline-flex', alignItems: 'center', gap: '4px', fontSize: '10px', color: '#2ebd85', background: 'rgba(46, 189, 133, 0.1)', padding: '2px 6px', borderRadius: '4px', fontWeight: '600' }}>
-                <span style={{ width: '5px', height: '5px', borderRadius: '50%', background: '#2ebd85' }}></span>
-                Instant P2P
-              </span>
-            </div>
-            <span style={{ fontSize: '11px', color: 'var(--muted)', fontFamily: "'JetBrains Mono', monospace" }}>
-              Slippage 0.5%
-            </span>
+        {/* Column 3: Professional Trading Terminal (Market / Limit / Swap) */}
+        <div className="terminal-card">
+          {/* Top Order Type Selector Tabs */}
+          <div className="terminal-top-tabs">
+            <button
+              type="button"
+              className={`terminal-top-tab ${orderType === 'market' ? 'active' : ''}`}
+              onClick={() => setOrderType('market')}
+            >
+              Market
+            </button>
+            <button
+              type="button"
+              className={`terminal-top-tab ${orderType === 'limit' ? 'active' : ''}`}
+              onClick={() => setOrderType('limit')}
+            >
+              Limit
+            </button>
+            <button
+              type="button"
+              className={`terminal-top-tab ${orderType === 'swap' ? 'active' : ''}`}
+              onClick={() => setOrderType('swap')}
+            >
+              Swap
+            </button>
           </div>
 
-          {/* Mode Switcher Tabs */}
-          <div style={{ padding: '10px 14px 2px' }}>
-            <div className="pro-swap-tabs">
+          {orderType === 'market' || orderType === 'limit' ? (
+            /* MARKET / LIMIT ORDER TERMINAL */
+            <div style={{ display: 'flex', flexDirection: 'column' }}>
+              {/* Buy / Sell Mode Pills */}
+              <div className="terminal-mode-row">
+                <button
+                  type="button"
+                  className={`terminal-mode-btn ${tradeMode === 'buy' ? 'buy-active' : ''}`}
+                  onClick={() => setTradeMode('buy')}
+                >
+                  Buy / Long
+                </button>
+                <button
+                  type="button"
+                  className={`terminal-mode-btn ${tradeMode === 'sell' ? 'sell-active' : ''}`}
+                  onClick={() => setTradeMode('sell')}
+                >
+                  Sell / Short
+                </button>
+              </div>
+
+              {/* Balances / Position Info */}
+              <div className="terminal-info-group">
+                <div className="terminal-info-row">
+                  <span className="k">Available to Trade</span>
+                  <span className="v">
+                    {tradeMode === 'buy' 
+                      ? `${visitorUsdc || '0.40'} USDC` 
+                      : `${visitorReset || '0.0863'} RESET`}
+                  </span>
+                </div>
+                <div className="terminal-info-row">
+                  <span className="k">Current Position</span>
+                  <span className="v">{visitorReset || '0.0863'} RESET</span>
+                </div>
+              </div>
+
+              {/* Limit Price Input (Only for Limit Orders) */}
+              {orderType === 'limit' && (
+                <div style={{ padding: '0 14px', marginTop: '6px' }}>
+                  <div className="terminal-input-group">
+                    <span className="lbl">Price</span>
+                    <input
+                      type="number"
+                      step="0.01"
+                      value={customPrice}
+                      onChange={(e) => setCustomPrice(e.target.value)}
+                      placeholder="0.00"
+                    />
+                    <span className="tag">USDC</span>
+                  </div>
+                </div>
+              )}
+
+              {/* Order Size Input */}
+              <div style={{ padding: '0 14px', marginTop: '6px' }}>
+                <div className="terminal-input-group">
+                  <span className="lbl">Size</span>
+                  <input
+                    type="number"
+                    step="0.001"
+                    value={tradeAmount}
+                    onChange={(e) => setTradeAmount(e.target.value)}
+                    placeholder="0.00"
+                  />
+                  <span className="tag">RESET</span>
+                </div>
+              </div>
+
+              {/* Interactive Percentage Slider & Notches */}
+              <div className="terminal-slider-box">
+                <input
+                  type="range"
+                  min="0"
+                  max="100"
+                  step="1"
+                  value={sliderPct}
+                  onChange={(e) => handleSliderChange(e.target.value)}
+                />
+                <span className="terminal-pct-badge">{sliderPct}%</span>
+              </div>
+              <div className="terminal-notches">
+                {[0, 25, 50, 75, 100].map((p) => (
+                  <button
+                    key={p}
+                    type="button"
+                    className="terminal-notch-btn"
+                    onClick={() => handleSliderChange(p)}
+                  >
+                    {p}%
+                  </button>
+                ))}
+              </div>
+
+              {/* Order Summary Breakdown */}
+              <div className="terminal-summary">
+                <div className="terminal-summary-row">
+                  <span className="k">Order Value</span>
+                  <span className="v">${subtotal.toFixed(2)} USDC</span>
+                </div>
+                <div className="terminal-summary-row">
+                  <span className="k">Execution Rate</span>
+                  <span className="v">1 RESET ≈ ${activePrice.toFixed(2)} USDC</span>
+                </div>
+                <div className="terminal-summary-row">
+                  <span className="k">Slippage</span>
+                  <span className="v"><span className="teal">Est: 0%</span> / Max: 0.50%</span>
+                </div>
+                <div className="terminal-summary-row">
+                  <span className="k">Protocol Fee (1.0%)</span>
+                  <span className="v">${platformFee.toFixed(3)} USDC</span>
+                </div>
+                <div className="terminal-summary-row">
+                  <span className="k">Route</span>
+                  <span className="v" style={{ color: '#2ebd85' }}>Direct P2P Orderbook</span>
+                </div>
+              </div>
+
+              {/* Primary Action Button */}
               <button
                 type="button"
-                className={`pro-swap-tab ${tradeMode === 'buy' ? 'active-buy' : ''}`}
-                onClick={() => setTradeMode('buy')}
+                className={`terminal-cta-btn ${tradeMode === 'buy' ? 'buy' : 'sell'}`}
+                disabled={isTrading}
+                onClick={() => {
+                  if (!connectedSolanaWallet) {
+                    setShowWalletModal(true);
+                    return;
+                  }
+                  if (tradeMode === 'buy') {
+                    handleExecuteBuy();
+                  } else {
+                    handleExecuteSell();
+                  }
+                }}
               >
-                <span style={{ width: '6px', height: '6px', borderRadius: '50%', background: tradeMode === 'buy' ? '#2ebd85' : 'var(--muted)' }}></span>
-                Buy RESET
-              </button>
-              <button
-                type="button"
-                className={`pro-swap-tab ${tradeMode === 'sell' ? 'active-sell' : ''}`}
-                onClick={() => setTradeMode('sell')}
-              >
-                <span style={{ width: '6px', height: '6px', borderRadius: '50%', background: tradeMode === 'sell' ? '#f0616d' : 'var(--muted)' }}></span>
-                Sell RESET
+                {isTrading ? (
+                  <>
+                    <RefreshCw size={16} className="spin" />
+                    <span>Processing...</span>
+                  </>
+                ) : tradeMode === 'buy' ? (
+                  orderType === 'limit'
+                    ? `Place Limit Buy (${tradeAmount} RESET @ $${customPrice})`
+                    : `Buy RESET (${tradeAmount} RESET ≈ $${finalBuyTotal} USDC)`
+                ) : (
+                  orderType === 'limit'
+                    ? `Place Limit Sell (${tradeAmount} RESET @ $${customPrice})`
+                    : `Sell RESET (${tradeAmount} RESET ≈ $${finalSellProceeds} USDC)`
+                )}
               </button>
             </div>
-          </div>
+          ) : (
+            /* SWAP TERMINAL VIEW */
+            <div style={{ display: 'flex', flexDirection: 'column' }}>
+              {/* Mode Switcher Tabs */}
+              <div style={{ padding: '10px 14px 2px' }}>
+                <div className="pro-swap-tabs">
+                  <button
+                    type="button"
+                    className={`pro-swap-tab ${tradeMode === 'buy' ? 'active-buy' : ''}`}
+                    onClick={() => setTradeMode('buy')}
+                  >
+                    <span style={{ width: '6px', height: '6px', borderRadius: '50%', background: tradeMode === 'buy' ? '#2ebd85' : 'var(--muted)' }}></span>
+                    Buy RESET
+                  </button>
+                  <button
+                    type="button"
+                    className={`pro-swap-tab ${tradeMode === 'sell' ? 'active-sell' : ''}`}
+                    onClick={() => setTradeMode('sell')}
+                  >
+                    <span style={{ width: '6px', height: '6px', borderRadius: '50%', background: tradeMode === 'sell' ? '#f0616d' : 'var(--muted)' }}></span>
+                    Sell RESET
+                  </button>
+                </div>
+              </div>
 
           <div style={{ padding: '12px 14px 16px', display: 'flex', flexDirection: 'column', gap: '10px' }}>
             {tradeMode === 'buy' ? (
@@ -1279,26 +1462,29 @@ export default function App() {
                 </button>
               </>
             )}
-
-            {/* Status Feedback */}
-            {tradeStatus && (
-              <div style={{ 
-                padding: '12px', 
-                borderRadius: '8px', 
-                fontSize: '12px', 
-                display: 'flex', 
-                alignItems: 'center', 
-                gap: '8px',
-                background: tradeStatus.phase === 'error' ? 'var(--down-bg)' : 'var(--up-bg)',
-                border: tradeStatus.phase === 'error' ? '1px solid var(--down)' : '1px solid var(--up)'
-              }}>
-                {tradeStatus.phase === 'complete' && <CheckCircle2 size={16} color="var(--up)" />}
-                {tradeStatus.phase === 'error' && <AlertCircle size={16} color="var(--down)" />}
-                {['warming', 'locking'].includes(tradeStatus.phase) && <RefreshCw size={16} className="spin" color="var(--accent)" />}
-                <span>{tradeStatus.message}</span>
               </div>
-            )}
-          </div>
+            </div>
+          )}
+
+          {/* Status Feedback */}
+          {tradeStatus && (
+            <div style={{ 
+              margin: '0 14px 14px',
+              padding: '12px', 
+              borderRadius: '8px', 
+              fontSize: '12px', 
+              display: 'flex', 
+              alignItems: 'center', 
+              gap: '8px',
+              background: tradeStatus.phase === 'error' ? 'var(--down-bg)' : 'var(--up-bg)',
+              border: tradeStatus.phase === 'error' ? '1px solid var(--down)' : '1px solid var(--up)'
+            }}>
+              {tradeStatus.phase === 'complete' && <CheckCircle2 size={16} color="var(--up)" />}
+              {tradeStatus.phase === 'error' && <AlertCircle size={16} color="var(--down)" />}
+              {['warming', 'locking'].includes(tradeStatus.phase) && <RefreshCw size={16} className="spin" color="var(--accent)" />}
+              <span>{tradeStatus.message}</span>
+            </div>
+          )}
         </div>
       </div>
 
