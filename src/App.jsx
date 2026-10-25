@@ -144,16 +144,23 @@ export default function App() {
   const [tradeHistoryTab, setTradeHistoryTab] = useState('market'); // 'market' | 'my'
   const [, setTimeTick] = useState(0);
   const [marketTrades, setMarketTrades] = useState(() => {
+    if (marketSnapshot?.trades && marketSnapshot.trades.length) {
+      return marketSnapshot.trades.slice(0, 30).map((t, idx) => ({
+        id: t.id || `tx-${idx}`,
+        side: t.side || (idx % 2 === 0 ? 'buy' : 'sell'),
+        price: parseFloat(t.price || '35.00').toFixed(2),
+        amount: parseFloat(t.amount || '0.1').toFixed(4),
+        total: parseFloat(t.usdc || '3.50').toFixed(2),
+        fee: (parseFloat(t.usdc || '3.50') * 0.01).toFixed(3),
+        blockTime: t.t,
+        sig: t.id ? t.id.slice(0, 44) : generateRealisticSig()
+      }));
+    }
     const now = Math.floor(Date.now() / 1000);
     return [
       { id: 'tx-0', side: 'buy', price: '36.00', amount: '0.0425', total: '1.53', fee: '0.015', blockTime: now - 18, sig: generateRealisticSig() },
       { id: 'tx-0b', side: 'sell', price: '36.00', amount: '0.0810', total: '2.91', fee: '0.029', blockTime: now - 52, sig: generateRealisticSig() },
-      { id: 'tx-1', side: 'buy', price: '36.00', amount: '0.0112', total: '0.40', fee: '0.004', blockTime: 1792932618, sig: '5gmTDj9S2SFum9cEpNqbyyK11Az35CUego6H7cBwCPNni3p5s79Lf3USFcu6txe7zPt6AytT7Rj7GX11mgozNQ7N' },
-      { id: 'tx-2', side: 'buy', price: '34.00', amount: '0.0050', total: '0.17', fee: '0.001', blockTime: 1792932121, sig: '5j9mC2DwZUbRLEVYd1GUgWHKfb7oeJbH45XJ2fxTsVvbsQEKY1g5ZhYsviZcsnTvjJ6KqvduwAiLvgNTvzKYgpQt' },
-      { id: 'tx-3', side: 'buy', price: '36.00', amount: '0.0969', total: '3.49', fee: '0.035', blockTime: 1792923658, sig: '2WjP6s6o1po66ZfayWG2WDWipjDftHDtk5CuAPRgeqfczWTAgqCGnnrEPuWrhBb9hPdQCUpLwEZ8dBxAv2AF2f6e' },
-      { id: 'tx-4', side: 'buy', price: '36.00', amount: '0.1212', total: '4.36', fee: '0.044', blockTime: 1792922151, sig: 'KCe5LR8mRMsBkS2gRpVrq7EPPkE2zbgTSC3jNjJLxtbyM8jefTS52PcSe8gWMeZatzqp5e4DBMGMmiXX1HiQ8T4' },
-      { id: 'tx-5', side: 'sell', price: '36.50', amount: '0.2500', total: '9.12', fee: '0.091', blockTime: 1792916899, sig: '5y4YVRvU5i89QU4t8a5PQkr6GFqSj3hEaU2JWoX19pHKkASmkBVNLfpkK4nW2PsqxjDufsAsehBWqCiGWtQXJkDb' },
-      { id: 'tx-6', side: 'buy', price: '36.00', amount: '0.5000', total: '18.00', fee: '0.180', blockTime: 1792916822, sig: '5jH8HKcFQ4LyGmKzfQXxCBtasfpubxH9wjiV7HfD9cfXxerRL26DqVPBzsf1Pvo3jAoBLMdDJhsmykiQM3dNgTNq' }
+      { id: 'tx-1', side: 'buy', price: '36.00', amount: '0.0112', total: '0.40', fee: '0.004', blockTime: 1792932618, sig: '5gmTDj9S2SFum9cEpNqbyyK11Az35CUego6H7cBwCPNni3p5s79Lf3USFcu6txe7zPt6AytT7Rj7GX11mgozNQ7N' }
     ];
   });
 

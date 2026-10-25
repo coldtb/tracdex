@@ -12,71 +12,67 @@ const SECONDS = {
   '24h': 86400, '2d': 172800, '3d': 259200, '1W': 604800, '1M': 2592000, '1Y': 31536000
 };
 
-// Resample candles according to timeframe
+const mod = (v, n) => ((v % n) + n) % n;
+const bucketStart = (s, i) => s - mod(s, SECONDS[i] || 900);
+const nextBucket = (t, i, step = 1) => t + step * (SECONDS[i] || 900);
+
+// Dense gap-filled authentic on-chain candle series (official intercom-dex algorithm)
 function aggregateCandles(baseCandles, interval) {
   if (!baseCandles || !baseCandles.length) return [];
-  const sorted = [...baseCandles].sort((a, b) => a.t - b.t);
   const sec = SECONDS[interval] || 900;
 
-  // If interval is smaller than base 15m (1m, 3m, 5m), divide cleanly without jagged sine distortion
-  if (sec < 900) {
-    const subBars = [];
-    const stepCount = Math.floor(900 / sec);
-    sorted.forEach((c) => {
-      const baseTime = c.t;
-      const o = parseFloat(c.o);
-      const h = parseFloat(c.h);
-      const l = parseFloat(c.l);
-      const cl = parseFloat(c.c);
-      const vol = parseFloat(c.v?.text || '25.0') / stepCount;
-
-      let curOpen = o;
-      for (let i = 0; i < stepCount; i++) {
-        const progress = (i + 1) / stepCount;
-        const curClose = i === stepCount - 1 ? cl : Number((o + (cl - o) * progress).toFixed(2));
-        const wickSpread = (h - l) * 0.15;
-        const curHigh = Number((Math.max(curOpen, curClose) + wickSpread).toFixed(2));
-        const curLow = Number((Math.min(curOpen, curClose) - wickSpread).toFixed(2));
-
-        subBars.push({
-          time: baseTime + i * sec,
-          open: curOpen,
-          high: Math.min(h, Math.max(curOpen, curClose, curHigh)),
-          low: Math.max(l, Math.min(curOpen, curClose, curLow)),
-          close: curClose,
-          volume: Number(vol.toFixed(2)),
-        });
-        curOpen = curClose;
-      }
-    });
-    return subBars;
-  }
-
-  // 15m or higher: standard financial OHLC bucket aggregation
+  // Aggregate into requested bucket interval
   const buckets = new Map();
-  sorted.forEach((c) => {
-    const bTime = Math.floor(c.t / sec) * sec;
+  for (const c of baseCandles) {
+    const bTime = bucketStart(c.t, interval);
     if (!buckets.has(bTime)) buckets.set(bTime, []);
     buckets.get(bTime).push(c);
-  });
+  }
 
-  const res = [];
-  buckets.forEach((items, bTime) => {
+  const aggregated = [];
+  for (const [t, items] of buckets.entries()) {
+    items.sort((a, b) => a.t - b.t);
     const o = parseFloat(items[0].o);
     const cl = parseFloat(items[items.length - 1].c);
     const h = Math.max(...items.map((x) => parseFloat(x.h)));
     const l = Math.min(...items.map((x) => parseFloat(x.l)));
-    const vol = items.reduce((acc, x) => acc + parseFloat(x.v?.text || '25.0'), 0);
-    res.push({
-      time: bTime,
-      open: o,
-      high: h,
-      low: l,
-      close: cl,
-      volume: Number(vol.toFixed(2)),
-    });
-  });
-  return res.sort((a, b) => a.time - b.time);
+    const vol = items.reduce((acc, x) => acc + parseFloat(x.v?.text || x.v || '0'), 0);
+    aggregated.push({ t, o, h, l, c: cl, v: vol });
+  }
+  aggregated.sort((a, b) => a.t - b.t);
+
+  // Fill gap buckets densely (flat bar at previous close with 0 volume)
+  if (!aggregated.length) return [];
+  const byT = new Map(aggregated.map(c => [c.t, c]));
+  const first = aggregated[0].t;
+  const last = aggregated[aggregated.length - 1].t;
+
+  let close = aggregated[0].o;
+  const out = [];
+  for (let t = first; t <= last; t = nextBucket(t, interval)) {
+    const c = byT.get(t);
+    if (c) {
+      out.push({
+        time: t,
+        open: c.o,
+        high: c.h,
+        low: c.l,
+        close: c.c,
+        volume: Number(c.v.toFixed(2))
+      });
+      close = c.c;
+    } else {
+      out.push({
+        time: t,
+        open: close,
+        high: close,
+        low: close,
+        close: close,
+        volume: 0
+      });
+    }
+  }
+  return out;
 }
 
 export default function CandleChart({ pair = 'RESET/USDC', currentPrice = '36.00' }) {
