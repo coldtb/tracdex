@@ -419,7 +419,24 @@ export default function App() {
   const bestBid = buyOffers[0]?.price || (parseFloat(bestAsk) * 0.98).toFixed(2);
   const activePriceDisplay = latestTradePrice;
   const spread = (parseFloat(bestAsk) - parseFloat(bestBid)).toFixed(2);
-  const spreadPct = ((spread / parseFloat(bestAsk)) * 100).toFixed(1);
+  const spreadPct = ((spread / parseFloat(bestAsk)) * 100).toFixed(2);
+
+  // Cumulative depth for Order Book
+  let askAcc = 0;
+  const asksWithDepth = sellOffers.slice(0, 10).map((o) => {
+    const amt = Number(o.baseAmount) / 1e8;
+    askAcc += amt;
+    return { ...o, amt, cum: askAcc };
+  });
+
+  let bidAcc = 0;
+  const bidsWithDepth = buyOffers.slice(0, 10).map((o) => {
+    const amt = Number(o.baseAmount) / 1e8;
+    bidAcc += amt;
+    return { ...o, amt, cum: bidAcc };
+  });
+
+  const maxBookDepth = Math.max(askAcc, bidAcc, 1);
 
   const ticker = {
     last: activePriceDisplay,
@@ -571,544 +588,217 @@ export default function App() {
   };
 
   return (
-    <div className="app-container">
-      {/* Top Header */}
-      <header className="header">
-        <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
-          <div className="brand">
-            <svg width="26" height="26" viewBox="0 0 32 32" fill="none">
-              <circle cx="16" cy="16" r="14" stroke="url(#logo-grad)" strokeWidth="2.5" />
-              <path d="M10 16L16 10L22 16L16 22Z" fill="url(#logo-grad)" />
-              <defs>
-                <linearGradient id="logo-grad" x1="0" y1="0" x2="32" y2="32" gradientUnits="userSpaceOnUse">
-                  <stop stopColor="#6366f1" />
-                  <stop offset="0.5" stopColor="#a855f7" />
-                  <stop offset="1" stopColor="#14f195" />
-                </linearGradient>
-              </defs>
-            </svg>
-            <span style={{ fontSize: '17px', fontWeight: '800', letterSpacing: '-0.5px', color: '#fff' }}>
-              Trac<span style={{ color: 'var(--color-solana)' }}>DEX</span>
-            </span>
-          </div>
-
-          <div style={{
-            display: 'flex',
-            alignItems: 'center',
-            gap: '8px',
-            padding: '4px 10px',
-            borderRadius: '20px',
-            background: 'rgba(255, 255, 255, 0.04)',
-            border: '1px solid var(--border-color)',
-            fontSize: '12px'
-          }}>
-            <span style={{ fontWeight: '700', color: '#fff' }}>RESET/USDC</span>
-            <span className="mono" style={{ color: 'var(--color-green)', fontWeight: '700' }}>
-              ${parseFloat(ticker.last).toFixed(2)}
-            </span>
-            <span style={{ fontSize: '10px', color: 'var(--color-green)', background: 'var(--color-green-soft)', padding: '1px 5px', borderRadius: '4px', fontWeight: 'bold' }}>
-              +4.12%
-            </span>
-          </div>
+    <div className="app-wrapper">
+      {/* Official Intercom-DEX Pairbar */}
+      <div className="pairbar">
+        {/* Custom Engraved Plaque Logo */}
+        <div style={{ display: 'flex', alignItems: 'center', marginRight: '6px' }}>
+          <img 
+            src="/tracdex-logo.png" 
+            alt="TRACDEX" 
+            style={{ 
+              height: '28px', 
+              borderRadius: '4px', 
+              boxShadow: '0 2px 8px rgba(0,0,0,0.4)',
+              display: 'block' 
+            }} 
+          />
         </div>
 
-        {/* Wallet Pill & Support */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-          <a 
-            href="https://t.me" 
-            target="_blank" 
-            rel="noreferrer"
-            className="btn btn-secondary" 
-            style={{ padding: '8px 12px', fontSize: '12px' }}
-            title="Join TracDEX Support Telegram"
+        <div className="pairs" role="tablist">
+          <button 
+            type="button" 
+            role="tab" 
+            aria-selected={pair === 'TNK/USDC'} 
+            onClick={() => setPair('TNK/USDC')}
           >
-            <MessageCircle size={15} style={{ color: '#38bdf8' }} />
-            <span>Support</span>
-          </a>
-
-          <a 
-            href="https://github.com/Trac-Systems/intercom-dex/releases/tag/v0.1.32" 
-            target="_blank" 
-            rel="noreferrer"
-            className="btn btn-secondary" 
-            style={{ padding: '8px 12px', fontSize: '12px', display: 'flex', alignItems: 'center', gap: '6px' }}
-            title="Official Trac-Systems intercom-dex v0.1.32 Source Release"
+            TNK/USDC
+          </button>
+          <button 
+            type="button" 
+            role="tab" 
+            aria-selected={pair === 'RESET/USDC'} 
+            onClick={() => setPair('RESET/USDC')}
           >
-            <GithubIcon size={14} />
-            <span>v0.1.32</span>
-          </a>
+            RESET/USDC
+          </button>
+        </div>
 
-          <div className="balance-pill">
-            <span style={{ display: 'inline-flex', alignItems: 'center', gap: '4px' }}>
-              <span style={{ color: '#f59e0b', fontSize: '10px', fontWeight: '600', letterSpacing: '0.3px' }}>RESET</span>
-              <span className="mono" style={{ color: '#f1f5f9', fontSize: '11px', fontWeight: '500' }}>
-                {connectedSolanaWallet ? visitorReset : '0.00'}
-              </span>
-            </span>
-            <span style={{ color: 'rgba(255, 255, 255, 0.18)', fontSize: '10px' }}>•</span>
-            <span style={{ display: 'inline-flex', alignItems: 'center', gap: '4px' }}>
-              <span style={{ color: '#38bdf8', fontSize: '10px', fontWeight: '600', letterSpacing: '0.3px' }}>USDC</span>
-              <span className="mono" style={{ color: '#f1f5f9', fontSize: '11px', fontWeight: '500' }}>
-                ${connectedSolanaWallet ? (visitorUsdc !== null ? visitorUsdc : '0.00') : '0.00'}
-              </span>
-            </span>
-            {connectedSolanaWallet && visitorSol !== null && (
-              <>
-                <span style={{ color: 'rgba(255, 255, 255, 0.18)', fontSize: '10px' }}>•</span>
-                <span style={{ display: 'inline-flex', alignItems: 'center', gap: '4px' }}>
-                  <span style={{ color: '#c084fc', fontSize: '10px', fontWeight: '600', letterSpacing: '0.3px' }}>SOL</span>
-                  <span className="mono" style={{ color: '#f1f5f9', fontSize: '11px', fontWeight: '500' }}>
-                    {visitorSol}
-                  </span>
-                </span>
-              </>
-            )}
-          </div>
+        <div className="last mono">
+          <span>{parseFloat(activePriceDisplay).toFixed(2)}</span>
+          <span className="unit">USDC</span>
+        </div>
 
-          {connectedSolanaWallet ? (
-            <div style={{ position: 'relative' }}>
-              <button 
-                onClick={() => setShowAccountDropdown(!showAccountDropdown)}
-                className="btn btn-solana" 
-                style={{ padding: '8px 14px', fontSize: '13px', display: 'flex', alignItems: 'center', gap: '8px' }}
-                title="Manage wallet"
-              >
-                <Wallet size={16} />
-                <span>{connectedWalletName ? `${connectedWalletName}: ` : ''}{connectedSolanaWallet.slice(0, 4)}...{connectedSolanaWallet.slice(-4)}</span>
-                <ChevronDown size={14} style={{ transform: showAccountDropdown ? 'rotate(180deg)' : 'none', transition: 'transform 0.2s' }} />
-              </button>
+        <div className="stat">
+          <span className="k">24h change</span>
+          <span className="v mono" style={{ color: 'var(--up)' }}>+5.88%</span>
+        </div>
 
-              {/* Connected Wallet Account Dropdown */}
-              {showAccountDropdown && (
-                <div style={{
-                  position: 'absolute',
-                  top: '115%',
-                  right: 0,
-                  width: '280px',
-                  background: 'var(--bg-card)',
-                  border: '1px solid var(--border-glow)',
-                  borderRadius: '12px',
-                  padding: '16px',
-                  boxShadow: '0 12px 32px rgba(0, 0, 0, 0.65)',
-                  zIndex: 80,
-                  display: 'flex',
-                  flexDirection: 'column',
-                  gap: '12px'
-                }}>
-                  {/* Top: Wallet Name & Status */}
-                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                      <span className="badge-dot" style={{ background: 'var(--color-green)' }}></span>
-                      <span style={{ fontWeight: 'bold', fontSize: '13px', color: '#fff' }}>
-                        {connectedWalletName || 'Solana Wallet'}
-                      </span>
-                    </div>
-                    <span style={{ fontSize: '11px', color: 'var(--color-green)', fontWeight: 'bold' }}>Connected</span>
-                  </div>
+        <div className="stat">
+          <span className="k">24h high</span>
+          <span className="v mono">44.00</span>
+        </div>
 
-                  {/* Address with Copy and Solscan link */}
-                  <div style={{
-                    background: 'var(--bg-main)',
-                    border: '1px solid var(--border-color)',
-                    borderRadius: '8px',
-                    padding: '8px 10px',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'space-between'
-                  }}>
-                    <span className="mono" style={{ fontSize: '11px', color: 'var(--text-muted)' }}>
-                      {connectedSolanaWallet.slice(0, 6)}...{connectedSolanaWallet.slice(-6)}
-                    </span>
-                    <div style={{ display: 'flex', gap: '6px' }}>
-                      <button
-                        onClick={() => handleCopy(connectedSolanaWallet)}
-                        style={{
-                          background: copiedAddress ? 'var(--color-green)' : 'rgba(255, 255, 255, 0.08)',
-                          border: 'none',
-                          color: '#fff',
-                          padding: '4px 6px',
-                          borderRadius: '4px',
-                          cursor: 'pointer',
-                          display: 'flex',
-                          alignItems: 'center'
-                        }}
-                        title="Copy address"
-                      >
-                        {copiedAddress ? <Check size={12} /> : <Copy size={12} />}
-                      </button>
-                      <a
-                        href={`https://solscan.io/account/${connectedSolanaWallet}`}
-                        target="_blank"
-                        rel="noreferrer"
-                        style={{
-                          background: 'rgba(255, 255, 255, 0.08)',
-                          color: '#fff',
-                          padding: '4px 6px',
-                          borderRadius: '4px',
-                          display: 'flex',
-                          alignItems: 'center'
-                        }}
-                        title="View on Solscan"
-                      >
-                        <ExternalLink size={12} />
-                      </a>
-                    </div>
-                  </div>
+        <div className="stat">
+          <span className="k">24h low</span>
+          <span className="v mono">20.00</span>
+        </div>
 
-                  {/* Balances */}
-                  <div style={{
-                    background: 'rgba(255, 255, 255, 0.03)',
-                    borderRadius: '8px',
-                    padding: '10px 12px',
-                    display: 'grid',
-                    gridTemplateColumns: '1fr 1fr 1fr',
-                    gap: '8px',
-                    fontSize: '12px'
-                  }}>
-                    <div>
-                      <span style={{ color: '#f7931a', fontSize: '10px', display: 'block', fontWeight: 'bold' }}>RESET</span>
-                      <span className="mono" style={{ fontWeight: 'bold', color: '#fff', fontSize: '11px' }}>{visitorReset}</span>
-                    </div>
-                    <div>
-                      <span style={{ color: '#38bdf8', fontSize: '10px', display: 'block', fontWeight: 'bold' }}>USDC</span>
-                      <span className="mono" style={{ fontWeight: 'bold', color: '#fff', fontSize: '11px' }}>${visitorUsdc || '0.00'}</span>
-                    </div>
-                    <div style={{ textAlign: 'right' }}>
-                      <span style={{ color: '#a855f7', fontSize: '10px', display: 'block', fontWeight: 'bold' }}>SOL</span>
-                      <span className="mono" style={{ fontWeight: 'bold', color: '#fff', fontSize: '11px' }}>{visitorSol || '0.00'}</span>
-                    </div>
-                  </div>
+        <div className="stat">
+          <span className="k">24h volume</span>
+          <span className="v mono">
+            {Number(ticker.volume24h ? Number(ticker.volume24h) / 1e6 : 5441.878).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 6 })} USDC
+          </span>
+        </div>
 
-                  {/* Actions: Change Wallet or Disconnect */}
-                  <div style={{ display: 'flex', gap: '8px', borderTop: '1px solid var(--border-color)', paddingTop: '10px' }}>
-                    <button
-                      onClick={() => {
-                        setShowAccountDropdown(false);
-                        setShowWalletModal(true);
-                      }}
-                      className="btn btn-secondary"
-                      style={{ flex: 1, padding: '8px', fontSize: '11px', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '4px' }}
-                    >
-                      <RefreshCw size={12} />
-                      <span>Change</span>
-                    </button>
-                    <button
-                      onClick={() => {
-                        setConnectedSolanaWallet(null);
-                        setConnectedWalletName(null);
-                        setShowAccountDropdown(false);
-                      }}
-                      style={{
-                        flex: 1,
-                        padding: '8px',
-                        fontSize: '11px',
-                        background: 'rgba(244, 63, 94, 0.15)',
-                        border: '1px solid rgba(244, 63, 94, 0.4)',
-                        color: '#f87171',
-                        borderRadius: '6px',
-                        cursor: 'pointer',
-                        fontWeight: 'bold',
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        gap: '4px'
-                      }}
-                    >
-                      <LogOut size={12} />
-                      <span>Disconnect</span>
-                    </button>
-                  </div>
-                </div>
-              )}
-            </div>
-          ) : (
+        <div className="signers">
+          <span className="dot on"></span>
+          <span>5 signers</span>
+        </div>
+
+        {/* Connected Wallet Pill or Connect Button */}
+        {connectedSolanaWallet ? (
+          <div style={{ position: 'relative' }}>
             <button 
-              onClick={handleConnectWallet}
-              className="btn btn-solana" 
-              style={{ padding: '8px 16px', fontSize: '13px', display: 'flex', alignItems: 'center', gap: '8px', borderRadius: '8px' }}
+              onClick={() => setShowAccountDropdown(!showAccountDropdown)}
+              className="btn btn-secondary" 
+              style={{ padding: '6px 12px', fontSize: '12px', display: 'flex', alignItems: 'center', gap: '6px' }}
+              title="Manage wallet"
             >
-              <Wallet size={15} />
-              <span>{isConnectingWallet ? 'Connecting...' : 'Connect Wallet'}</span>
+              <Wallet size={14} />
+              <span>{connectedWalletName ? `${connectedWalletName}: ` : ''}{connectedSolanaWallet.slice(0, 4)}...{connectedSolanaWallet.slice(-4)}</span>
+              <ChevronDown size={13} style={{ transform: showAccountDropdown ? 'rotate(180deg)' : 'none', transition: 'transform 0.2s' }} />
             </button>
-          )}
-        </div>
-      </header>
 
-      {/* Main Trading Floor */}
-      <div className="dashboard-grid">
-        {/* Left: Verified P2P Order Book */}
-        <div className="card">
-          <div className="card-header">
-            <span className="card-title">
-              <Zap size={16} style={{ color: '#f7931a' }} />
-              Verified P2P Order Book
-            </span>
-            <button onClick={fetchData} className="ghost" style={{ background: 'none', border: 'none', color: 'var(--text-dim)', cursor: 'pointer' }}>
-              <RefreshCw size={14} className={loading ? 'spin' : ''} />
-            </button>
-          </div>
-
-          <div style={{ padding: '8px 16px', display: 'grid', gridTemplateColumns: '1.2fr 1fr 1fr', fontSize: '11px', color: 'var(--text-dim)', textTransform: 'uppercase', fontWeight: 'bold' }}>
-            <span>Price (USDC)</span>
-            <span style={{ textAlign: 'right' }}>Size (RESET)</span>
-            <span style={{ textAlign: 'right' }}>Seller Score</span>
-          </div>
-
-          {/* Sell Ladder (Asks) */}
-          <div style={{ display: 'flex', flexDirection: 'column-reverse', minHeight: '160px' }}>
-            {sellOffers.slice(0, 7).map((o, idx) => {
-              const amount = Number(o.baseAmount) / 1e8;
-              const depthPct = Math.min(100, Math.max(15, (amount / 1.5) * 100));
-              const score = 99 - (idx * 0.3);
-              return (
-                <div 
-                  key={o.offerId || idx} 
-                  className="ob-row" 
-                  onClick={() => { 
-                    setTradeMode('buy');
-                    setSelectedOffer(o); 
-                    setTradeAmount(amount.toString()); 
-                  }}
-                  style={{ 
-                    display: 'grid', 
-                    gridTemplateColumns: '1.2fr 1fr 1fr',
-                    background: selectedOffer?.offerId === o.offerId ? 'rgba(244, 63, 94, 0.15)' : undefined 
-                  }}
-                  title="Click to Buy this offer"
-                >
-                  <div className="ob-depth ask" style={{ width: `${depthPct}%` }}></div>
-                  <span style={{ color: 'var(--color-red)', fontWeight: 'bold' }}>${parseFloat(o.price).toFixed(2)}</span>
-                  <span style={{ textAlign: 'right', color: 'var(--text-main)' }}>{amount.toFixed(4)}</span>
-                  <span style={{ textAlign: 'right', color: 'var(--color-green)', fontSize: '11px', display: 'flex', alignItems: 'center', justifyContent: 'flex-end', gap: '3px' }}>
-                    <Star size={10} fill="var(--color-green)" />
-                    <span>{score.toFixed(1)}%</span>
-                  </span>
+            {/* Dropdown */}
+            {showAccountDropdown && (
+              <div style={{
+                position: 'absolute',
+                top: 'calc(100% + 6px)',
+                right: 0,
+                background: 'var(--panel)',
+                border: '1px solid var(--line)',
+                borderRadius: '8px',
+                padding: '12px 14px',
+                minWidth: '240px',
+                boxShadow: '0 10px 25px rgba(0,0,0,0.5)',
+                zIndex: 60,
+                display: 'flex',
+                flexDirection: 'column',
+                gap: '8px'
+              }}>
+                <div style={{ fontSize: '11px', color: 'var(--muted)', display: 'flex', justifyContent: 'space-between' }}>
+                  <span>Connected via</span>
+                  <strong style={{ color: 'var(--text)' }}>{connectedWalletName || 'Solana Wallet'}</strong>
                 </div>
-              );
-            })}
-          </div>
-
-          {/* Spread Indicator */}
-          <div className="ob-spread">
-            <span style={{ color: 'var(--text-dim)' }}>Spread</span>
-            <span className="mono" style={{ color: 'var(--color-solana)' }}>
-              ${spread} USDC ({spreadPct}%)
-            </span>
-          </div>
-
-          {/* Buy Ladder (Bids) */}
-          <div style={{ display: 'flex', flexDirection: 'column', minHeight: '160px' }}>
-            {buyOffers.slice(0, 7).map((o, idx) => {
-              const amount = Number(o.baseAmount) / 1e8;
-              const depthPct = Math.min(100, Math.max(15, (amount / 1.5) * 100));
-              const score = 98.5 + (idx * 0.2);
-              return (
-                <div 
-                  key={o.offerId || idx} 
-                  className="ob-row"
+                <div className="mono" style={{ fontSize: '11px', color: 'var(--text)', wordBreak: 'break-all', background: 'var(--sunken)', padding: '6px 8px', borderRadius: '4px' }}>
+                  {connectedSolanaWallet}
+                </div>
+                <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '12px', borderTop: '1px solid var(--line)', paddingTop: '6px' }}>
+                  <span style={{ color: 'var(--muted)' }}>RESET</span>
+                  <span className="mono" style={{ color: 'var(--text)', fontWeight: 'bold' }}>{visitorReset}</span>
+                </div>
+                <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '12px' }}>
+                  <span style={{ color: 'var(--muted)' }}>USDC</span>
+                  <span className="mono" style={{ color: 'var(--text)', fontWeight: 'bold' }}>${visitorUsdc !== null ? visitorUsdc : '0.00'}</span>
+                </div>
+                <button
+                  type="button"
                   onClick={() => {
-                    setTradeMode('sell');
-                    setSubTab('instant');
-                    setTradeAmount(amount.toString());
+                    setConnectedSolanaWallet(null);
+                    setConnectedWalletName(null);
+                    setShowAccountDropdown(false);
                   }}
-                  style={{ display: 'grid', gridTemplateColumns: '1.2fr 1fr 1fr' }}
-                  title="Click to Sell to this buyer"
+                  className="btn btn-secondary"
+                  style={{ width: '100%', marginTop: '4px', padding: '6px', fontSize: '11px', color: 'var(--down)', borderColor: 'var(--down)' }}
                 >
-                  <div className="ob-depth bid" style={{ width: `${depthPct}%` }}></div>
-                  <span style={{ color: 'var(--color-green)', fontWeight: 'bold' }}>${parseFloat(o.price).toFixed(2)}</span>
-                  <span style={{ textAlign: 'right', color: 'var(--text-main)' }}>{amount.toFixed(4)}</span>
-                  <span style={{ textAlign: 'right', color: 'var(--color-green)', fontSize: '11px', display: 'flex', alignItems: 'center', justifyContent: 'flex-end', gap: '3px' }}>
-                    <Star size={10} fill="var(--color-green)" />
-                    <span>{score.toFixed(1)}%</span>
-                  </span>
-                </div>
-              );
-            })}
-          </div>
-        </div>
-
-        {/* Center: Live Candlestick K-Line Chart */}
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
-          <CandleChart pair={pair} currentPrice={activePriceDisplay} />
-
-          {/* Recent Market Trades & Executed Orders Table */}
-          <div className="card" style={{ padding: '0', overflow: 'hidden' }}>
-            <div style={{
-              display: 'flex',
-              justifyContent: 'space-between',
-              alignItems: 'center',
-              padding: '12px 18px',
-              borderBottom: '1px solid var(--border-color)',
-              background: 'rgba(255, 255, 255, 0.02)'
-            }}>
-              <div style={{ display: 'flex', gap: '8px' }}>
-                <button
-                  onClick={() => setTradeHistoryTab('market')}
-                  style={{
-                    padding: '6px 12px',
-                    borderRadius: '6px',
-                    border: 'none',
-                    background: tradeHistoryTab === 'market' ? 'var(--color-accent)' : 'transparent',
-                    color: tradeHistoryTab === 'market' ? '#fff' : 'var(--text-dim)',
-                    fontWeight: 'bold',
-                    fontSize: '12px',
-                    cursor: 'pointer',
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: '6px'
-                  }}
-                >
-                  <span className="badge-dot" style={{ background: 'var(--color-green)' }}></span>
-                  <span>Market Trades</span>
+                  Disconnect Wallet
                 </button>
-
-                <button
-                  onClick={() => setTradeHistoryTab('my')}
-                  style={{
-                    padding: '6px 12px',
-                    borderRadius: '6px',
-                    border: 'none',
-                    background: tradeHistoryTab === 'my' ? 'var(--color-accent)' : 'transparent',
-                    color: tradeHistoryTab === 'my' ? '#fff' : 'var(--text-dim)',
-                    fontWeight: 'bold',
-                    fontSize: '12px',
-                    cursor: 'pointer'
-                  }}
-                >
-                  My Orders (0)
-                </button>
-              </div>
-
-              <div style={{ fontSize: '11px', color: 'var(--text-dim)', display: 'flex', alignItems: 'center', gap: '6px' }}>
-                <ShieldCheck size={13} style={{ color: 'var(--color-green)' }} />
-                <span>On-Chain Verified</span>
-              </div>
-            </div>
-
-            {tradeHistoryTab === 'market' ? (
-              <div style={{ overflowX: 'auto', maxHeight: '220px', overflowY: 'auto' }}>
-                <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '12px', textAlign: 'left' }}>
-                  <thead>
-                    <tr style={{ color: 'var(--text-dim)', borderBottom: '1px solid var(--border-color)', background: 'var(--bg-main)' }}>
-                      <th style={{ padding: '8px 16px', fontWeight: 'bold' }}>Type</th>
-                      <th style={{ padding: '8px 16px', fontWeight: 'bold' }}>Price (USDC)</th>
-                      <th style={{ padding: '8px 16px', fontWeight: 'bold' }}>Amount (RESET)</th>
-                      <th style={{ padding: '8px 16px', fontWeight: 'bold' }}>Total (USDC)</th>
-                      <th style={{ padding: '8px 16px', fontWeight: 'bold' }}>Platform Fee (1%)</th>
-                      <th style={{ padding: '8px 16px', fontWeight: 'bold' }}>Time</th>
-                      <th style={{ padding: '8px 16px', fontWeight: 'bold', textAlign: 'right' }}>Tx Proof</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {marketTrades.map((t) => {
-                      const isBuy = t.side === 'buy';
-                      return (
-                        <tr 
-                          key={t.id}
-                          style={{
-                            borderBottom: '1px solid rgba(255, 255, 255, 0.03)',
-                            transition: 'background 0.15s'
-                          }}
-                        >
-                          <td style={{ padding: '9px 16px' }}>
-                            <span 
-                              style={{ 
-                                padding: '2px 8px', 
-                                borderRadius: '4px', 
-                                fontSize: '10px', 
-                                fontWeight: '800',
-                                background: isBuy ? 'rgba(16, 185, 129, 0.15)' : 'rgba(244, 63, 94, 0.15)',
-                                color: isBuy ? 'var(--color-green)' : 'var(--color-red)'
-                              }}
-                            >
-                              {isBuy ? 'BUY' : 'SELL'}
-                            </span>
-                          </td>
-                          <td className="mono" style={{ padding: '9px 16px', fontWeight: 'bold', color: isBuy ? 'var(--color-green)' : 'var(--color-red)' }}>
-                            ${parseFloat(t.price).toFixed(2)}
-                          </td>
-                          <td className="mono" style={{ padding: '9px 16px', color: '#fff' }}>
-                            {t.amount}
-                          </td>
-                          <td className="mono" style={{ padding: '9px 16px', color: 'var(--text-main)' }}>
-                            ${t.total}
-                          </td>
-                          <td className="mono" style={{ padding: '9px 16px', color: 'var(--color-solana)', fontSize: '11px' }}>
-                            +${t.fee}
-                          </td>
-                          <td style={{ padding: '9px 16px', color: 'var(--text-dim)', fontSize: '11px' }} title={t.blockTime ? new Date(t.blockTime * 1000).toUTCString() : ''}>
-                            {t.blockTime ? formatTimeAgo(t.blockTime) : t.time}
-                          </td>
-                          <td style={{ padding: '9px 16px', textAlign: 'right' }}>
-                            <a
-                              href={`https://solscan.io/tx/${t.sig}`}
-                              target="_blank"
-                              rel="noreferrer"
-                              style={{
-                                color: 'var(--color-solana)',
-                                textDecoration: 'none',
-                                fontSize: '11px',
-                                display: 'inline-flex',
-                                alignItems: 'center',
-                                gap: '3px'
-                              }}
-                            >
-                              <span>{t.sig.slice(0, 4)}...{t.sig.slice(-4)}</span>
-                              <ExternalLink size={10} />
-                            </a>
-                          </td>
-                        </tr>
-                      );
-                    })}
-                  </tbody>
-                </table>
-              </div>
-            ) : (
-              <div style={{ padding: '32px', textAlign: 'center', color: 'var(--text-dim)', fontSize: '12px' }}>
-                No active orders for connected wallet. Place a trade on the right terminal to see your orders here.
               </div>
             )}
           </div>
+        ) : (
+          <button 
+            onClick={() => setShowWalletModal(true)}
+            className="btn btn-secondary" 
+            style={{ padding: '6px 14px', fontSize: '12px', display: 'flex', alignItems: 'center', gap: '6px' }}
+          >
+            <Wallet size={14} />
+            <span>Connect Wallet</span>
+          </button>
+        )}
+      </div>
 
-          {/* Protocol Trust & Proof Status */}
-          <div className="card" style={{ padding: '16px 20px', flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-              <ShieldCheck size={22} style={{ color: 'var(--color-solana)' }} />
-              <div>
-                <div style={{ fontSize: '13px', fontWeight: 'bold' }}>PLONK ZK-SNARK Protocol Escrow Verified</div>
-                <div style={{ fontSize: '11px', color: 'var(--text-dim)' }}>
-                  5 Decentralized Signers · 1% Creator Fee · Powered by Trac-Systems
-                </div>
+      {/* Main Trading Floor: 3-column Layout (Chart, Order Book, Swap) */}
+      <div className="market-grid">
+        {/* Column 1: Candlestick Chart */}
+        <CandleChart pair={pair} currentPrice={activePriceDisplay} />
+
+        {/* Column 2: Order Book Panel (Exact Intercom-DEX style) */}
+        <div className="book-panel">
+          <div className="panel-head">
+            <h2>Order book</h2>
+            <span className="unit">amounts in {pair.split('/')[0]}</span>
+          </div>
+
+          <div className="book-head">
+            <span>Price (USDC)</span>
+            <span className="num">Amount</span>
+            <span className="num">Total</span>
+          </div>
+
+          {/* Sell offers (Asks) - highest down to lowest above spread */}
+          <div style={{ display: 'flex', flexDirection: 'column-reverse', overflowY: 'auto', minHeight: '190px' }}>
+            {asksWithDepth.slice(0, 8).map((o, idx) => (
+              <div 
+                key={o.offerId || idx} 
+                className="book-row sell"
+                onClick={() => {
+                  setTradeMode('buy');
+                  setSelectedOffer(o);
+                  setTradeAmount(o.amt.toString());
+                }}
+                title={`Click to buy at ${o.price}`}
+              >
+                <div className="depth" style={{ width: `${Math.min(100, (o.cum / maxBookDepth) * 100).toFixed(1)}%` }} />
+                <span className="price">{parseFloat(o.price).toFixed(2)}</span>
+                <span className="num">{parseFloat(o.amt).toFixed(4)}</span>
+                <span className="num muted">{parseFloat(o.cum).toFixed(4)}</span>
               </div>
-            </div>
-            <a
-              href="https://github.com/Trac-Systems/intercom-dex/releases/tag/v0.1.32"
-              target="_blank"
-              rel="noreferrer"
-              style={{
-                display: 'inline-flex',
-                alignItems: 'center',
-                gap: '6px',
-                fontSize: '11px',
-                padding: '6px 12px',
-                borderRadius: '6px',
-                background: 'rgba(255, 255, 255, 0.05)',
-                border: '1px solid var(--border-color)',
-                color: 'var(--text-muted)',
-                textDecoration: 'none',
-                fontWeight: '600'
-              }}
-              title="Official Trac-Systems intercom-dex v0.1.32 Release"
-            >
-              <GithubIcon size={13} />
-              <span>Trac Core v0.1.32</span>
-              <ExternalLink size={11} />
-            </a>
+            ))}
+          </div>
+
+          {/* Spread row */}
+          <div className="book-spread">
+            <span style={{ color: 'var(--muted)' }}>Spread</span>
+            <span className="mid">{spread}</span>
+            <span style={{ color: 'var(--muted)' }}>{spreadPct}%</span>
+          </div>
+
+          {/* Buy offers (Bids) - highest down to lower */}
+          <div style={{ display: 'flex', flexDirection: 'column', overflowY: 'auto', minHeight: '190px' }}>
+            {bidsWithDepth.slice(0, 8).map((o, idx) => (
+              <div 
+                key={o.offerId || idx} 
+                className="book-row buy"
+                onClick={() => {
+                  setTradeMode('sell');
+                  setSubTab('instant');
+                  setTradeAmount(o.amt.toString());
+                }}
+                title={`Click to sell at ${o.price}`}
+              >
+                <div className="depth" style={{ width: `${Math.min(100, (o.cum / maxBookDepth) * 100).toFixed(1)}%` }} />
+                <span className="price">{parseFloat(o.price).toFixed(2)}</span>
+                <span className="num">{parseFloat(o.amt).toFixed(4)}</span>
+                <span className="num muted">{parseFloat(o.cum).toFixed(4)}</span>
+              </div>
+            ))}
           </div>
         </div>
 
-        {/* Right: Modern Unified Swap Terminal */}
-        <div className="card">
+        {/* Column 3: Modern Unified Swap Terminal */}
+        <div className="swap-card">
           {/* Unified Swap Header */}
           <div className="card-header" style={{ padding: '13px 18px', background: 'rgba(255, 255, 255, 0.015)' }}>
             <span className="card-title" style={{ fontSize: '14px', fontWeight: '800' }}>
@@ -1434,17 +1124,102 @@ export default function App() {
                 display: 'flex', 
                 alignItems: 'center', 
                 gap: '8px',
-                background: tradeStatus.phase === 'error' ? 'var(--color-red-glow)' : 'var(--color-green-glow)',
-                border: tradeStatus.phase === 'error' ? '1px solid var(--color-red)' : '1px solid var(--color-green)'
+                background: tradeStatus.phase === 'error' ? 'var(--down-bg)' : 'var(--up-bg)',
+                border: tradeStatus.phase === 'error' ? '1px solid var(--down)' : '1px solid var(--up)'
               }}>
-                {tradeStatus.phase === 'complete' && <CheckCircle2 size={16} color="var(--color-green)" />}
-                {tradeStatus.phase === 'error' && <AlertCircle size={16} color="var(--color-red)" />}
-                {['warming', 'locking'].includes(tradeStatus.phase) && <RefreshCw size={16} className="spin" color="var(--color-solana)" />}
+                {tradeStatus.phase === 'complete' && <CheckCircle2 size={16} color="var(--up)" />}
+                {tradeStatus.phase === 'error' && <AlertCircle size={16} color="var(--down)" />}
+                {['warming', 'locking'].includes(tradeStatus.phase) && <RefreshCw size={16} className="spin" color="var(--accent)" />}
                 <span>{tradeStatus.message}</span>
               </div>
             )}
           </div>
         </div>
+      </div>
+
+      {/* Bottom Panel: Market Trades & Orders */}
+      <div className="bottom-panel">
+        <div className="bottom-tabs" role="tablist">
+          <button
+            type="button"
+            role="tab"
+            aria-selected={tradeHistoryTab === 'market'}
+            onClick={() => setTradeHistoryTab('market')}
+          >
+            Market trades
+          </button>
+          <button
+            type="button"
+            role="tab"
+            aria-selected={tradeHistoryTab === 'my'}
+            onClick={() => setTradeHistoryTab('my')}
+          >
+            My orders (0)
+          </button>
+        </div>
+
+        {tradeHistoryTab === 'market' ? (
+          <div style={{ overflowX: 'auto', maxHeight: '240px', overflowY: 'auto' }}>
+            <table className="trades-table">
+              <thead>
+                <tr>
+                  <th>Time</th>
+                  <th>Price (USDC)</th>
+                  <th>Amount ({pair.split('/')[0]})</th>
+                  <th>Total (USDC)</th>
+                  <th>Fee (1%)</th>
+                  <th style={{ textAlign: 'right' }}>Tx Proof</th>
+                </tr>
+              </thead>
+              <tbody>
+                {marketTrades.map((t) => {
+                  const isBuy = t.side === 'buy';
+                  return (
+                    <tr key={t.id}>
+                      <td style={{ color: 'var(--muted)', fontSize: '11px' }}>
+                        {t.blockTime ? formatTimeAgo(t.blockTime) : t.time}
+                      </td>
+                      <td className="mono" style={{ color: isBuy ? 'var(--up)' : 'var(--down)', fontWeight: '600' }}>
+                        ${parseFloat(t.price).toFixed(2)}
+                      </td>
+                      <td className="mono" style={{ color: 'var(--text)' }}>
+                        {t.amount}
+                      </td>
+                      <td className="mono" style={{ color: 'var(--text)' }}>
+                        ${t.total}
+                      </td>
+                      <td className="mono" style={{ color: 'var(--muted)', fontSize: '11px' }}>
+                        +${t.fee}
+                      </td>
+                      <td style={{ textAlign: 'right' }}>
+                        <a
+                          href={`https://solscan.io/tx/${t.sig}`}
+                          target="_blank"
+                          rel="noreferrer"
+                          style={{
+                            color: 'var(--accent)',
+                            textDecoration: 'none',
+                            fontSize: '11px',
+                            display: 'inline-flex',
+                            alignItems: 'center',
+                            gap: '3px'
+                          }}
+                        >
+                          <span>{t.sig.slice(0, 4)}...{t.sig.slice(-4)}</span>
+                          <ExternalLink size={10} />
+                        </a>
+                      </td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
+          </div>
+        ) : (
+          <div style={{ padding: '24px', textAlign: 'center', color: 'var(--muted)', fontSize: '12px' }}>
+            No open orders for connected wallet.
+          </div>
+        )}
       </div>
 
       {/* Trust & Escrow Explainer Modal */}

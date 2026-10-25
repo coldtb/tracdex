@@ -1,175 +1,146 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { createChart, ColorType, CandlestickSeries, HistogramSeries, CrosshairMode } from 'lightweight-charts';
-import { BarChart3, Clock, TrendingUp, RefreshCw, ZoomIn, ZoomOut } from 'lucide-react';
+import { createChart, ColorType, CandlestickSeries, HistogramSeries, CrosshairMode, LineStyle } from 'lightweight-charts';
 import marketSnapshot from '../data/market-snapshot.json';
 
-// Aggregate or resample candles according to timeframe
+export const TIMEFRAMES = [
+  '1m', '3m', '5m', '15m', '30m', '1h', '2h', '4h', '8h', '12h', '24h', '2d', '3d', '1W', '1M', '1Y'
+];
+
+const SECONDS = {
+  '1m': 60, '3m': 180, '5m': 300, '15m': 900, '30m': 1800,
+  '1h': 3600, '2h': 7200, '4h': 14400, '8h': 28800, '12h': 43200,
+  '24h': 86400, '2d': 172800, '3d': 259200, '1W': 604800, '1M': 2592000, '1Y': 31536000
+};
+
+// Resample candles according to timeframe
 function aggregateCandles(baseCandles, interval) {
   if (!baseCandles || !baseCandles.length) return [];
   const sorted = [...baseCandles].sort((a, b) => a.t - b.t);
+  const sec = SECONDS[interval] || 3600;
 
-  if (interval === '15m') {
-    const result15m = [];
+  // Sub-hourly division (1m, 3m, 5m, 15m, 30m)
+  if (sec < 3600) {
+    const subBars = [];
+    const stepCount = Math.floor(3600 / sec);
     sorted.forEach((c) => {
       const baseTime = c.t;
       const o = parseFloat(c.o);
       const h = parseFloat(c.h);
       const l = parseFloat(c.l);
       const cl = parseFloat(c.c);
-      const vol = parseFloat(c.v?.text || '12.5') / 4;
+      const vol = parseFloat(c.v?.text || '12.5') / stepCount;
 
-      const p1 = o + (h - o) * 0.45;
-      const p2 = l + (h - l) * 0.35;
-      const p3 = (p1 + p2 + cl) / 3;
+      let curOpen = o;
+      for (let i = 0; i < stepCount; i++) {
+        const progress = (i + 1) / stepCount;
+        const curClose = i === stepCount - 1 ? cl : o + (cl - o) * progress + (Math.sin(i * 1.5) * (h - l) * 0.12);
+        const curHigh = Math.max(curOpen, curClose, Math.min(h, curOpen + (h - l) * 0.25));
+        const curLow = Math.min(curOpen, curClose, Math.max(l, curOpen - (h - l) * 0.25));
 
-      result15m.push({
-        time: baseTime,
-        open: o,
-        high: Math.max(o, p1),
-        low: Math.min(o, p1 * 0.999),
-        close: p1,
-        volume: vol,
-      });
-      result15m.push({
-        time: baseTime + 900,
-        open: p1,
-        high: Math.max(p1, h),
-        low: Math.min(p1, p2),
-        close: p2,
-        volume: vol * 1.15,
-      });
-      result15m.push({
-        time: baseTime + 1800,
-        open: p2,
-        high: Math.max(p2, p3 * 1.002),
-        low: Math.min(p2, l),
-        close: p3,
-        volume: vol * 0.95,
-      });
-      result15m.push({
-        time: baseTime + 2700,
-        open: p3,
-        high: Math.max(p3, cl * 1.001),
-        low: Math.min(p3, cl * 0.999),
-        close: cl,
-        volume: vol,
-      });
+        subBars.push({
+          time: baseTime + i * sec,
+          open: curOpen,
+          high: curHigh,
+          low: curLow,
+          close: curClose,
+          volume: Math.max(0.1, vol * (0.8 + Math.cos(i) * 0.4)),
+        });
+        curOpen = curClose;
+      }
     });
-    return result15m;
+    return subBars;
   }
 
-  if (interval === '4h') {
-    const buckets = new Map();
-    sorted.forEach((c) => {
-      const bTime = Math.floor(c.t / 14400) * 14400;
-      if (!buckets.has(bTime)) buckets.set(bTime, []);
-      buckets.get(bTime).push(c);
-    });
-
-    const result4h = [];
-    buckets.forEach((items, bTime) => {
-      const o = parseFloat(items[0].o);
-      const cl = parseFloat(items[items.length - 1].c);
-      const h = Math.max(...items.map((x) => parseFloat(x.h)));
-      const l = Math.min(...items.map((x) => parseFloat(x.l)));
-      const vol = items.reduce((acc, x) => acc + parseFloat(x.v?.text || '12.5'), 0);
-      result4h.push({
-        time: bTime,
-        open: o,
-        high: h,
-        low: l,
-        close: cl,
-        volume: vol,
-      });
-    });
-    return result4h.sort((a, b) => a.time - b.time);
+  // 1 hour base
+  if (sec === 3600) {
+    return sorted.map((c) => ({
+      time: c.t,
+      open: parseFloat(c.o),
+      high: parseFloat(c.h),
+      low: parseFloat(c.l),
+      close: parseFloat(c.c),
+      volume: parseFloat(c.v?.text || '12.5'),
+    }));
   }
 
-  if (interval === '1d') {
-    const buckets = new Map();
-    sorted.forEach((c) => {
-      const bTime = Math.floor(c.t / 86400) * 86400;
-      if (!buckets.has(bTime)) buckets.set(bTime, []);
-      buckets.get(bTime).push(c);
-    });
+  // Multi-hour or multi-day grouping (2h, 4h, 8h, 12h, 24h, 2d, 3d, 1W, 1M, 1Y)
+  const buckets = new Map();
+  sorted.forEach((c) => {
+    const bTime = Math.floor(c.t / sec) * sec;
+    if (!buckets.has(bTime)) buckets.set(bTime, []);
+    buckets.get(bTime).push(c);
+  });
 
-    const result1d = [];
-    buckets.forEach((items, bTime) => {
-      const o = parseFloat(items[0].o);
-      const cl = parseFloat(items[items.length - 1].c);
-      const h = Math.max(...items.map((x) => parseFloat(x.h)));
-      const l = Math.min(...items.map((x) => parseFloat(x.l)));
-      const vol = items.reduce((acc, x) => acc + parseFloat(x.v?.text || '12.5'), 0);
-      result1d.push({
-        time: bTime,
-        open: o,
-        high: h,
-        low: l,
-        close: cl,
-        volume: vol,
-      });
+  const res = [];
+  buckets.forEach((items, bTime) => {
+    const o = parseFloat(items[0].o);
+    const cl = parseFloat(items[items.length - 1].c);
+    const h = Math.max(...items.map((x) => parseFloat(x.h)));
+    const l = Math.min(...items.map((x) => parseFloat(x.l)));
+    const vol = items.reduce((acc, x) => acc + parseFloat(x.v?.text || '12.5'), 0);
+    res.push({
+      time: bTime,
+      open: o,
+      high: h,
+      low: l,
+      close: cl,
+      volume: vol,
     });
-    return result1d.sort((a, b) => a.time - b.time);
-  }
-
-  // 1h standard
-  return sorted.map((c) => ({
-    time: c.t,
-    open: parseFloat(c.o),
-    high: parseFloat(c.h),
-    low: parseFloat(c.l),
-    close: parseFloat(c.c),
-    volume: parseFloat(c.v?.text || '12.5'),
-  })).sort((a, b) => a.time - b.time);
+  });
+  return res.sort((a, b) => a.time - b.time);
 }
 
 export default function CandleChart({ pair = 'RESET/USDC', currentPrice = '36.00' }) {
-  const [interval, setIntervalVal] = useState('1h');
-  const [loading, setLoading] = useState(true);
+  const [interval, setIntervalVal] = useState('5m');
   const [activeCandle, setActiveCandle] = useState(null);
-  const latestCandleRef = useRef(null);
   const chartContainerRef = useRef(null);
   const chartInstanceRef = useRef(null);
   const seriesRef = useRef(null);
   const volumeSeriesRef = useRef(null);
+  const latestCandleRef = useRef(null);
 
-  // Initialize TradingView Lightweight Chart
+  // Initialize TradingView Lightweight Chart with intercom-dex color palette
   useEffect(() => {
     if (!chartContainerRef.current) return;
 
-    // Create Chart
     const chart = createChart(chartContainerRef.current, {
+      autoSize: true,
       layout: {
-        background: { type: ColorType.Solid, color: '#101522' },
-        textColor: '#94a3b8',
-        fontFamily: "'JetBrains Mono', monospace",
+        background: { type: ColorType.Solid, color: '#13161b' },
+        textColor: '#7a838f',
+        fontFamily: 'system-ui, -apple-system, sans-serif',
         fontSize: 11,
       },
       grid: {
-        vertLines: { color: '#1a2234' },
-        horzLines: { color: '#1a2234' },
+        vertLines: { color: '#1a1e25', style: LineStyle.Solid },
+        horzLines: { color: '#1a1e25', style: LineStyle.Solid },
       },
       crosshair: {
         mode: CrosshairMode.Normal,
         vertLine: {
-          color: '#6366f1',
+          color: '#7a838f',
           width: 1,
-          style: 3,
-          labelBackgroundColor: '#6366f1',
+          style: LineStyle.Dashed,
+          labelBackgroundColor: '#1a1e24',
         },
         horzLine: {
-          color: '#6366f1',
+          color: '#7a838f',
           width: 1,
-          style: 3,
-          labelBackgroundColor: '#6366f1',
+          style: LineStyle.Dashed,
+          labelBackgroundColor: '#1a1e24',
         },
       },
       rightPriceScale: {
-        borderColor: '#1e2638',
-        autoScale: true,
+        borderColor: '#252a33',
+        entireTextOnly: true,
+        scaleMargins: { top: 0.08, bottom: 0.26 },
       },
       timeScale: {
-        borderColor: '#1e2638',
+        borderColor: '#252a33',
+        rightOffset: 3,
+        barSpacing: 8,
+        minBarSpacing: 0.5,
+        fixLeftEdge: true,
         timeVisible: true,
         secondsVisible: false,
       },
@@ -177,48 +148,28 @@ export default function CandleChart({ pair = 'RESET/USDC', currentPrice = '36.00
       handleScale: true,
     });
 
-    // Add Candlestick Series (lightweight-charts v5 addSeries)
-    let candleSeries;
-    if (typeof chart.addSeries === 'function') {
-      candleSeries = chart.addSeries(CandlestickSeries, {
-        upColor: '#10b981',
-        downColor: '#f43f5e',
-        borderVisible: false,
-        wickUpColor: '#10b981',
-        wickDownColor: '#f43f5e',
-      });
-    } else if (typeof chart.addCandlestickSeries === 'function') {
-      candleSeries = chart.addCandlestickSeries({
-        upColor: '#10b981',
-        downColor: '#f43f5e',
-        borderVisible: false,
-        wickUpColor: '#10b981',
-        wickDownColor: '#f43f5e',
-      });
-    }
+    // Add Candlestick Series
+    const candleSeries = chart.addSeries(CandlestickSeries, {
+      upColor: '#2ebd85',
+      downColor: '#f0616d',
+      borderUpColor: '#2ebd85',
+      borderDownColor: '#f0616d',
+      wickUpColor: '#2ebd85',
+      wickDownColor: '#f0616d',
+      priceFormat: { type: 'price', precision: 2, minMove: 0.01 },
+    });
 
     // Add Volume Series
-    let volSeries;
-    if (typeof chart.addSeries === 'function') {
-      volSeries = chart.addSeries(HistogramSeries, {
-        priceFormat: { type: 'volume' },
-        priceScaleId: '',
-      });
-    } else if (typeof chart.addHistogramSeries === 'function') {
-      volSeries = chart.addHistogramSeries({
-        priceFormat: { type: 'volume' },
-        priceScaleId: '',
-      });
-    }
+    const volSeries = chart.addSeries(HistogramSeries, {
+      priceFormat: { type: 'volume' },
+      priceScaleId: '',
+      lastValueVisible: false,
+      priceLineVisible: false,
+    });
 
-    if (volSeries) {
-      volSeries.priceScale().applyOptions({
-        scaleMargins: {
-          top: 0.82,
-          bottom: 0,
-        },
-      });
-    }
+    volSeries.priceScale().applyOptions({
+      scaleMargins: { top: 0.8, bottom: 0 },
+    });
 
     // Crosshair hover listener
     chart.subscribeCrosshairMove((param) => {
@@ -228,14 +179,16 @@ export default function CandleChart({ pair = 'RESET/USDC', currentPrice = '36.00
         }
         return;
       }
-      const data = param.seriesData.get(candleSeries);
-      if (data) {
+      const cData = param.seriesData.get(candleSeries);
+      const vData = volSeries ? param.seriesData.get(volSeries) : null;
+      if (cData) {
         setActiveCandle({
           time: param.time,
-          open: data.open,
-          high: data.high,
-          low: data.low,
-          close: data.close,
+          open: cData.open,
+          high: cData.high,
+          low: cData.low,
+          close: cData.close,
+          volume: vData?.value || 0,
         });
       }
     });
@@ -244,18 +197,15 @@ export default function CandleChart({ pair = 'RESET/USDC', currentPrice = '36.00
     seriesRef.current = candleSeries;
     volumeSeriesRef.current = volSeries;
 
-    // Responsive Resize Observer
     const handleResize = () => {
       if (chartContainerRef.current && chart) {
         chart.applyOptions({
           width: chartContainerRef.current.clientWidth,
-          height: chartContainerRef.current.clientHeight || 340,
+          height: chartContainerRef.current.clientHeight,
         });
       }
     };
-
     window.addEventListener('resize', handleResize);
-    handleResize();
 
     return () => {
       window.removeEventListener('resize', handleResize);
@@ -263,211 +213,99 @@ export default function CandleChart({ pair = 'RESET/USDC', currentPrice = '36.00
     };
   }, []);
 
-  // Fetch Candle Data from DEX (with snapshot fallback)
-  const loadCandles = async () => {
-    try {
-      setLoading(true);
-      let rawCandles = [];
-      try {
-        const res = await fetch(`/api/candles?pair=${encodeURIComponent(pair)}&interval=${interval}&limit=100`);
-        if (res.ok) {
-          const json = await res.json();
-          if (json.candles && Array.isArray(json.candles) && json.candles.length) {
-            rawCandles = json.candles;
-          }
-        }
-      } catch (e) {
-        // Fallback for public static deployment
-      }
-
-      // If API unavailable, load real market snapshot
-      if (!rawCandles.length && marketSnapshot.candles && marketSnapshot.candles.length) {
-        rawCandles = marketSnapshot.candles;
-      }
-
-      if (rawCandles.length && seriesRef.current) {
-        // Resample candles according to timeframe (15m, 1h, 4h, 1d)
-        const aggregated = aggregateCandles(rawCandles, interval);
-
-        // Unique times
-        const uniqueCandles = [];
-        const seenTimes = new Set();
-        for (const item of aggregated) {
-          if (!seenTimes.has(item.time)) {
-            seenTimes.add(item.time);
-            uniqueCandles.push(item);
-          }
-        }
-
-        if (uniqueCandles.length) {
-          // Harmonize the latest candle with live orderbook price
-          const activeLivePrice = parseFloat(currentPrice || '36.00');
-          const lastIdx = uniqueCandles.length - 1;
-          uniqueCandles[lastIdx].close = activeLivePrice;
-          if (activeLivePrice > uniqueCandles[lastIdx].high) {
-            uniqueCandles[lastIdx].high = activeLivePrice;
-          }
-          if (activeLivePrice < uniqueCandles[lastIdx].low) {
-            uniqueCandles[lastIdx].low = activeLivePrice;
-          }
-
-          seriesRef.current.setData(uniqueCandles);
-
-          // Volumes
-          if (volumeSeriesRef.current) {
-            const volData = uniqueCandles.map((c) => {
-              const val = c.volume || 12.5;
-              const isUp = c.close >= c.open;
-              return {
-                time: c.time,
-                value: val,
-                color: isUp ? 'rgba(16, 185, 129, 0.35)' : 'rgba(244, 63, 94, 0.35)',
-              };
-            });
-
-            volumeSeriesRef.current.setData(volData);
-          }
-
-          const last = uniqueCandles[lastIdx];
-          latestCandleRef.current = last;
-          setActiveCandle(last);
-
-          // Fit chart view to time scale
-          chartInstanceRef.current?.timeScale().fitContent();
-        }
-      }
-    } catch (e) {
-      console.warn('Error loading candles:', e.message);
-    } finally {
-      setLoading(false);
-    }
-  };
-
+  // Load and apply candles
   useEffect(() => {
-    loadCandles();
-    const intervalTimer = setInterval(loadCandles, 8000);
-    return () => clearInterval(intervalTimer);
+    if (!seriesRef.current) return;
+
+    const baseData = marketSnapshot?.candles || [];
+    const aggregated = aggregateCandles(baseData, interval);
+
+    if (aggregated.length) {
+      // Harmonize latest bar close with live price
+      const liveP = parseFloat(currentPrice || '36.00');
+      const last = aggregated[aggregated.length - 1];
+      last.close = liveP;
+      if (liveP > last.high) last.high = liveP;
+      if (liveP < last.low) last.low = liveP;
+
+      const candlePoints = aggregated.map((c) => ({
+        time: c.time,
+        open: c.open,
+        high: c.high,
+        low: c.low,
+        close: c.close,
+      }));
+
+      const volPoints = aggregated.map((c) => ({
+        time: c.time,
+        value: c.volume,
+        color: c.close >= c.open ? 'rgba(46, 189, 133, 0.45)' : 'rgba(240, 97, 109, 0.45)',
+      }));
+
+      seriesRef.current.setData(candlePoints);
+      if (volumeSeriesRef.current) {
+        volumeSeriesRef.current.setData(volPoints);
+      }
+
+      chartInstanceRef.current?.timeScale().fitContent();
+
+      const latest = aggregated[aggregated.length - 1];
+      latestCandleRef.current = latest;
+      setActiveCandle(latest);
+    }
   }, [pair, interval, currentPrice]);
 
-  return (
-    <div className="card" style={{ flex: 1, minHeight: '420px', display: 'flex', flexDirection: 'column' }}>
-      {/* Header Controls */}
-      <div className="card-header">
-        <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-          <span style={{ fontWeight: '800', fontSize: '15px', display: 'flex', alignItems: 'center', gap: '8px' }}>
-            <BarChart3 size={18} style={{ color: 'var(--color-solana)' }} />
-            {pair} TradingView K-Line
-          </span>
-          <span className="badge" style={{ color: 'var(--color-green)' }}>
-            <span className="badge-dot"></span> Live Interactive
-          </span>
-        </div>
+  const active = activeCandle || latestCandleRef.current || {
+    open: 36.00, high: 36.00, low: 36.00, close: 36.00, volume: 7.5
+  };
 
-        {/* Timeframe Selector & Actions */}
-        <div style={{ display: 'flex', gap: '6px', alignItems: 'center' }}>
-          {['15m', '1h', '4h', '1d'].map((tf) => (
+  const move = active.open ? (active.close - active.open) / active.open : 0;
+  const movePct = (move * 100).toFixed(2) + '%';
+  const isUp = move >= 0;
+
+  return (
+    <div className="chart-panel">
+      {/* 16 Timeframes Bar */}
+      <div className="chart-bar">
+        <div className="tfs" role="group" aria-label="Timeframe">
+          {TIMEFRAMES.map((tf) => (
             <button
               key={tf}
+              type="button"
+              className="tf"
+              aria-pressed={String(interval === tf)}
               onClick={() => setIntervalVal(tf)}
-              style={{
-                padding: '4px 10px',
-                borderRadius: '6px',
-                fontSize: '11px',
-                fontWeight: '700',
-                cursor: 'pointer',
-                border: 'none',
-                background: interval === tf ? 'var(--color-accent)' : 'var(--bg-main)',
-                color: interval === tf ? '#fff' : 'var(--text-muted)',
-                transition: 'all 0.15s',
-              }}
             >
-              {tf.toUpperCase()}
+              {tf}
             </button>
           ))}
-          <button
-            onClick={loadCandles}
-            style={{ background: 'none', border: 'none', color: 'var(--text-dim)', cursor: 'pointer', marginLeft: '6px' }}
-            title="Refresh"
-          >
-            <RefreshCw size={14} className={loading ? 'spin' : ''} />
-          </button>
         </div>
       </div>
 
-      {/* Dynamic Hover Tooltip Bar */}
-      {activeCandle && (
-        <div
-          style={{
-            padding: '8px 18px',
-            background: 'rgba(255, 255, 255, 0.02)',
-            borderBottom: '1px solid var(--border-color)',
-            display: 'flex',
-            flexWrap: 'wrap',
-            gap: '18px',
-            fontSize: '12px',
-            fontFamily: "'JetBrains Mono', monospace",
-          }}
-        >
-          <div>
-            <span style={{ color: 'var(--text-dim)' }}>Time: </span>
-            <span style={{ color: 'var(--text-main)', fontWeight: 'bold' }}>
-              {new Date(activeCandle.time * 1000).toLocaleString([], {
-                month: 'short',
-                day: 'numeric',
-                hour: '2-digit',
-                minute: '2-digit',
-              })}
-            </span>
-          </div>
-          <div>
-            <span style={{ color: 'var(--text-dim)' }}>Open: </span>
-            <span style={{ color: activeCandle.close >= activeCandle.open ? 'var(--color-green)' : 'var(--color-red)', fontWeight: 'bold' }}>
-              ${activeCandle.open?.toFixed(2)}
-            </span>
-          </div>
-          <div>
-            <span style={{ color: 'var(--text-dim)' }}>High: </span>
-            <span style={{ color: 'var(--text-main)', fontWeight: 'bold' }}>
-              ${activeCandle.high?.toFixed(2)}
-            </span>
-          </div>
-          <div>
-            <span style={{ color: 'var(--text-dim)' }}>Low: </span>
-            <span style={{ color: 'var(--text-main)', fontWeight: 'bold' }}>
-              ${activeCandle.low?.toFixed(2)}
-            </span>
-          </div>
-          <div>
-            <span style={{ color: 'var(--text-dim)' }}>Close: </span>
-            <span style={{ color: activeCandle.close >= activeCandle.open ? 'var(--color-green)' : 'var(--color-red)', fontWeight: 'bold' }}>
-              ${activeCandle.close?.toFixed(2)}
-            </span>
-          </div>
-          <div>
-            <span style={{ color: 'var(--text-dim)' }}>Change: </span>
-            <span
-              style={{
-                color: activeCandle.close >= activeCandle.open ? 'var(--color-green)' : 'var(--color-red)',
-                fontWeight: 'bold',
-              }}
-            >
-              {activeCandle.close >= activeCandle.open ? '+' : ''}
-              {(((activeCandle.close - activeCandle.open) / (activeCandle.open || 1)) * 100).toFixed(2)}%
-            </span>
-          </div>
-        </div>
-      )}
+      {/* Chart Body with Absolute Readout */}
+      <div className="chart-body" style={{ flex: 1, position: 'relative', minHeight: '440px' }}>
+        <div ref={chartContainerRef} style={{ width: '100%', height: '100%', position: 'absolute', inset: 0 }} />
 
-      {/* TradingView Real Canvas Area */}
-      <div
-        ref={chartContainerRef}
-        style={{
-          flex: 1,
-          width: '100%',
-          minHeight: '340px',
-          position: 'relative',
-        }}
-      />
+        {/* OHLC Readout */}
+        <div className="readout">
+          <span style={{ color: 'var(--muted)' }}>O</span>
+          <span style={{ color: isUp ? 'var(--up)' : 'var(--down)' }}>{active.open?.toFixed(2)}</span>
+          <span style={{ color: 'var(--muted)' }}>H</span>
+          <span style={{ color: isUp ? 'var(--up)' : 'var(--down)' }}>{active.high?.toFixed(2)}</span>
+          <span style={{ color: 'var(--muted)' }}>L</span>
+          <span style={{ color: isUp ? 'var(--up)' : 'var(--down)' }}>{active.low?.toFixed(2)}</span>
+          <span style={{ color: 'var(--muted)' }}>C</span>
+          <span style={{ color: isUp ? 'var(--up)' : 'var(--down)' }}>{active.close?.toFixed(2)}</span>
+          <span style={{ color: isUp ? 'var(--up)' : 'var(--down)', fontWeight: '600' }}>{movePct}</span>
+          <span style={{ color: 'var(--muted)', marginLeft: '4px' }}>Vol</span>
+          <span style={{ color: 'var(--text)' }}>{typeof active.volume === 'number' ? active.volume.toFixed(2) : active.volume}</span>
+        </div>
+      </div>
+
+      {/* Credit Watermark */}
+      <p className="credit">
+        Chart by <a href="https://www.tradingview.com/" target="_blank" rel="noopener noreferrer">TradingView</a> Lightweight Charts™
+      </p>
     </div>
   );
 }
