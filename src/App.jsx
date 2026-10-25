@@ -23,7 +23,8 @@ import {
   QrCode,
   Copy,
   Check,
-  Smartphone
+  Smartphone,
+  LogOut
 } from 'lucide-react';
 import CandleChart from './components/CandleChart';
 import marketSnapshot from './data/market-snapshot.json';
@@ -97,6 +98,7 @@ export default function App() {
   const [showTrustModal, setShowTrustModal] = useState(false);
   const [showPaymentModal, setShowPaymentModal] = useState(false);
   const [showWalletModal, setShowWalletModal] = useState(false);
+  const [showAccountDropdown, setShowAccountDropdown] = useState(false);
   const [connectedWalletName, setConnectedWalletName] = useState(null);
   const [walletError, setWalletError] = useState(null);
   const [paymentTab, setPaymentTab] = useState('qr'); // 'qr' | 'web3'
@@ -478,15 +480,156 @@ export default function App() {
           )}
 
           {connectedSolanaWallet ? (
-            <button 
-              onClick={() => setConnectedSolanaWallet(null)}
-              className="btn btn-solana" 
-              style={{ padding: '8px 14px', fontSize: '13px' }}
-              title="Click to disconnect"
-            >
-              <Wallet size={16} />
-              <span>{connectedWalletName ? `${connectedWalletName}: ` : ''}{connectedSolanaWallet.slice(0, 4)}...{connectedSolanaWallet.slice(-4)}</span>
-            </button>
+            <div style={{ position: 'relative' }}>
+              <button 
+                onClick={() => setShowAccountDropdown(!showAccountDropdown)}
+                className="btn btn-solana" 
+                style={{ padding: '8px 14px', fontSize: '13px', display: 'flex', alignItems: 'center', gap: '8px' }}
+                title="Manage wallet"
+              >
+                <Wallet size={16} />
+                <span>{connectedWalletName ? `${connectedWalletName}: ` : ''}{connectedSolanaWallet.slice(0, 4)}...{connectedSolanaWallet.slice(-4)}</span>
+                <ChevronDown size={14} style={{ transform: showAccountDropdown ? 'rotate(180deg)' : 'none', transition: 'transform 0.2s' }} />
+              </button>
+
+              {/* Connected Wallet Account Dropdown */}
+              {showAccountDropdown && (
+                <div style={{
+                  position: 'absolute',
+                  top: '115%',
+                  right: 0,
+                  width: '280px',
+                  background: 'var(--bg-card)',
+                  border: '1px solid var(--border-glow)',
+                  borderRadius: '12px',
+                  padding: '16px',
+                  boxShadow: '0 12px 32px rgba(0, 0, 0, 0.65)',
+                  zIndex: 80,
+                  display: 'flex',
+                  flexDirection: 'column',
+                  gap: '12px'
+                }}>
+                  {/* Top: Wallet Name & Status */}
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                      <span className="badge-dot" style={{ background: 'var(--color-green)' }}></span>
+                      <span style={{ fontWeight: 'bold', fontSize: '13px', color: '#fff' }}>
+                        {connectedWalletName || 'Solana Wallet'}
+                      </span>
+                    </div>
+                    <span style={{ fontSize: '11px', color: 'var(--color-green)', fontWeight: 'bold' }}>Connected</span>
+                  </div>
+
+                  {/* Address with Copy and Solscan link */}
+                  <div style={{
+                    background: 'var(--bg-main)',
+                    border: '1px solid var(--border-color)',
+                    borderRadius: '8px',
+                    padding: '8px 10px',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'space-between'
+                  }}>
+                    <span className="mono" style={{ fontSize: '11px', color: 'var(--text-muted)' }}>
+                      {connectedSolanaWallet.slice(0, 6)}...{connectedSolanaWallet.slice(-6)}
+                    </span>
+                    <div style={{ display: 'flex', gap: '6px' }}>
+                      <button
+                        onClick={() => handleCopy(connectedSolanaWallet)}
+                        style={{
+                          background: copiedAddress ? 'var(--color-green)' : 'rgba(255, 255, 255, 0.08)',
+                          border: 'none',
+                          color: '#fff',
+                          padding: '4px 6px',
+                          borderRadius: '4px',
+                          cursor: 'pointer',
+                          display: 'flex',
+                          alignItems: 'center'
+                        }}
+                        title="Copy address"
+                      >
+                        {copiedAddress ? <Check size={12} /> : <Copy size={12} />}
+                      </button>
+                      <a
+                        href={`https://solscan.io/account/${connectedSolanaWallet}`}
+                        target="_blank"
+                        rel="noreferrer"
+                        style={{
+                          background: 'rgba(255, 255, 255, 0.08)',
+                          color: '#fff',
+                          padding: '4px 6px',
+                          borderRadius: '4px',
+                          display: 'flex',
+                          alignItems: 'center'
+                        }}
+                        title="View on Solscan"
+                      >
+                        <ExternalLink size={12} />
+                      </a>
+                    </div>
+                  </div>
+
+                  {/* Balances */}
+                  <div style={{
+                    background: 'rgba(255, 255, 255, 0.03)',
+                    borderRadius: '8px',
+                    padding: '10px 12px',
+                    display: 'flex',
+                    justifyContent: 'space-between',
+                    fontSize: '12px'
+                  }}>
+                    <div>
+                      <span style={{ color: 'var(--text-dim)', fontSize: '10px', display: 'block' }}>USDC Balance</span>
+                      <span className="mono" style={{ fontWeight: 'bold', color: '#38bdf8' }}>${visitorUsdc || '0.00'}</span>
+                    </div>
+                    <div style={{ textAlign: 'right' }}>
+                      <span style={{ color: 'var(--text-dim)', fontSize: '10px', display: 'block' }}>SOL Balance</span>
+                      <span className="mono" style={{ fontWeight: 'bold', color: '#a855f7' }}>{visitorSol || '0.00'} SOL</span>
+                    </div>
+                  </div>
+
+                  {/* Actions: Change Wallet or Disconnect */}
+                  <div style={{ display: 'flex', gap: '8px', borderTop: '1px solid var(--border-color)', paddingTop: '10px' }}>
+                    <button
+                      onClick={() => {
+                        setShowAccountDropdown(false);
+                        setShowWalletModal(true);
+                      }}
+                      className="btn btn-secondary"
+                      style={{ flex: 1, padding: '8px', fontSize: '11px', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '4px' }}
+                    >
+                      <RefreshCw size={12} />
+                      <span>Change</span>
+                    </button>
+                    <button
+                      onClick={() => {
+                        setConnectedSolanaWallet(null);
+                        setConnectedWalletName(null);
+                        setShowAccountDropdown(false);
+                      }}
+                      style={{
+                        flex: 1,
+                        padding: '8px',
+                        fontSize: '11px',
+                        background: 'rgba(244, 63, 94, 0.15)',
+                        border: '1px solid rgba(244, 63, 94, 0.4)',
+                        color: '#f87171',
+                        borderRadius: '6px',
+                        cursor: 'pointer',
+                        fontWeight: 'bold',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        gap: '4px'
+                      }}
+                    >
+                      <LogOut size={12} />
+                      <span>Disconnect</span>
+                    </button>
+                  </div>
+                </div>
+              )}
+            </div>
           ) : (
             <button 
               onClick={handleConnectWallet}
