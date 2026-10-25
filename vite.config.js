@@ -25,6 +25,16 @@ export default defineConfig({
     port: 3000,
     host: '127.0.0.1',
     proxy: {
+      '/api/live-candles': {
+        target: 'https://reset.much.fun',
+        changeOrigin: true,
+        rewrite: (path) => path.replace(/^\/api\/live-candles/, '/v1/market/candles'),
+      },
+      '/api/live-trades': {
+        target: 'https://reset.much.fun',
+        changeOrigin: true,
+        rewrite: (path) => path.replace(/^\/api\/live-trades/, '/v1/market/trades'),
+      },
       '/api/candles': {
         target: 'http://127.0.0.1:47202',
         changeOrigin: true,
