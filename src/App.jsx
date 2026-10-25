@@ -316,50 +316,6 @@ export default function App() {
     return () => clearInterval(interval);
   }, [pair]);
 
-  // Live Market Trade Stream: Continuously flows new trades into table and updates price
-  useEffect(() => {
-    const tradeStream = setInterval(() => {
-      const isBuy = Math.random() > 0.35;
-      const priceDelta = (Math.random() - 0.48) * 0.12;
-      const currentBase = 36.00;
-      const tradePrice = Math.max(34.0, (currentBase + priceDelta)).toFixed(2);
-      const amt = (0.0100 + Math.random() * 0.18).toFixed(4);
-      const tot = (parseFloat(amt) * parseFloat(tradePrice)).toFixed(2);
-      const feeVal = (parseFloat(tot) * 0.01).toFixed(3);
-
-      const liveTrade = {
-        id: `tx-live-${Date.now()}`,
-        side: isBuy ? 'buy' : 'sell',
-        price: tradePrice,
-        amount: amt,
-        total: tot,
-        fee: feeVal,
-        blockTime: Math.floor(Date.now() / 1000),
-        sig: generateRealisticSig()
-      };
-
-      setMarketTrades(prev => [liveTrade, ...prev.slice(0, 24)]);
-
-      // Increment 24h volume
-      setData(prev => {
-        if (!prev) return prev;
-        return {
-          ...prev,
-          tickers: {
-            ...prev.tickers,
-            [pair]: {
-              ...prev.tickers?.[pair],
-              last: tradePrice,
-              volume24h: (Number(prev.tickers?.[pair]?.volume24h || 6110889244) + Math.floor(parseFloat(tot) * 1e6)).toString()
-            }
-          }
-        };
-      });
-    }, 12000);
-
-    return () => clearInterval(tradeStream);
-  }, [pair]);
-
   // Solana On-Chain Poller: Pulls real Solana transactions from the platform collector
   useEffect(() => {
     const pollSolana = async () => {

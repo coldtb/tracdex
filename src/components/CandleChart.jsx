@@ -252,9 +252,14 @@ export default function CandleChart({ pair = 'RESET/USDC', currentPrice = '36.00
         volumeSeriesRef.current.setData(volPoints);
       }
 
-      // Only auto-fit on initial load or when timeframe changes, preserving user pan & zoom
+      // Focus view on recent active trading window (last 65 bars) so candles are tall, bold and clear
       if (!initialFitDoneRef.current || lastTfRef.current !== interval) {
-        chartInstanceRef.current?.timeScale().fitContent();
+        const count = candlePoints.length;
+        const visibleBars = Math.min(count, 65);
+        chartInstanceRef.current?.timeScale().setVisibleLogicalRange({
+          from: Math.max(0, count - visibleBars),
+          to: count + 2,
+        });
         initialFitDoneRef.current = true;
         lastTfRef.current = interval;
       }
