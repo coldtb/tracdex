@@ -32,6 +32,55 @@ import marketSnapshot from './data/market-snapshot.json';
 const PLATFORM_COLLECTOR = '161N33uKaKEzMEHKV2RaUkM68cLj6Wy9BdvV9rvNU6F';
 const PLATFORM_FEE_PCT = 1.0; // 1% platform fee
 
+// Supported Solana Wallets
+const SOLANA_WALLETS = [
+  {
+    id: 'phantom',
+    name: 'Phantom',
+    badge: 'Popular',
+    color: '#ab9ff2',
+    icon: '👻',
+    getProvider: () => (typeof window !== 'undefined' ? (window.phantom?.solana || (window.solana?.isPhantom ? window.solana : null)) : null),
+    installUrl: 'https://phantom.app/'
+  },
+  {
+    id: 'solflare',
+    name: 'Solflare',
+    badge: 'Native',
+    color: '#fc6a38',
+    icon: '🔥',
+    getProvider: () => (typeof window !== 'undefined' ? (window.solflare?.isSolflare ? window.solflare : null) : null),
+    installUrl: 'https://solflare.com/'
+  },
+  {
+    id: 'backpack',
+    name: 'Backpack',
+    badge: 'Web3',
+    color: '#e33e38',
+    icon: '🎒',
+    getProvider: () => (typeof window !== 'undefined' ? window.backpack : null),
+    installUrl: 'https://backpack.app/'
+  },
+  {
+    id: 'okx',
+    name: 'OKX Wallet',
+    badge: 'Multi-Chain',
+    color: '#ffffff',
+    icon: '⬛',
+    getProvider: () => (typeof window !== 'undefined' ? window.okxwallet?.solana : null),
+    installUrl: 'https://www.okx.com/web3'
+  },
+  {
+    id: 'coinbase',
+    name: 'Coinbase Wallet',
+    badge: 'Ecosystem',
+    color: '#0052ff',
+    icon: '🔵',
+    getProvider: () => (typeof window !== 'undefined' ? window.coinbaseSolana : null),
+    installUrl: 'https://www.coinbase.com/wallet'
+  }
+];
+
 export default function App() {
   const [pair, setPair] = useState('RESET/USDC');
   const [data, setData] = useState(marketSnapshot);
@@ -47,6 +96,9 @@ export default function App() {
   const [isTrading, setIsTrading] = useState(false);
   const [showTrustModal, setShowTrustModal] = useState(false);
   const [showPaymentModal, setShowPaymentModal] = useState(false);
+  const [showWalletModal, setShowWalletModal] = useState(false);
+  const [connectedWalletName, setConnectedWalletName] = useState(null);
+  const [walletError, setWalletError] = useState(null);
   const [paymentTab, setPaymentTab] = useState('qr'); // 'qr' | 'web3'
   const [copiedAddress, setCopiedAddress] = useState(false);
   const [connectedSolanaWallet, setConnectedSolanaWallet] = useState(null);
@@ -58,20 +110,30 @@ export default function App() {
     setTimeout(() => setCopiedAddress(false), 2000);
   };
 
-  const handleConnectWallet = async () => {
-    if (typeof window !== 'undefined' && window.solana?.isPhantom) {
-      try {
-        setIsConnectingWallet(true);
-        const resp = await window.solana.connect();
-        setConnectedSolanaWallet(resp.publicKey.toString());
-      } catch (err) {
-        console.warn('Wallet connection cancelled:', err);
-      } finally {
-        setIsConnectingWallet(false);
-      }
-    } else {
-      setShowPaymentModal(true);
-      setPaymentTab('web3');
+  const handleConnectWallet = () => {
+    setWalletError(null);
+    setShowWalletModal(true);
+  };
+
+  const handleSelectWallet = async (wallet) => {
+    setWalletError(null);
+    const provider = wallet.getProvider();
+    if (!provider) {
+      window.open(wallet.installUrl, '_blank');
+      return;
+    }
+    try {
+      setIsConnectingWallet(true);
+      const resp = await provider.connect();
+      const pubkey = resp.publicKey ? resp.publicKey.toString() : (resp.address || String(resp));
+      setConnectedSolanaWallet(pubkey);
+      setConnectedWalletName(wallet.name);
+      setShowWalletModal(false);
+    } catch (err) {
+      console.warn('Wallet connection error:', err);
+      setWalletError(err.message || 'Connection rejected');
+    } finally {
+      setIsConnectingWallet(false);
     }
   };
 
@@ -363,7 +425,7 @@ export default function App() {
               title="Click to disconnect"
             >
               <Wallet size={16} />
-              <span>{connectedSolanaWallet.slice(0, 4)}...{connectedSolanaWallet.slice(-4)}</span>
+              <span>{connectedWalletName ? `${connectedWalletName}: ` : ''}{connectedSolanaWallet.slice(0, 4)}...{connectedSolanaWallet.slice(-4)}</span>
             </button>
           ) : (
             <button 
@@ -1127,19 +1189,49 @@ export default function App() {
                     </button>
                   </div>
                 ) : (
-                  <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
-                    <button
-                      onClick={handleConnectWallet}
-                      disabled={isConnectingWallet}
-                      className="btn btn-solana"
-                      style={{ width: '100%', padding: '14px', fontSize: '14px', justifyContent: 'center' }}
-                    >
-                      <Wallet size={18} />
-                      <span>{isConnectingWallet ? 'Connecting...' : 'Connect Phantom Wallet'}</span>
-                    </button>
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+                    <div style={{ fontSize: '12px', color: 'var(--text-dim)', marginBottom: '4px' }}>
+                      Choose your preferred Solana wallet:
+                    </div>
+                    {SOLANA_WALLETS.map((w) => {
+                      const detected = !!w.getProvider();
+                      return (
+                        <div
+                          key={w.id}
+                          onClick={() => handleSelectWallet(w)}
+                          style={{
+                            background: 'var(--bg-main)',
+                            border: '1px solid var(--border-color)',
+                            borderRadius: '8px',
+                            padding: '12px 14px',
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'space-between',
+                            cursor: 'pointer',
+                            transition: 'all 0.2s',
+                          }}
+                        >
+                          <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                            <span style={{ fontSize: '18px' }}>{w.icon}</span>
+                            <span style={{ fontWeight: 'bold', fontSize: '13px', color: '#fff' }}>{w.name}</span>
+                          </div>
+                          <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                            {detected ? (
+                              <span style={{ fontSize: '10px', background: 'rgba(16, 185, 129, 0.2)', color: 'var(--color-green)', padding: '2px 6px', borderRadius: '4px', fontWeight: 'bold' }}>
+                                Detected
+                              </span>
+                            ) : (
+                              <span style={{ fontSize: '10px', background: 'rgba(255, 255, 255, 0.05)', color: 'var(--text-dim)', padding: '2px 6px', borderRadius: '4px' }}>
+                                {w.badge}
+                              </span>
+                            )}
+                          </div>
+                        </div>
+                      );
+                    })}
 
-                    <div style={{ background: 'rgba(255, 255, 255, 0.03)', padding: '12px', borderRadius: '8px', fontSize: '11px', color: 'var(--text-dim)', textAlign: 'center' }}>
-                      💡 On mobile or prefer no extension? Switch to <strong>"📱 QR Direct Transfer"</strong> tab above to pay directly from your app.
+                    <div style={{ background: 'rgba(255, 255, 255, 0.03)', padding: '10px', borderRadius: '8px', fontSize: '11px', color: 'var(--text-dim)', textAlign: 'center', marginTop: '6px' }}>
+                      💡 Prefer mobile or no wallet? Switch to <strong>"📱 QR Direct Transfer"</strong> tab above to pay directly from your exchange or app.
                     </div>
                   </div>
                 )}
@@ -1155,6 +1247,90 @@ export default function App() {
               >
                 Close
               </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Standalone Solana Multi-Wallet Selection Modal */}
+      {showWalletModal && (
+        <div style={{
+          position: 'fixed',
+          top: 0,
+          left: 0,
+          right: 0,
+          bottom: 0,
+          background: 'rgba(0, 0, 0, 0.8)',
+          backdropFilter: 'blur(10px)',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          zIndex: 120,
+          padding: '16px'
+        }}>
+          <div className="card" style={{ maxWidth: '420px', width: '100%', padding: '24px', gap: '16px' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                <Wallet size={20} style={{ color: 'var(--color-solana)' }} />
+                <span style={{ fontSize: '17px', fontWeight: '800' }}>Connect Solana Wallet</span>
+              </div>
+              <button 
+                onClick={() => setShowWalletModal(false)}
+                style={{ background: 'none', border: 'none', color: 'var(--text-dim)', fontSize: '20px', cursor: 'pointer' }}
+              >
+                ✕
+              </button>
+            </div>
+
+            {walletError && (
+              <div style={{ background: 'rgba(244, 63, 94, 0.15)', border: '1px solid var(--color-red)', borderRadius: '8px', padding: '10px', fontSize: '12px', color: '#fca5a5' }}>
+                {walletError}
+              </div>
+            )}
+
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+              {SOLANA_WALLETS.map((w) => {
+                const detected = !!w.getProvider();
+                return (
+                  <div
+                    key={w.id}
+                    onClick={() => handleSelectWallet(w)}
+                    style={{
+                      background: 'var(--bg-main)',
+                      border: '1px solid var(--border-color)',
+                      borderRadius: '10px',
+                      padding: '12px 16px',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'space-between',
+                      cursor: 'pointer',
+                      transition: 'all 0.2s',
+                    }}
+                  >
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                      <span style={{ fontSize: '20px' }}>{w.icon}</span>
+                      <span style={{ fontWeight: 'bold', fontSize: '14px', color: '#fff' }}>{w.name}</span>
+                    </div>
+
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                      {detected ? (
+                        <span style={{ fontSize: '10px', background: 'rgba(16, 185, 129, 0.2)', color: 'var(--color-green)', padding: '2px 8px', borderRadius: '4px', fontWeight: 'bold' }}>
+                          Detected
+                        </span>
+                      ) : (
+                        <span style={{ fontSize: '10px', background: 'rgba(255, 255, 255, 0.05)', color: 'var(--text-dim)', padding: '2px 8px', borderRadius: '4px' }}>
+                          {w.badge}
+                        </span>
+                      )}
+                      <ExternalLink size={12} style={{ color: 'var(--text-dim)' }} />
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+
+            <div style={{ background: 'rgba(255, 255, 255, 0.03)', padding: '12px', borderRadius: '8px', fontSize: '11px', color: 'var(--text-muted)', lineHeight: '1.5', textAlign: 'center' }}>
+              Don't have a wallet extension installed? You can trade instantly without installing anything using our <strong>QR Direct Transfer</strong> mode.
             </div>
           </div>
         </div>
