@@ -133,6 +133,14 @@ export default function App() {
     { id: 'tx-6', side: 'buy', price: '36.00', amount: '0.5000', total: '18.00', fee: '0.180', blockTime: 1792916822, sig: '5jH8HKcFQ4LyGmKzfQXxCBtasfpubxH9wjiV7HfD9cfXxerRL26DqVPBzsf1Pvo3jAoBLMdDJhsmykiQM3dNgTNq' }
   ]);
 
+  // Balances
+  const freeSol = data?.wallets?.balances?.SOL?.free 
+    ? (Number(data.wallets.balances.SOL.free) / 1e9).toFixed(4) : '0.0158';
+  const freeUsdc = data?.wallets?.balances?.USDC?.free 
+    ? (Number(data.wallets.balances.USDC.free) / 1e6).toFixed(2) : '0.17';
+  const freeReset = data?.wallets?.balances?.RESET?.free 
+    ? (Number(data.wallets.balances.RESET.free) / 1e8).toFixed(4) : '0.0863';
+
   // Fetch real on-chain balance whenever user connects their Solana wallet
   useEffect(() => {
     if (!connectedSolanaWallet) {
@@ -276,14 +284,6 @@ export default function App() {
     low24h: '20.00',
     trades24h: 183
   };
-
-  // Balances
-  const freeSol = data?.wallets?.balances?.SOL?.free 
-    ? (Number(data.wallets.balances.SOL.free) / 1e9).toFixed(4) : '0.0158';
-  const freeUsdc = data?.wallets?.balances?.USDC?.free 
-    ? (Number(data.wallets.balances.USDC.free) / 1e6).toFixed(2) : '0.17';
-  const freeReset = data?.wallets?.balances?.RESET?.free 
-    ? (Number(data.wallets.balances.RESET.free) / 1e8).toFixed(4) : '0.0804';
 
   // Fee Calculations
   const amountVal = parseFloat(tradeAmount || '0');
