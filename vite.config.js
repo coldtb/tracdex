@@ -21,6 +21,10 @@ try {
 // https://vite.dev/config/
 export default defineConfig({
   plugins: [react()],
+  define: {
+    'process.env': {},
+    global: 'globalThis',
+  },
   server: {
     port: 3000,
     host: '127.0.0.1',

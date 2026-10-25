@@ -1,4 +1,9 @@
 import React, { useState, useEffect, useRef } from 'react';
+import { Buffer } from 'buffer';
+if (typeof window !== 'undefined' && !window.Buffer) {
+  window.Buffer = Buffer;
+  globalThis.Buffer = Buffer;
+}
 import { 
   Zap, 
   ArrowUpDown, 

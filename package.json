@@ -12,6 +12,7 @@
   "dependencies": {
     "@solana/spl-token": "^0.4.15",
     "@solana/web3.js": "^1.99.0",
+    "buffer": "^6.0.3",
     "lightweight-charts": "^5.2.1",
     "lucide-react": "^1.61.0",
     "react": "^19.3.1",
