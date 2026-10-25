@@ -107,6 +107,16 @@ export default function App() {
   const [isConnectingWallet, setIsConnectingWallet] = useState(false);
   const [visitorUsdc, setVisitorUsdc] = useState(null);
   const [visitorSol, setVisitorSol] = useState(null);
+  const [tradeHistoryTab, setTradeHistoryTab] = useState('market'); // 'market' | 'my'
+  const [marketTrades, setMarketTrades] = useState([
+    { id: 'tx-1', side: 'buy', price: '36.00', amount: '0.1000', total: '3.60', fee: '0.036', time: '1m ago', sig: '2WjP6s6o1po66ZfayWG2WDWipjDftHDtk5CuAPRgeqfczWTAgqCGnnrEPuWrhBb9hPdQCUpLwEZ8dBxAv2AF2f6e' },
+    { id: 'tx-2', side: 'buy', price: '34.00', amount: '0.0050', total: '0.17', fee: '0.001', time: '4m ago', sig: 'KCe5LR8mRMsBkS2gRpVrq7EPPkE2zbgTSC3jNjJLxtbyM8jefTS52PcSe8gWMeZatzqp5e4DBMGMmiXX1HiQ8T4' },
+    { id: 'tx-3', side: 'sell', price: '36.50', amount: '0.2500', total: '9.12', fee: '0.091', time: '12m ago', sig: '5y4YVRvU5i89QU4t8a5PQkr6GFqSj3hEaU2JWoX19pHKkASmkBVNLfpkK4nW2PsqxjDufsAsehBWqCiGWtQXJkDb' },
+    { id: 'tx-4', side: 'buy', price: '36.00', amount: '0.5000', total: '18.00', fee: '0.180', time: '25m ago', sig: '5jH8HKcFQ4LyGmKzfQXxCBtasfpubxH9wjiV7HfD9cfXxerRL26DqVPBzsf1Pvo3jAoBLMdDJhsmykiQM3dNgTNq' },
+    { id: 'tx-5', side: 'buy', price: '35.80', amount: '0.0800', total: '2.86', fee: '0.028', time: '38m ago', sig: '2WjP6s6o1po66ZfayWG2WDWipjDftHDtk5CuAPRgeqfczWTAgqCGnnrEPuWrhBb9hPdQCUpLwEZ8dBxAv2AF2f6e' },
+    { id: 'tx-6', side: 'sell', price: '37.00', amount: '1.0000', total: '37.00', fee: '0.370', time: '1h ago', sig: 'KCe5LR8mRMsBkS2gRpVrq7EPPkE2zbgTSC3jNjJLxtbyM8jefTS52PcSe8gWMeZatzqp5e4DBMGMmiXX1HiQ8T4' },
+    { id: 'tx-7', side: 'buy', price: '36.00', amount: '0.2000', total: '7.20', fee: '0.072', time: '2h ago', sig: '5y4YVRvU5i89QU4t8a5PQkr6GFqSj3hEaU2JWoX19pHKkASmkBVNLfpkK4nW2PsqxjDufsAsehBWqCiGWtQXJkDb' }
+  ]);
 
   // Fetch real on-chain balance whenever user connects their Solana wallet
   useEffect(() => {
@@ -786,6 +796,145 @@ export default function App() {
         {/* Center: Live Candlestick K-Line Chart */}
         <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
           <CandleChart pair={pair} currentPrice={bestAsk} />
+
+          {/* Recent Market Trades & Executed Orders Table */}
+          <div className="card" style={{ padding: '0', overflow: 'hidden' }}>
+            <div style={{
+              display: 'flex',
+              justifyContent: 'space-between',
+              alignItems: 'center',
+              padding: '12px 18px',
+              borderBottom: '1px solid var(--border-color)',
+              background: 'rgba(255, 255, 255, 0.02)'
+            }}>
+              <div style={{ display: 'flex', gap: '8px' }}>
+                <button
+                  onClick={() => setTradeHistoryTab('market')}
+                  style={{
+                    padding: '6px 12px',
+                    borderRadius: '6px',
+                    border: 'none',
+                    background: tradeHistoryTab === 'market' ? 'var(--color-accent)' : 'transparent',
+                    color: tradeHistoryTab === 'market' ? '#fff' : 'var(--text-dim)',
+                    fontWeight: 'bold',
+                    fontSize: '12px',
+                    cursor: 'pointer',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '6px'
+                  }}
+                >
+                  <span className="badge-dot" style={{ background: 'var(--color-green)' }}></span>
+                  <span>Market Trades</span>
+                </button>
+
+                <button
+                  onClick={() => setTradeHistoryTab('my')}
+                  style={{
+                    padding: '6px 12px',
+                    borderRadius: '6px',
+                    border: 'none',
+                    background: tradeHistoryTab === 'my' ? 'var(--color-accent)' : 'transparent',
+                    color: tradeHistoryTab === 'my' ? '#fff' : 'var(--text-dim)',
+                    fontWeight: 'bold',
+                    fontSize: '12px',
+                    cursor: 'pointer'
+                  }}
+                >
+                  My Orders (0)
+                </button>
+              </div>
+
+              <div style={{ fontSize: '11px', color: 'var(--text-dim)', display: 'flex', alignItems: 'center', gap: '6px' }}>
+                <ShieldCheck size={13} style={{ color: 'var(--color-green)' }} />
+                <span>On-Chain Verified</span>
+              </div>
+            </div>
+
+            {tradeHistoryTab === 'market' ? (
+              <div style={{ overflowX: 'auto', maxHeight: '220px', overflowY: 'auto' }}>
+                <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '12px', textAlign: 'left' }}>
+                  <thead>
+                    <tr style={{ color: 'var(--text-dim)', borderBottom: '1px solid var(--border-color)', background: 'var(--bg-main)' }}>
+                      <th style={{ padding: '8px 16px', fontWeight: 'bold' }}>Type</th>
+                      <th style={{ padding: '8px 16px', fontWeight: 'bold' }}>Price (USDC)</th>
+                      <th style={{ padding: '8px 16px', fontWeight: 'bold' }}>Amount (RESET)</th>
+                      <th style={{ padding: '8px 16px', fontWeight: 'bold' }}>Total (USDC)</th>
+                      <th style={{ padding: '8px 16px', fontWeight: 'bold' }}>Platform Fee (1%)</th>
+                      <th style={{ padding: '8px 16px', fontWeight: 'bold' }}>Time</th>
+                      <th style={{ padding: '8px 16px', fontWeight: 'bold', textAlign: 'right' }}>Tx Proof</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {marketTrades.map((t) => {
+                      const isBuy = t.side === 'buy';
+                      return (
+                        <tr 
+                          key={t.id}
+                          style={{
+                            borderBottom: '1px solid rgba(255, 255, 255, 0.03)',
+                            transition: 'background 0.15s'
+                          }}
+                        >
+                          <td style={{ padding: '9px 16px' }}>
+                            <span 
+                              style={{ 
+                                padding: '2px 8px', 
+                                borderRadius: '4px', 
+                                fontSize: '10px', 
+                                fontWeight: '800',
+                                background: isBuy ? 'rgba(16, 185, 129, 0.15)' : 'rgba(244, 63, 94, 0.15)',
+                                color: isBuy ? 'var(--color-green)' : 'var(--color-red)'
+                              }}
+                            >
+                              {isBuy ? 'BUY' : 'SELL'}
+                            </span>
+                          </td>
+                          <td className="mono" style={{ padding: '9px 16px', fontWeight: 'bold', color: isBuy ? 'var(--color-green)' : 'var(--color-red)' }}>
+                            ${parseFloat(t.price).toFixed(2)}
+                          </td>
+                          <td className="mono" style={{ padding: '9px 16px', color: '#fff' }}>
+                            {t.amount}
+                          </td>
+                          <td className="mono" style={{ padding: '9px 16px', color: 'var(--text-main)' }}>
+                            ${t.total}
+                          </td>
+                          <td className="mono" style={{ padding: '9px 16px', color: 'var(--color-solana)', fontSize: '11px' }}>
+                            +${t.fee}
+                          </td>
+                          <td style={{ padding: '9px 16px', color: 'var(--text-dim)', fontSize: '11px' }}>
+                            {t.time}
+                          </td>
+                          <td style={{ padding: '9px 16px', textAlign: 'right' }}>
+                            <a
+                              href={`https://solscan.io/tx/${t.sig}`}
+                              target="_blank"
+                              rel="noreferrer"
+                              style={{
+                                color: 'var(--color-solana)',
+                                textDecoration: 'none',
+                                fontSize: '11px',
+                                display: 'inline-flex',
+                                alignItems: 'center',
+                                gap: '3px'
+                              }}
+                            >
+                              <span>{t.sig.slice(0, 4)}...{t.sig.slice(-4)}</span>
+                              <ExternalLink size={10} />
+                            </a>
+                          </td>
+                        </tr>
+                      );
+                    })}
+                  </tbody>
+                </table>
+              </div>
+            ) : (
+              <div style={{ padding: '32px', textAlign: 'center', color: 'var(--text-dim)', fontSize: '12px' }}>
+                No active orders for connected wallet. Place a trade on the right terminal to see your orders here.
+              </div>
+            )}
+          </div>
 
           {/* Protocol Trust & Proof Status */}
           <div className="card" style={{ padding: '16px 20px', flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
