@@ -16,34 +16,35 @@ const SECONDS = {
 function aggregateCandles(baseCandles, interval) {
   if (!baseCandles || !baseCandles.length) return [];
   const sorted = [...baseCandles].sort((a, b) => a.t - b.t);
-  const sec = SECONDS[interval] || 3600;
+  const sec = SECONDS[interval] || 900;
 
-  // Sub-hourly division (1m, 3m, 5m, 15m, 30m)
-  if (sec < 3600) {
+  // If interval is smaller than base 15m (1m, 3m, 5m), divide cleanly without jagged sine distortion
+  if (sec < 900) {
     const subBars = [];
-    const stepCount = Math.floor(3600 / sec);
+    const stepCount = Math.floor(900 / sec);
     sorted.forEach((c) => {
       const baseTime = c.t;
       const o = parseFloat(c.o);
       const h = parseFloat(c.h);
       const l = parseFloat(c.l);
       const cl = parseFloat(c.c);
-      const vol = parseFloat(c.v?.text || '12.5') / stepCount;
+      const vol = parseFloat(c.v?.text || '25.0') / stepCount;
 
       let curOpen = o;
       for (let i = 0; i < stepCount; i++) {
         const progress = (i + 1) / stepCount;
-        const curClose = i === stepCount - 1 ? cl : o + (cl - o) * progress + (Math.sin(i * 1.5) * (h - l) * 0.12);
-        const curHigh = Math.max(curOpen, curClose, Math.min(h, curOpen + (h - l) * 0.25));
-        const curLow = Math.min(curOpen, curClose, Math.max(l, curOpen - (h - l) * 0.25));
+        const curClose = i === stepCount - 1 ? cl : Number((o + (cl - o) * progress).toFixed(2));
+        const wickSpread = (h - l) * 0.15;
+        const curHigh = Number((Math.max(curOpen, curClose) + wickSpread).toFixed(2));
+        const curLow = Number((Math.min(curOpen, curClose) - wickSpread).toFixed(2));
 
         subBars.push({
           time: baseTime + i * sec,
           open: curOpen,
-          high: curHigh,
-          low: curLow,
+          high: Math.min(h, Math.max(curOpen, curClose, curHigh)),
+          low: Math.max(l, Math.min(curOpen, curClose, curLow)),
           close: curClose,
-          volume: Math.max(0.1, vol * (0.8 + Math.cos(i) * 0.4)),
+          volume: Number(vol.toFixed(2)),
         });
         curOpen = curClose;
       }
@@ -51,19 +52,7 @@ function aggregateCandles(baseCandles, interval) {
     return subBars;
   }
 
-  // 1 hour base
-  if (sec === 3600) {
-    return sorted.map((c) => ({
-      time: c.t,
-      open: parseFloat(c.o),
-      high: parseFloat(c.h),
-      low: parseFloat(c.l),
-      close: parseFloat(c.c),
-      volume: parseFloat(c.v?.text || '12.5'),
-    }));
-  }
-
-  // Multi-hour or multi-day grouping (2h, 4h, 8h, 12h, 24h, 2d, 3d, 1W, 1M, 1Y)
+  // 15m or higher: standard financial OHLC bucket aggregation
   const buckets = new Map();
   sorted.forEach((c) => {
     const bTime = Math.floor(c.t / sec) * sec;
@@ -77,21 +66,21 @@ function aggregateCandles(baseCandles, interval) {
     const cl = parseFloat(items[items.length - 1].c);
     const h = Math.max(...items.map((x) => parseFloat(x.h)));
     const l = Math.min(...items.map((x) => parseFloat(x.l)));
-    const vol = items.reduce((acc, x) => acc + parseFloat(x.v?.text || '12.5'), 0);
+    const vol = items.reduce((acc, x) => acc + parseFloat(x.v?.text || '25.0'), 0);
     res.push({
       time: bTime,
       open: o,
       high: h,
       low: l,
       close: cl,
-      volume: vol,
+      volume: Number(vol.toFixed(2)),
     });
   });
   return res.sort((a, b) => a.time - b.time);
 }
 
 export default function CandleChart({ pair = 'RESET/USDC', currentPrice = '36.00' }) {
-  const [interval, setIntervalVal] = useState('5m');
+  const [interval, setIntervalVal] = useState('15m');
   const [activeCandle, setActiveCandle] = useState(null);
   const chartContainerRef = useRef(null);
   const chartInstanceRef = useRef(null);
