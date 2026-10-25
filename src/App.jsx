@@ -470,29 +470,19 @@ export default function App() {
             <span>Support</span>
           </a>
 
-          <div className="badge" style={{ background: 'var(--bg-main)', border: '1px solid var(--border-glow)' }}>
-            <span style={{ color: '#f7931a', fontWeight: 'bold' }}>RESET:</span>
-            <span className="mono" style={{ color: '#fff' }}>{freeReset}</span>
-            <span style={{ color: 'var(--text-dim)' }}>|</span>
-            {connectedSolanaWallet ? (
-              <>
-                <span style={{ color: '#38bdf8', fontWeight: 'bold' }}>USDC:</span>
-                <span className="mono" style={{ color: '#fff' }}>
-                  ${visitorUsdc !== null ? visitorUsdc : '0.00'}
-                </span>
-                <span style={{ color: 'var(--text-dim)' }}>|</span>
-                <span style={{ color: '#a855f7', fontWeight: 'bold' }}>SOL:</span>
-                <span className="mono" style={{ color: '#fff' }}>
-                  {visitorSol !== null ? visitorSol : '0.00'}
-                </span>
-              </>
-            ) : (
-              <>
-                <span style={{ color: '#38bdf8', fontWeight: 'bold' }}>USDC:</span>
-                <span className="mono" style={{ color: '#fff' }}>${freeUsdc}</span>
-              </>
-            )}
-          </div>
+          {connectedSolanaWallet && (
+            <div className="badge" style={{ background: 'var(--bg-main)', border: '1px solid var(--border-glow)' }}>
+              <span style={{ color: '#38bdf8', fontWeight: 'bold' }}>USDC:</span>
+              <span className="mono" style={{ color: '#fff' }}>
+                ${visitorUsdc !== null ? visitorUsdc : '0.00'}
+              </span>
+              <span style={{ color: 'var(--text-dim)' }}>|</span>
+              <span style={{ color: '#a855f7', fontWeight: 'bold' }}>SOL:</span>
+              <span className="mono" style={{ color: '#fff' }}>
+                {visitorSol !== null ? visitorSol : '0.00'}
+              </span>
+            </div>
+          )}
 
           {connectedSolanaWallet ? (
             <div style={{ position: 'relative' }}>
@@ -1129,11 +1119,8 @@ export default function App() {
                     <label style={{ fontSize: '12px', fontWeight: 'bold', color: 'var(--text-muted)' }}>
                       Amount to Sell (RESET):
                     </label>
-                    <span 
-                      onClick={() => setTradeAmount(freeReset)} 
-                      style={{ fontSize: '11px', color: 'var(--color-solana)', cursor: 'pointer', fontWeight: 'bold' }}
-                    >
-                      MAX ({freeReset} RESET)
+                    <span style={{ fontSize: '11px', color: 'var(--text-dim)' }}>
+                      Enter amount to sell
                     </span>
                   </div>
                   <input 
