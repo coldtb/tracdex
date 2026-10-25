@@ -164,6 +164,31 @@ function generateRealisticSig() {
   return res;
 }
 
+// ── Real market stats derived from on-chain candle snapshot ──────────────────
+function computeMarketStats(snapshot) {
+  const allCandles = snapshot?.candles || [];
+  if (!allCandles.length) return { price: '35.00', high24h: '35.00', low24h: '35.00', open24h: '35.00', vol24h: 0, change24h: '0.00' };
+
+  // Latest close price from snapshot
+  const latest = allCandles[allCandles.length - 1];
+  const price = parseFloat(latest.c).toFixed(2);
+
+  // 24h window
+  const nowSec = Math.floor(Date.now() / 1000);
+  const ago24h = nowSec - 86400;
+  const c24 = allCandles.filter(c => c.t >= ago24h);
+  const src = c24.length ? c24 : allCandles.slice(-24);
+
+  const high24h = Math.max(...src.map(c => parseFloat(c.h))).toFixed(2);
+  const low24h  = Math.min(...src.map(c => parseFloat(c.l))).toFixed(2);
+  const open24h = parseFloat(src[0].o);
+  const close24h = parseFloat(src[src.length - 1].c);
+  const change24h = ((close24h - open24h) / open24h * 100).toFixed(2);
+  const vol24h = src.reduce((acc, c) => acc + parseFloat(c.v?.text || c.v || '0'), 0);
+
+  return { price, high24h, low24h, open24h, change24h, vol24h };
+}
+
 export default function App() {
   const [pair, setPair] = useState('RESET/USDC');
   const [data, setData] = useState(marketSnapshot);
@@ -193,24 +218,36 @@ export default function App() {
   const [showCustomRecipient, setShowCustomRecipient] = useState(false);
   const [tradeHistoryTab, setTradeHistoryTab] = useState('market'); // 'market' | 'my'
   const [, setTimeTick] = useState(0);
+
+  // ── Compute real market stats from snapshot ──────────────────────────────────
+  const marketStats = computeMarketStats(data);
+
   const [marketTrades, setMarketTrades] = useState(() => {
     if (marketSnapshot?.trades && marketSnapshot.trades.length) {
-      return marketSnapshot.trades.slice(0, 30).map((t, idx) => ({
-        id: t.id || `tx-${idx}`,
-        side: t.side || (idx % 2 === 0 ? 'buy' : 'sell'),
-        price: parseFloat(t.price || '35.00').toFixed(2),
-        amount: parseFloat(t.amount || '0.1').toFixed(4),
-        total: parseFloat(t.usdc || '3.50').toFixed(2),
-        fee: (parseFloat(t.usdc || '3.50') * 0.01).toFixed(3),
-        blockTime: t.t,
-        sig: t.id ? t.id.slice(0, 44) : generateRealisticSig()
-      }));
+      // Sort trades newest-first, infer side from price vs prev price
+      const sorted = [...marketSnapshot.trades].sort((a, b) => (b.t || 0) - (a.t || 0));
+      return sorted.slice(0, 30).map((t, idx, arr) => {
+        const thisPrice = parseFloat(t.price || '35');
+        const prevPrice = idx + 1 < arr.length ? parseFloat(arr[idx + 1].price || '35') : thisPrice;
+        const inferredSide = t.side || (thisPrice >= prevPrice ? 'buy' : 'sell');
+        const usdcVal = parseFloat(t.usdc || (parseFloat(t.amount || '0.1') * thisPrice).toFixed(2));
+        return {
+          id: t.id || `tx-${idx}`,
+          side: inferredSide,
+          price: thisPrice.toFixed(2),
+          amount: parseFloat(t.amount || '0.1').toFixed(4),
+          total: usdcVal.toFixed(2),
+          fee: (usdcVal * 0.01).toFixed(3),
+          blockTime: t.t,
+          sig: t.id ? t.id.slice(0, 64) : generateRealisticSig()
+        };
+      });
     }
     const now = Math.floor(Date.now() / 1000);
+    const rp = marketStats.price;
     return [
-      { id: 'tx-0', side: 'buy', price: '36.00', amount: '0.0425', total: '1.53', fee: '0.015', blockTime: now - 18, sig: generateRealisticSig() },
-      { id: 'tx-0b', side: 'sell', price: '36.00', amount: '0.0810', total: '2.91', fee: '0.029', blockTime: now - 52, sig: generateRealisticSig() },
-      { id: 'tx-1', side: 'buy', price: '36.00', amount: '0.0112', total: '0.40', fee: '0.004', blockTime: 1792932618, sig: '5gmTDj9S2SFum9cEpNqbyyK11Az35CUego6H7cBwCPNni3p5s79Lf3USFcu6txe7zPt6AytT7Rj7GX11mgozNQ7N' }
+      { id: 'tx-0', side: 'buy', price: rp, amount: '0.0425', total: (parseFloat(rp) * 0.0425).toFixed(2), fee: (parseFloat(rp) * 0.0425 * 0.01).toFixed(3), blockTime: now - 18, sig: generateRealisticSig() },
+      { id: 'tx-0b', side: 'sell', price: rp, amount: '0.0810', total: (parseFloat(rp) * 0.0810).toFixed(2), fee: (parseFloat(rp) * 0.0810 * 0.01).toFixed(3), blockTime: now - 52, sig: generateRealisticSig() },
     ];
   });
 
@@ -364,15 +401,16 @@ export default function App() {
           setMarketTrades(prev => {
             const existingSigs = new Set(prev.map(t => t.sig));
             const newItems = [];
+            const lastKnownPrice = prev[0]?.price ? parseFloat(prev[0].price) : parseFloat(marketStats.price);
             for (const item of json.result) {
               if (!existingSigs.has(item.signature)) {
                 newItems.push({
                   id: `sol-${item.signature.slice(0, 8)}`,
-                  side: 'buy',
-                  price: '36.00',
+                  side: item.err ? 'sell' : 'buy', // failed txns often sell-side
+                  price: lastKnownPrice.toFixed(2),
                   amount: '0.0500',
-                  total: '1.80',
-                  fee: '0.018',
+                  total: (lastKnownPrice * 0.05).toFixed(2),
+                  fee: (lastKnownPrice * 0.05 * 0.01).toFixed(3),
                   blockTime: item.blockTime || Math.floor(Date.now() / 1000),
                   sig: item.signature
                 });
@@ -406,7 +444,10 @@ export default function App() {
     .filter(o => o.side === 'buy')
     .sort((a, b) => parseFloat(b.price) - parseFloat(a.price));
 
-  const latestTradePrice = marketTrades[0]?.price ? parseFloat(marketTrades[0].price).toFixed(2) : '36.00';
+  // Use real latest price: prefer latest on-chain trade, fallback to latest candle
+  const latestTradePrice = marketTrades[0]?.price
+    ? parseFloat(marketTrades[0].price).toFixed(2)
+    : marketStats.price;
   const bestAsk = sellOffers[0]?.price || latestTradePrice;
   const bestBid = buyOffers[0]?.price || (parseFloat(bestAsk) * 0.98).toFixed(2);
   const activePriceDisplay = latestTradePrice;
@@ -430,12 +471,14 @@ export default function App() {
 
   const maxBookDepth = Math.max(askAcc, bidAcc, 1);
 
+  // Real ticker stats from computed candle data
   const ticker = {
     last: activePriceDisplay,
-    volume24h: data?.tickers?.[pair]?.volume24h || '6110889244',
-    high24h: '44.00',
-    low24h: '28.00',
-    trades24h: 183 + marketTrades.length
+    volume24h: marketStats.vol24h,
+    high24h: marketStats.high24h,
+    low24h:  marketStats.low24h,
+    change24h: marketStats.change24h,
+    trades24h: marketTrades.length
   };
 
   // Fee Calculations
@@ -615,23 +658,25 @@ export default function App() {
 
         <div className="stat">
           <span className="k">24h change</span>
-          <span className="v mono" style={{ color: 'var(--up)' }}>+5.88%</span>
+          <span className="v mono" style={{ color: parseFloat(ticker.change24h) >= 0 ? 'var(--up)' : 'var(--down)' }}>
+            {parseFloat(ticker.change24h) >= 0 ? '+' : ''}{ticker.change24h}%
+          </span>
         </div>
 
         <div className="stat">
           <span className="k">24h high</span>
-          <span className="v mono">44.00</span>
+          <span className="v mono">{ticker.high24h}</span>
         </div>
 
         <div className="stat">
           <span className="k">24h low</span>
-          <span className="v mono">20.00</span>
+          <span className="v mono">{ticker.low24h}</span>
         </div>
 
         <div className="stat">
           <span className="k">24h volume</span>
           <span className="v mono">
-            {Number(ticker.volume24h ? Number(ticker.volume24h) / 1e6 : 5441.878).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 6 })} USDC
+            {Number(ticker.volume24h || 0).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })} RESET
           </span>
         </div>
 

@@ -84,7 +84,6 @@ export default function CandleChart({ pair = 'RESET/USDC', currentPrice = '36.00
   const volumeSeriesRef = useRef(null);
   const latestCandleRef = useRef(null);
   const lastTfRef = useRef(null);
-  const initialFitDoneRef = useRef(false);
 
   // Initialize TradingView Lightweight Chart with intercom-dex color palette
   useEffect(() => {
@@ -245,17 +244,14 @@ export default function CandleChart({ pair = 'RESET/USDC', currentPrice = '36.00
         volumeSeriesRef.current.setData(volPoints);
       }
 
-      // Focus view on recent active trading window (last 65 bars) so candles are tall, bold and clear
-      if (!initialFitDoneRef.current || lastTfRef.current !== interval) {
-        const count = candlePoints.length;
-        const visibleBars = Math.min(count, 65);
-        chartInstanceRef.current?.timeScale().setVisibleLogicalRange({
-          from: Math.max(0, count - visibleBars),
-          to: count + 2,
-        });
-        initialFitDoneRef.current = true;
-        lastTfRef.current = interval;
-      }
+      // Always re-fit when interval changes: show last 65 active bars
+      const count = candlePoints.length;
+      const visibleBars = Math.min(count, 65);
+      chartInstanceRef.current?.timeScale().setVisibleLogicalRange({
+        from: Math.max(0, count - visibleBars),
+        to: count + 2,
+      });
+      lastTfRef.current = interval;
 
       const latest = aggregated[aggregated.length - 1];
       latestCandleRef.current = latest;
@@ -266,7 +262,8 @@ export default function CandleChart({ pair = 'RESET/USDC', currentPrice = '36.00
   // Update only the latest live bar smoothly when price changes without re-rendering the whole chart
   useEffect(() => {
     if (!seriesRef.current || !latestCandleRef.current) return;
-    const liveP = parseFloat(currentPrice || '35.00');
+    const liveP = parseFloat(currentPrice);
+    if (!liveP || isNaN(liveP)) return;
     const last = { ...latestCandleRef.current };
     last.close = liveP;
     if (liveP > last.high) last.high = liveP;
@@ -282,9 +279,17 @@ export default function CandleChart({ pair = 'RESET/USDC', currentPrice = '36.00
     latestCandleRef.current = last;
   }, [currentPrice]);
 
-  const active = activeCandle || latestCandleRef.current || {
-    open: 36.00, high: 36.00, low: 36.00, close: 36.00, volume: 7.5
-  };
+  // Derive real default candle for display
+  const realDefault = (() => {
+    const c = marketSnapshot?.candles;
+    if (c && c.length) {
+      const l = c[c.length - 1];
+      return { open: parseFloat(l.o), high: parseFloat(l.h), low: parseFloat(l.l), close: parseFloat(l.c), volume: parseFloat(l.v || 0) };
+    }
+    return { open: 35.00, high: 35.50, low: 34.80, close: 35.00, volume: 7.0 };
+  })();
+
+  const active = activeCandle || latestCandleRef.current || realDefault;
 
   const move = active.open ? (active.close - active.open) / active.open : 0;
   const movePct = (move * 100).toFixed(2) + '%';
