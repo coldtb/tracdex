@@ -41,8 +41,8 @@ export default function App() {
   const [subTab, setSubTab] = useState('instant'); // 'instant' | 'limit'
   const [tradeAmount, setTradeAmount] = useState('0.1');
   const [customPrice, setCustomPrice] = useState('45.00');
-  const [tracAddress, setTracAddress] = useState('trac1dsyccpuc8qt7djvy7zd7g993vt395fet87naatd32nrld65hwves8kd7j6');
-  const [solWallet, setSolWallet] = useState('161N33uKaKEzMEHKV2RaUkM68cLj6Wy9BdvV9rvNU6F');
+  const [tracAddress, setTracAddress] = useState('');
+  const [solWallet, setSolWallet] = useState('');
   const [tradeStatus, setTradeStatus] = useState(null);
   const [isTrading, setIsTrading] = useState(false);
   const [showTrustModal, setShowTrustModal] = useState(false);
@@ -340,13 +340,20 @@ export default function App() {
             <span>Support</span>
           </a>
 
-          <div className="badge" style={{ background: 'var(--bg-main)', border: '1px solid var(--border-glow)' }}>
-            <span style={{ color: '#f7931a', fontWeight: 'bold' }}>RESET:</span>
-            <span className="mono" style={{ color: '#fff' }}>{freeReset}</span>
-            <span style={{ color: 'var(--text-dim)' }}>|</span>
-            <span style={{ color: '#38bdf8', fontWeight: 'bold' }}>USDC:</span>
-            <span className="mono" style={{ color: '#fff' }}>${freeUsdc}</span>
-          </div>
+          {connectedSolanaWallet ? (
+            <div className="badge" style={{ background: 'var(--bg-main)', border: '1px solid var(--border-glow)' }}>
+              <span style={{ color: '#f7931a', fontWeight: 'bold' }}>RESET:</span>
+              <span className="mono" style={{ color: '#fff' }}>{freeReset}</span>
+              <span style={{ color: 'var(--text-dim)' }}>|</span>
+              <span style={{ color: '#38bdf8', fontWeight: 'bold' }}>USDC:</span>
+              <span className="mono" style={{ color: '#fff' }}>${freeUsdc}</span>
+            </div>
+          ) : (
+            <div className="badge" style={{ background: 'var(--bg-main)', border: '1px solid var(--border-glow)' }}>
+              <span className="badge-dot"></span>
+              <span style={{ color: 'var(--color-green)' }}>Mainnet Connected</span>
+            </div>
+          )}
 
           {connectedSolanaWallet ? (
             <button 
@@ -899,7 +906,7 @@ export default function App() {
                 <Zap size={22} style={{ color: 'var(--color-solana)' }} />
                 <div>
                   <div style={{ fontSize: '18px', fontWeight: '800' }}>
-                    {tradeMode === 'buy' ? 'Худалдан авалтыг баталгаажуулах' : 'Худалдааг баталгаажуулах'}
+                    {tradeMode === 'buy' ? 'Confirm P2P Escrow Purchase' : 'Confirm P2P Escrow Sale'}
                   </div>
                   <div style={{ fontSize: '11px', color: 'var(--text-dim)' }}>
                     100% Non-Custodial Smart Contract Escrow
@@ -926,19 +933,19 @@ export default function App() {
               fontSize: '12px'
             }}>
               <div>
-                <span style={{ color: 'var(--text-dim)', display: 'block' }}>Авах койн:</span>
+                <span style={{ color: 'var(--text-dim)', display: 'block' }}>Asset to Receive:</span>
                 <span className="mono" style={{ fontWeight: 'bold', fontSize: '14px', color: '#fff' }}>
                   {tradeAmount} RESET
                 </span>
               </div>
               <div style={{ textAlign: 'right' }}>
-                <span style={{ color: 'var(--text-dim)', display: 'block' }}>Төлөх нийт дүн:</span>
+                <span style={{ color: 'var(--text-dim)', display: 'block' }}>Total to Pay:</span>
                 <span className="mono" style={{ fontWeight: 'bold', fontSize: '14px', color: 'var(--color-green)' }}>
                   ${finalBuyTotal} USDC
                 </span>
               </div>
               <div style={{ gridColumn: 'span 2', borderTop: '1px solid var(--border-color)', paddingTop: '8px', display: 'flex', justifyContent: 'space-between', fontSize: '11px' }}>
-                <span style={{ color: 'var(--text-muted)' }}>1.0% Платформын шимтгэл:</span>
+                <span style={{ color: 'var(--text-muted)' }}>Platform Fee (1.0% included):</span>
                 <span className="mono" style={{ color: 'var(--color-solana)', fontWeight: 'bold' }}>+${platformFee.toFixed(3)} USDC</span>
               </div>
             </div>
@@ -963,7 +970,7 @@ export default function App() {
                 }}
               >
                 <QrCode size={15} />
-                <span>📱 QR Төлбөр (Хэтэвчгүй)</span>
+                <span>📱 QR Direct Transfer (No Wallet)</span>
               </button>
 
               <button
@@ -992,7 +999,7 @@ export default function App() {
             {paymentTab === 'qr' && (
               <div style={{ display: 'flex', flexDirection: 'column', gap: '14px', alignItems: 'center', textAlign: 'center' }}>
                 <div style={{ fontSize: '12px', color: 'var(--text-muted)', lineHeight: '1.5' }}>
-                  Хөтөч дээрээ ямар ч хэтэвч холбох шаардлагагүй. Аль ч бирж эсвэл гар утасны түрийвчнээсээ доорх QR кодыг уншуулаад <strong>${finalBuyTotal} USDC</strong> шилжүүлнэ үү.
+                  No browser extension required. Scan this QR code or transfer <strong>${finalBuyTotal} USDC</strong> directly from Binance, Bybit, Phantom Mobile, or any Solana wallet.
                 </div>
 
                 {/* QR Code Container */}
@@ -1013,7 +1020,7 @@ export default function App() {
                 {/* Deposit Address Box */}
                 <div style={{ width: '100%', background: 'var(--bg-main)', padding: '10px 14px', borderRadius: '8px', border: '1px solid var(--border-color)', textAlign: 'left' }}>
                   <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '6px' }}>
-                    <span style={{ fontSize: '11px', color: 'var(--text-dim)', fontWeight: 'bold' }}>Шилжүүлэх Solana Escrow Хаяг:</span>
+                    <span style={{ fontSize: '11px', color: 'var(--text-dim)', fontWeight: 'bold' }}>Solana Escrow Deposit Address:</span>
                     <button 
                       onClick={() => handleCopy(PLATFORM_COLLECTOR)}
                       style={{ 
@@ -1032,7 +1039,7 @@ export default function App() {
                       }}
                     >
                       {copiedAddress ? <Check size={12} /> : <Copy size={12} />}
-                      <span>{copiedAddress ? 'Хуулагдлаа!' : 'Хаяг хуулах'}</span>
+                      <span>{copiedAddress ? 'Copied!' : 'Copy Address'}</span>
                     </button>
                   </div>
                   <div className="mono" style={{ fontSize: '11px', color: '#fff', wordBreak: 'break-all' }}>
@@ -1043,7 +1050,7 @@ export default function App() {
                 {/* Destination Trac Address */}
                 <div style={{ width: '100%', textAlign: 'left' }}>
                   <label style={{ fontSize: '11px', fontWeight: 'bold', color: 'var(--text-muted)', marginBottom: '4px', display: 'block' }}>
-                    Таны RESET хүлээн авах Trac хаяг:
+                    Your Destination Trac Address (to receive RESET):
                   </label>
                   <input 
                     type="text"
@@ -1051,7 +1058,7 @@ export default function App() {
                     onChange={(e) => setTracAddress(e.target.value)}
                     className="input-field mono"
                     style={{ fontSize: '11px', padding: '8px 12px' }}
-                    placeholder="trac1..."
+                    placeholder="Enter your Trac address (e.g. trac1...)"
                   />
                 </div>
 
@@ -1069,17 +1076,17 @@ export default function App() {
                 }}>
                   <div style={{ display: 'flex', alignItems: 'center', gap: '8px', color: 'var(--color-green)' }}>
                     <span className="badge-dot" style={{ background: 'var(--color-green)', animation: 'pulse 1.5s infinite' }}></span>
-                    <span style={{ fontWeight: 'bold' }}>Гүйлгээг сүлжээн дээр хүлээж байна...</span>
+                    <span style={{ fontWeight: 'bold' }}>Listening for on-chain deposit...</span>
                   </div>
                   <div style={{ fontSize: '11px', color: 'var(--text-dim)', display: 'flex', alignItems: 'center', gap: '4px' }}>
                     <Clock size={12} />
-                    <span>~15-30 сек</span>
+                    <span>~15-30s</span>
                   </div>
                 </div>
 
                 <div style={{ fontSize: '11px', color: 'var(--text-dim)', display: 'flex', alignItems: 'center', gap: '6px' }}>
                   <Lock size={12} style={{ color: 'var(--color-green)' }} />
-                  <span>10 минутын Auto-Refund хамгаалалттай (Амжилтгүй бол 100% автоматаар буцна).</span>
+                  <span>10-Minute Guaranteed Auto-Refund Timelock (100% returned if unfulfilled).</span>
                 </div>
               </div>
             )}
@@ -1088,13 +1095,13 @@ export default function App() {
             {paymentTab === 'web3' && (
               <div style={{ display: 'flex', flexDirection: 'column', gap: '16px', padding: '10px 0' }}>
                 <div style={{ fontSize: '13px', color: 'var(--text-muted)', lineHeight: '1.6' }}>
-                  Хэрэв таны хөтөч дээр <strong>Phantom</strong> эсвэл <strong>Solflare</strong> түрийвч суугдсан бол 1-хэн товшилтоор ухаалаг гэрээнд гарын үсэг зурж шууд арилжаа хийх боломжтой.
+                  If you have <strong>Phantom</strong> or <strong>Solflare</strong> installed, connect and approve this trade with one click.
                 </div>
 
                 {connectedSolanaWallet ? (
                   <div style={{ background: 'var(--bg-main)', padding: '16px', borderRadius: '10px', border: '1px solid var(--border-color)', display: 'flex', flexDirection: 'column', gap: '12px' }}>
                     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                      <span style={{ fontSize: '12px', color: 'var(--text-dim)' }}>Холбогдсон хэтэвч:</span>
+                      <span style={{ fontSize: '12px', color: 'var(--text-dim)' }}>Connected Wallet:</span>
                       <span className="mono" style={{ fontSize: '12px', color: 'var(--color-green)', fontWeight: 'bold' }}>
                         {connectedSolanaWallet.slice(0, 6)}...{connectedSolanaWallet.slice(-6)}
                       </span>
@@ -1109,12 +1116,12 @@ export default function App() {
                       {isTrading ? (
                         <>
                           <RefreshCw size={16} className="spin" />
-                          <span>Гүйлгээг баталгаажуулж байна...</span>
+                          <span>Confirming on Solana...</span>
                         </>
                       ) : (
                         <>
                           <Zap size={16} />
-                          <span>Phantom-оор ${finalBuyTotal} USDC төлөх</span>
+                          <span>Approve & Pay ${finalBuyTotal} USDC via Phantom</span>
                         </>
                       )}
                     </button>
@@ -1128,11 +1135,11 @@ export default function App() {
                       style={{ width: '100%', padding: '14px', fontSize: '14px', justifyContent: 'center' }}
                     >
                       <Wallet size={18} />
-                      <span>{isConnectingWallet ? 'Холбогдож байна...' : 'Phantom Түрийвчээ холбох'}</span>
+                      <span>{isConnectingWallet ? 'Connecting...' : 'Connect Phantom Wallet'}</span>
                     </button>
 
                     <div style={{ background: 'rgba(255, 255, 255, 0.03)', padding: '12px', borderRadius: '8px', fontSize: '11px', color: 'var(--text-dim)', textAlign: 'center' }}>
-                      💡 Хэрэв та гар утас эсвэл түрийвчгүй орсон бол дээд талын <strong>"📱 QR Төлбөр"</strong> табыг сонгон төлбөрөө хийнэ үү.
+                      💡 On mobile or prefer no extension? Switch to <strong>"📱 QR Direct Transfer"</strong> tab above to pay directly from your app.
                     </div>
                   </div>
                 )}
@@ -1146,7 +1153,7 @@ export default function App() {
                 className="btn btn-secondary"
                 style={{ padding: '8px 20px', fontSize: '12px' }}
               >
-                Хаах
+                Close
               </button>
             </div>
           </div>
