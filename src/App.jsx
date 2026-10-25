@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { 
   Zap, 
   ArrowUpDown, 
@@ -206,6 +206,22 @@ export default function App() {
   const [showPaymentModal, setShowPaymentModal] = useState(false);
   const [showWalletModal, setShowWalletModal] = useState(false);
   const [showAccountDropdown, setShowAccountDropdown] = useState(false);
+  const accountDropdownRef = useRef(null);
+
+  // Close dropdown on click outside
+  useEffect(() => {
+    function handleClickOutside(event) {
+      if (accountDropdownRef.current && !accountDropdownRef.current.contains(event.target)) {
+        setShowAccountDropdown(false);
+      }
+    }
+    if (showAccountDropdown) {
+      document.addEventListener('mousedown', handleClickOutside);
+    }
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [showAccountDropdown]);
   const [connectedWalletName, setConnectedWalletName] = useState(null);
   const [walletError, setWalletError] = useState(null);
   const [paymentTab, setPaymentTab] = useState('qr'); // 'qr' | 'web3'
@@ -659,131 +675,188 @@ export default function App() {
     <div className="app-wrapper">
       {/* Official Intercom-DEX Pairbar */}
       <div className="pairbar">
-        {/* Custom Engraved Plaque Logo */}
-        <div style={{ display: 'flex', alignItems: 'center', marginRight: '6px' }}>
-          <img 
-            src="/tracdex-logo.png" 
-            alt="TRACDEX" 
-            style={{ 
-              height: '28px', 
-              borderRadius: '4px', 
-              boxShadow: '0 2px 8px rgba(0,0,0,0.4)',
-              display: 'block' 
-            }} 
-          />
-        </div>
+        <div className="pairbar-stats">
+          {/* Custom Engraved Plaque Logo */}
+          <div style={{ display: 'flex', alignItems: 'center', marginRight: '6px', flexShrink: 0 }}>
+            <img 
+              src="/tracdex-logo.png" 
+              alt="TRACDEX" 
+              style={{ 
+                height: '28px', 
+                borderRadius: '4px', 
+                boxShadow: '0 2px 8px rgba(0,0,0,0.4)',
+                display: 'block' 
+              }} 
+            />
+          </div>
 
-        <div className="pairs" role="tablist">
-          <button 
-            type="button" 
-            role="tab" 
-            aria-selected="true"
-            style={{ cursor: 'default', background: 'var(--raised)', color: 'var(--text)' }}
-          >
-            RESET/USDC
-          </button>
-        </div>
-
-        <div className="last mono">
-          <span>{parseFloat(activePriceDisplay).toFixed(2)}</span>
-          <span className="unit">USDC</span>
-        </div>
-
-        <div className="stat">
-          <span className="k">24h change</span>
-          <span className="v mono" style={{ color: parseFloat(ticker.change24h) >= 0 ? 'var(--up)' : 'var(--down)' }}>
-            {parseFloat(ticker.change24h) >= 0 ? '+' : ''}{ticker.change24h}%
-          </span>
-        </div>
-
-        <div className="stat">
-          <span className="k">24h high</span>
-          <span className="v mono">{ticker.high24h}</span>
-        </div>
-
-        <div className="stat">
-          <span className="k">24h low</span>
-          <span className="v mono">{ticker.low24h}</span>
-        </div>
-
-        <div className="stat">
-          <span className="k">24h volume</span>
-          <span className="v mono">
-            {Number(ticker.volume24h || 0).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })} RESET
-          </span>
-        </div>
-
-        {/* Connected Wallet Pill or Connect Button */}
-        {connectedSolanaWallet ? (
-          <div style={{ position: 'relative', marginLeft: 'auto' }}>
+          <div className="pairs" role="tablist">
             <button 
-              onClick={() => setShowAccountDropdown(!showAccountDropdown)}
+              type="button" 
+              role="tab" 
+              aria-selected="true"
+              style={{ cursor: 'default', background: 'var(--raised)', color: 'var(--text)' }}
+            >
+              RESET/USDC
+            </button>
+          </div>
+
+          <div className="last mono">
+            <span>{parseFloat(activePriceDisplay).toFixed(2)}</span>
+            <span className="unit">USDC</span>
+          </div>
+
+          <div className="stat">
+            <span className="k">24h change</span>
+            <span className="v mono" style={{ color: parseFloat(ticker.change24h) >= 0 ? 'var(--up)' : 'var(--down)' }}>
+              {parseFloat(ticker.change24h) >= 0 ? '+' : ''}{ticker.change24h}%
+            </span>
+          </div>
+
+          <div className="stat">
+            <span className="k">24h high</span>
+            <span className="v mono">{ticker.high24h}</span>
+          </div>
+
+          <div className="stat">
+            <span className="k">24h low</span>
+            <span className="v mono">{ticker.low24h}</span>
+          </div>
+
+          <div className="stat">
+            <span className="k">24h volume</span>
+            <span className="v mono">
+              {Number(ticker.volume24h || 0).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })} RESET
+            </span>
+          </div>
+        </div>
+
+        {/* Pinned Wallet Action with Unclipped Dropdown */}
+        <div className="pairbar-actions" ref={accountDropdownRef}>
+          {connectedSolanaWallet ? (
+            <div style={{ position: 'relative' }}>
+              <button 
+                onClick={() => setShowAccountDropdown(!showAccountDropdown)}
+                className="btn btn-secondary" 
+                style={{ 
+                  padding: '7px 14px', 
+                  fontSize: '12px', 
+                  display: 'flex', 
+                  alignItems: 'center', 
+                  gap: '7px',
+                  background: 'var(--raised)',
+                  borderColor: showAccountDropdown ? 'var(--accent)' : 'var(--line)'
+                }}
+                title="Manage wallet"
+              >
+                <span style={{ width: '7px', height: '7px', borderRadius: '50%', background: '#2ebd85' }}></span>
+                <span style={{ fontWeight: '600' }}>{connectedWalletName ? `${connectedWalletName}: ` : ''}{connectedSolanaWallet.slice(0, 4)}...{connectedSolanaWallet.slice(-4)}</span>
+                <ChevronDown size={14} style={{ transform: showAccountDropdown ? 'rotate(180deg)' : 'none', transition: 'transform 0.2s', color: 'var(--muted)' }} />
+              </button>
+
+              {/* Complete, Unclipped Dropdown Menu */}
+              {showAccountDropdown && (
+                <div style={{
+                  position: 'absolute',
+                  top: 'calc(100% + 8px)',
+                  right: 0,
+                  background: '#13161b',
+                  border: '1px solid #282f3b',
+                  borderRadius: '10px',
+                  padding: '14px',
+                  minWidth: '280px',
+                  boxShadow: '0 16px 40px rgba(0,0,0,0.7)',
+                  zIndex: 100,
+                  display: 'flex',
+                  flexDirection: 'column',
+                  gap: '12px'
+                }}>
+                  {/* Top Header */}
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', paddingBottom: '8px', borderBottom: '1px solid var(--line)' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                      <span style={{ width: '8px', height: '8px', borderRadius: '50%', background: '#2ebd85' }}></span>
+                      <strong style={{ fontSize: '12px', color: '#fff' }}>{connectedWalletName || 'Solana Wallet'}</strong>
+                    </div>
+                    <span style={{ fontSize: '10px', color: '#2ebd85', background: 'rgba(46, 189, 133, 0.15)', padding: '2px 6px', borderRadius: '4px', fontWeight: 'bold' }}>
+                      Connected
+                    </span>
+                  </div>
+
+                  {/* Address Box with Copy */}
+                  <div style={{ background: '#0a0d12', border: '1px solid #1a202c', padding: '8px 10px', borderRadius: '6px' }}>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '4px' }}>
+                      <span style={{ fontSize: '10px', color: 'var(--muted)', textTransform: 'uppercase', letterSpacing: '0.4px', fontWeight: 'bold' }}>Public Key</span>
+                      <button
+                        type="button"
+                        onClick={() => handleCopy(connectedSolanaWallet)}
+                        style={{ background: 'none', border: 'none', color: copiedAddress ? '#2ebd85' : 'var(--accent)', cursor: 'pointer', fontSize: '11px', display: 'flex', alignItems: 'center', gap: '4px', padding: 0 }}
+                      >
+                        {copiedAddress ? <Check size={11} /> : <Copy size={11} />}
+                        <span>{copiedAddress ? 'Copied' : 'Copy'}</span>
+                      </button>
+                    </div>
+                    <div className="mono" style={{ fontSize: '11px', color: '#e7e9ec', wordBreak: 'break-all' }}>
+                      {connectedSolanaWallet}
+                    </div>
+                  </div>
+
+                  {/* Asset Balances */}
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '6px', background: '#0a0d12', border: '1px solid #1a202c', padding: '10px', borderRadius: '6px' }}>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: '12px' }}>
+                      <span style={{ color: 'var(--muted)' }}>RESET Balance</span>
+                      <span className="mono" style={{ color: '#fff', fontWeight: 'bold' }}>{visitorReset}</span>
+                    </div>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: '12px' }}>
+                      <span style={{ color: 'var(--muted)' }}>USDC Balance</span>
+                      <span className="mono" style={{ color: '#2ebd85', fontWeight: 'bold' }}>${visitorUsdc !== null ? visitorUsdc : '0.00'}</span>
+                    </div>
+                    {visitorSol && (
+                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: '12px' }}>
+                        <span style={{ color: 'var(--muted)' }}>SOL (Gas)</span>
+                        <span className="mono" style={{ color: '#e7e9ec' }}>{visitorSol} SOL</span>
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Disconnect Button */}
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setConnectedSolanaWallet(null);
+                      setConnectedWalletName(null);
+                      setShowAccountDropdown(false);
+                    }}
+                    className="btn btn-secondary"
+                    style={{ 
+                      width: '100%', 
+                      padding: '8px', 
+                      fontSize: '11px', 
+                      color: 'var(--down)', 
+                      borderColor: 'rgba(240, 97, 109, 0.4)',
+                      background: 'rgba(240, 97, 109, 0.08)',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      gap: '6px'
+                    }}
+                  >
+                    <LogOut size={13} />
+                    <span>Disconnect Wallet</span>
+                  </button>
+                </div>
+              )}
+            </div>
+          ) : (
+            <button 
+              onClick={() => setShowWalletModal(true)}
               className="btn btn-secondary" 
-              style={{ padding: '6px 12px', fontSize: '12px', display: 'flex', alignItems: 'center', gap: '6px' }}
-              title="Manage wallet"
+              style={{ padding: '7px 16px', fontSize: '12px', display: 'flex', alignItems: 'center', gap: '6px' }}
             >
               <Wallet size={14} />
-              <span>{connectedWalletName ? `${connectedWalletName}: ` : ''}{connectedSolanaWallet.slice(0, 4)}...{connectedSolanaWallet.slice(-4)}</span>
-              <ChevronDown size={13} style={{ transform: showAccountDropdown ? 'rotate(180deg)' : 'none', transition: 'transform 0.2s' }} />
+              <span>Connect Wallet</span>
             </button>
-
-            {/* Dropdown */}
-            {showAccountDropdown && (
-              <div style={{
-                position: 'absolute',
-                top: 'calc(100% + 6px)',
-                right: 0,
-                background: 'var(--panel)',
-                border: '1px solid var(--line)',
-                borderRadius: '8px',
-                padding: '12px 14px',
-                minWidth: '240px',
-                boxShadow: '0 10px 25px rgba(0,0,0,0.5)',
-                zIndex: 60,
-                display: 'flex',
-                flexDirection: 'column',
-                gap: '8px'
-              }}>
-                <div style={{ fontSize: '11px', color: 'var(--muted)', display: 'flex', justifyContent: 'space-between' }}>
-                  <span>Connected via</span>
-                  <strong style={{ color: 'var(--text)' }}>{connectedWalletName || 'Solana Wallet'}</strong>
-                </div>
-                <div className="mono" style={{ fontSize: '11px', color: 'var(--text)', wordBreak: 'break-all', background: 'var(--sunken)', padding: '6px 8px', borderRadius: '4px' }}>
-                  {connectedSolanaWallet}
-                </div>
-                <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '12px', borderTop: '1px solid var(--line)', paddingTop: '6px' }}>
-                  <span style={{ color: 'var(--muted)' }}>RESET</span>
-                  <span className="mono" style={{ color: 'var(--text)', fontWeight: 'bold' }}>{visitorReset}</span>
-                </div>
-                <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '12px' }}>
-                  <span style={{ color: 'var(--muted)' }}>USDC</span>
-                  <span className="mono" style={{ color: 'var(--text)', fontWeight: 'bold' }}>${visitorUsdc !== null ? visitorUsdc : '0.00'}</span>
-                </div>
-                <button
-                  type="button"
-                  onClick={() => {
-                    setConnectedSolanaWallet(null);
-                    setConnectedWalletName(null);
-                    setShowAccountDropdown(false);
-                  }}
-                  className="btn btn-secondary"
-                  style={{ width: '100%', marginTop: '4px', padding: '6px', fontSize: '11px', color: 'var(--down)', borderColor: 'var(--down)' }}
-                >
-                  Disconnect Wallet
-                </button>
-              </div>
-            )}
-          </div>
-        ) : (
-          <button 
-            onClick={() => setShowWalletModal(true)}
-            className="btn btn-secondary" 
-            style={{ marginLeft: 'auto', padding: '6px 14px', fontSize: '12px', display: 'flex', alignItems: 'center', gap: '6px' }}
-          >
-            <Wallet size={14} />
-            <span>Connect Wallet</span>
-          </button>
-        )}
+          )}
+        </div>
       </div>
 
       {/* Main Trading Floor: 3-column Layout (Chart, Order Book, Swap) */}

@@ -96,14 +96,39 @@ body {
 .pairbar {
   display: flex;
   align-items: center;
-  gap: 22px;
+  justify-content: space-between;
   padding: 6px 12px;
   background: var(--panel);
   border: 1px solid var(--line);
   border-radius: 8px;
+  min-height: 52px;
+  position: relative;
+  z-index: 50;
+  overflow: visible;
+}
+
+.pairbar-stats {
+  display: flex;
+  align-items: center;
+  gap: 22px;
   overflow-x: auto;
   white-space: nowrap;
-  min-height: 52px;
+  flex: 1;
+  min-width: 0;
+  scrollbar-width: none;
+}
+
+.pairbar-stats::-webkit-scrollbar {
+  display: none;
+}
+
+.pairbar-actions {
+  display: flex;
+  align-items: center;
+  margin-left: 16px;
+  flex: none;
+  position: relative;
+  z-index: 60;
 }
 
 .pairs {
