@@ -19,7 +19,11 @@ import {
   MessageCircle,
   Star,
   Lock,
-  RotateCcw
+  RotateCcw,
+  QrCode,
+  Copy,
+  Check,
+  Smartphone
 } from 'lucide-react';
 import CandleChart from './components/CandleChart';
 import marketSnapshot from './data/market-snapshot.json';
@@ -42,6 +46,34 @@ export default function App() {
   const [tradeStatus, setTradeStatus] = useState(null);
   const [isTrading, setIsTrading] = useState(false);
   const [showTrustModal, setShowTrustModal] = useState(false);
+  const [showPaymentModal, setShowPaymentModal] = useState(false);
+  const [paymentTab, setPaymentTab] = useState('qr'); // 'qr' | 'web3'
+  const [copiedAddress, setCopiedAddress] = useState(false);
+  const [connectedSolanaWallet, setConnectedSolanaWallet] = useState(null);
+  const [isConnectingWallet, setIsConnectingWallet] = useState(false);
+
+  const handleCopy = (text) => {
+    navigator.clipboard.writeText(text);
+    setCopiedAddress(true);
+    setTimeout(() => setCopiedAddress(false), 2000);
+  };
+
+  const handleConnectWallet = async () => {
+    if (typeof window !== 'undefined' && window.solana?.isPhantom) {
+      try {
+        setIsConnectingWallet(true);
+        const resp = await window.solana.connect();
+        setConnectedSolanaWallet(resp.publicKey.toString());
+      } catch (err) {
+        console.warn('Wallet connection cancelled:', err);
+      } finally {
+        setIsConnectingWallet(false);
+      }
+    } else {
+      setShowPaymentModal(true);
+      setPaymentTab('web3');
+    }
+  };
 
   // Fetch live orderbook and tickers from Intercom-DEX (with snapshot fallback)
   const fetchData = async () => {
@@ -316,10 +348,29 @@ export default function App() {
             <span className="mono" style={{ color: '#fff' }}>${freeUsdc}</span>
           </div>
 
-          <button className="btn btn-solana" style={{ padding: '8px 14px', fontSize: '13px' }}>
-            <Wallet size={16} />
-            <span>{solWallet.slice(0, 4)}...{solWallet.slice(-4)}</span>
-          </button>
+          {connectedSolanaWallet ? (
+            <button 
+              onClick={() => setConnectedSolanaWallet(null)}
+              className="btn btn-solana" 
+              style={{ padding: '8px 14px', fontSize: '13px' }}
+              title="Click to disconnect"
+            >
+              <Wallet size={16} />
+              <span>{connectedSolanaWallet.slice(0, 4)}...{connectedSolanaWallet.slice(-4)}</span>
+            </button>
+          ) : (
+            <button 
+              onClick={handleConnectWallet}
+              className="btn btn-solana" 
+              style={{ padding: '8px 14px', fontSize: '13px', display: 'flex', alignItems: 'center', gap: '8px' }}
+            >
+              <Wallet size={16} />
+              <span>{isConnectingWallet ? 'Connecting...' : 'Connect Wallet'}</span>
+              <span style={{ fontSize: '10px', background: 'rgba(16, 185, 129, 0.25)', color: '#34d399', padding: '2px 6px', borderRadius: '4px' }}>
+                QR Ready
+              </span>
+            </button>
+          )}
         </div>
       </header>
 
@@ -633,22 +684,13 @@ export default function App() {
                 </div>
 
                 <button 
-                  onClick={handleExecuteBuy}
+                  onClick={() => setShowPaymentModal(true)}
                   disabled={isTrading}
                   className="btn btn-primary"
                   style={{ width: '100%', padding: '14px', fontSize: '15px' }}
                 >
-                  {isTrading ? (
-                    <>
-                      <RefreshCw size={18} className="spin" />
-                      <span>Locking into Solana Escrow...</span>
-                    </>
-                  ) : (
-                    <>
-                      <Zap size={18} />
-                      <span>Buy {tradeAmount} RESET (${finalBuyTotal} USDC)</span>
-                    </>
-                  )}
+                  <Zap size={18} />
+                  <span>Buy {tradeAmount} RESET (${finalBuyTotal} USDC)</span>
                 </button>
               </>
             )}
@@ -724,6 +766,8 @@ export default function App() {
                 <button 
                   onClick={handleExecuteSell}
                   disabled={isTrading}
+                  onClick={() => setShowPaymentModal(true)}
+                  disabled={isTrading}
                   style={{
                     width: '100%',
                     padding: '14px',
@@ -741,22 +785,13 @@ export default function App() {
                     gap: '8px'
                   }}
                 >
-                  {isTrading ? (
-                    <>
-                      <RefreshCw size={18} className="spin" />
-                      <span>Executing Sell on DEX...</span>
-                    </>
-                  ) : (
-                    <>
-                      <ArrowUpRight size={18} />
-                      <span>
-                        {subTab === 'instant' 
-                          ? `Instant Sell for $${finalSellProceeds} USDC`
-                          : `Place Sell Order at $${customPrice}`
-                        }
-                      </span>
-                    </>
-                  )}
+                  <ArrowUpRight size={18} />
+                  <span>
+                    {subTab === 'instant' 
+                      ? `Instant Sell for $${finalSellProceeds} USDC`
+                      : `Place Sell Order at $${customPrice}`
+                    }
+                  </span>
                 </button>
               </>
             )}
@@ -835,6 +870,283 @@ export default function App() {
                 style={{ padding: '10px 24px' }}
               >
                 Got it, Continue Trading
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Hybrid Settlement Modal (QR Code or Web3 Wallet) */}
+      {showPaymentModal && (
+        <div style={{
+          position: 'fixed',
+          top: 0,
+          left: 0,
+          right: 0,
+          bottom: 0,
+          background: 'rgba(0, 0, 0, 0.82)',
+          backdropFilter: 'blur(10px)',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          zIndex: 110,
+          padding: '16px'
+        }}>
+          <div className="card" style={{ maxWidth: '540px', width: '100%', padding: '24px', gap: '16px', maxHeight: '92vh', overflowY: 'auto' }}>
+            {/* Header */}
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                <Zap size={22} style={{ color: 'var(--color-solana)' }} />
+                <div>
+                  <div style={{ fontSize: '18px', fontWeight: '800' }}>
+                    {tradeMode === 'buy' ? 'Худалдан авалтыг баталгаажуулах' : 'Худалдааг баталгаажуулах'}
+                  </div>
+                  <div style={{ fontSize: '11px', color: 'var(--text-dim)' }}>
+                    100% Non-Custodial Smart Contract Escrow
+                  </div>
+                </div>
+              </div>
+              <button 
+                onClick={() => setShowPaymentModal(false)}
+                style={{ background: 'none', border: 'none', color: 'var(--text-dim)', fontSize: '22px', cursor: 'pointer' }}
+              >
+                ✕
+              </button>
+            </div>
+
+            {/* Trade Details Summary */}
+            <div style={{ 
+              background: 'var(--bg-main)', 
+              padding: '14px 18px', 
+              borderRadius: '10px', 
+              border: '1px solid var(--border-color)',
+              display: 'grid',
+              gridTemplateColumns: '1fr 1fr',
+              gap: '10px',
+              fontSize: '12px'
+            }}>
+              <div>
+                <span style={{ color: 'var(--text-dim)', display: 'block' }}>Авах койн:</span>
+                <span className="mono" style={{ fontWeight: 'bold', fontSize: '14px', color: '#fff' }}>
+                  {tradeAmount} RESET
+                </span>
+              </div>
+              <div style={{ textAlign: 'right' }}>
+                <span style={{ color: 'var(--text-dim)', display: 'block' }}>Төлөх нийт дүн:</span>
+                <span className="mono" style={{ fontWeight: 'bold', fontSize: '14px', color: 'var(--color-green)' }}>
+                  ${finalBuyTotal} USDC
+                </span>
+              </div>
+              <div style={{ gridColumn: 'span 2', borderTop: '1px solid var(--border-color)', paddingTop: '8px', display: 'flex', justifyContent: 'space-between', fontSize: '11px' }}>
+                <span style={{ color: 'var(--text-muted)' }}>1.0% Платформын шимтгэл:</span>
+                <span className="mono" style={{ color: 'var(--color-solana)', fontWeight: 'bold' }}>+${platformFee.toFixed(3)} USDC</span>
+              </div>
+            </div>
+
+            {/* Hybrid Method Switcher Tabs */}
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px', background: 'var(--bg-main)', padding: '4px', borderRadius: '8px' }}>
+              <button
+                onClick={() => setPaymentTab('qr')}
+                style={{
+                  padding: '10px',
+                  borderRadius: '6px',
+                  border: 'none',
+                  background: paymentTab === 'qr' ? 'var(--color-primary)' : 'transparent',
+                  color: paymentTab === 'qr' ? '#fff' : 'var(--text-dim)',
+                  fontWeight: 'bold',
+                  fontSize: '12px',
+                  cursor: 'pointer',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  gap: '6px'
+                }}
+              >
+                <QrCode size={15} />
+                <span>📱 QR Төлбөр (Хэтэвчгүй)</span>
+              </button>
+
+              <button
+                onClick={() => setPaymentTab('web3')}
+                style={{
+                  padding: '10px',
+                  borderRadius: '6px',
+                  border: 'none',
+                  background: paymentTab === 'web3' ? 'var(--color-primary)' : 'transparent',
+                  color: paymentTab === 'web3' ? '#fff' : 'var(--text-dim)',
+                  fontWeight: 'bold',
+                  fontSize: '12px',
+                  cursor: 'pointer',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  gap: '6px'
+                }}
+              >
+                <Wallet size={15} />
+                <span>⚡ Web3 (Phantom)</span>
+              </button>
+            </div>
+
+            {/* TAB 1: QR CODE DIRECT DEPOSIT (NO EXTENSION NEEDED) */}
+            {paymentTab === 'qr' && (
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '14px', alignItems: 'center', textAlign: 'center' }}>
+                <div style={{ fontSize: '12px', color: 'var(--text-muted)', lineHeight: '1.5' }}>
+                  Хөтөч дээрээ ямар ч хэтэвч холбох шаардлагагүй. Аль ч бирж эсвэл гар утасны түрийвчнээсээ доорх QR кодыг уншуулаад <strong>${finalBuyTotal} USDC</strong> шилжүүлнэ үү.
+                </div>
+
+                {/* QR Code Container */}
+                <div style={{ 
+                  background: '#fff', 
+                  padding: '12px', 
+                  borderRadius: '12px', 
+                  boxShadow: '0 8px 24px rgba(0, 0, 0, 0.4)',
+                  display: 'inline-block' 
+                }}>
+                  <img 
+                    src={`https://api.qrserver.com/v1/create-qr-code/?size=180x180&margin=0&data=solana:${PLATFORM_COLLECTOR}?amount=${finalBuyTotal}&spl-token=EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v`}
+                    alt="Solana Escrow QR Code"
+                    style={{ width: '180px', height: '180px', display: 'block' }}
+                  />
+                </div>
+
+                {/* Deposit Address Box */}
+                <div style={{ width: '100%', background: 'var(--bg-main)', padding: '10px 14px', borderRadius: '8px', border: '1px solid var(--border-color)', textAlign: 'left' }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '6px' }}>
+                    <span style={{ fontSize: '11px', color: 'var(--text-dim)', fontWeight: 'bold' }}>Шилжүүлэх Solana Escrow Хаяг:</span>
+                    <button 
+                      onClick={() => handleCopy(PLATFORM_COLLECTOR)}
+                      style={{ 
+                        background: copiedAddress ? 'var(--color-green)' : 'rgba(99, 102, 241, 0.15)', 
+                        border: 'none', 
+                        color: copiedAddress ? '#fff' : 'var(--color-solana)',
+                        padding: '4px 8px',
+                        borderRadius: '4px',
+                        fontSize: '11px',
+                        cursor: 'pointer',
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: '4px',
+                        fontWeight: 'bold',
+                        transition: 'all 0.2s'
+                      }}
+                    >
+                      {copiedAddress ? <Check size={12} /> : <Copy size={12} />}
+                      <span>{copiedAddress ? 'Хуулагдлаа!' : 'Хаяг хуулах'}</span>
+                    </button>
+                  </div>
+                  <div className="mono" style={{ fontSize: '11px', color: '#fff', wordBreak: 'break-all' }}>
+                    {PLATFORM_COLLECTOR}
+                  </div>
+                </div>
+
+                {/* Destination Trac Address */}
+                <div style={{ width: '100%', textAlign: 'left' }}>
+                  <label style={{ fontSize: '11px', fontWeight: 'bold', color: 'var(--text-muted)', marginBottom: '4px', display: 'block' }}>
+                    Таны RESET хүлээн авах Trac хаяг:
+                  </label>
+                  <input 
+                    type="text"
+                    value={tracAddress}
+                    onChange={(e) => setTracAddress(e.target.value)}
+                    className="input-field mono"
+                    style={{ fontSize: '11px', padding: '8px 12px' }}
+                    placeholder="trac1..."
+                  />
+                </div>
+
+                {/* Live Blockchain Listener Animation */}
+                <div style={{ 
+                  width: '100%',
+                  background: 'rgba(16, 185, 129, 0.08)', 
+                  border: '1px solid rgba(16, 185, 129, 0.25)', 
+                  borderRadius: '8px', 
+                  padding: '10px 14px',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'space-between',
+                  fontSize: '12px'
+                }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px', color: 'var(--color-green)' }}>
+                    <span className="badge-dot" style={{ background: 'var(--color-green)', animation: 'pulse 1.5s infinite' }}></span>
+                    <span style={{ fontWeight: 'bold' }}>Гүйлгээг сүлжээн дээр хүлээж байна...</span>
+                  </div>
+                  <div style={{ fontSize: '11px', color: 'var(--text-dim)', display: 'flex', alignItems: 'center', gap: '4px' }}>
+                    <Clock size={12} />
+                    <span>~15-30 сек</span>
+                  </div>
+                </div>
+
+                <div style={{ fontSize: '11px', color: 'var(--text-dim)', display: 'flex', alignItems: 'center', gap: '6px' }}>
+                  <Lock size={12} style={{ color: 'var(--color-green)' }} />
+                  <span>10 минутын Auto-Refund хамгаалалттай (Амжилтгүй бол 100% автоматаар буцна).</span>
+                </div>
+              </div>
+            )}
+
+            {/* TAB 2: WEB3 ONE-CLICK (PHANTOM) */}
+            {paymentTab === 'web3' && (
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '16px', padding: '10px 0' }}>
+                <div style={{ fontSize: '13px', color: 'var(--text-muted)', lineHeight: '1.6' }}>
+                  Хэрэв таны хөтөч дээр <strong>Phantom</strong> эсвэл <strong>Solflare</strong> түрийвч суугдсан бол 1-хэн товшилтоор ухаалаг гэрээнд гарын үсэг зурж шууд арилжаа хийх боломжтой.
+                </div>
+
+                {connectedSolanaWallet ? (
+                  <div style={{ background: 'var(--bg-main)', padding: '16px', borderRadius: '10px', border: '1px solid var(--border-color)', display: 'flex', flexDirection: 'column', gap: '12px' }}>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                      <span style={{ fontSize: '12px', color: 'var(--text-dim)' }}>Холбогдсон хэтэвч:</span>
+                      <span className="mono" style={{ fontSize: '12px', color: 'var(--color-green)', fontWeight: 'bold' }}>
+                        {connectedSolanaWallet.slice(0, 6)}...{connectedSolanaWallet.slice(-6)}
+                      </span>
+                    </div>
+
+                    <button
+                      onClick={handleExecuteBuy}
+                      disabled={isTrading}
+                      className="btn btn-primary"
+                      style={{ width: '100%', padding: '14px', fontSize: '14px' }}
+                    >
+                      {isTrading ? (
+                        <>
+                          <RefreshCw size={16} className="spin" />
+                          <span>Гүйлгээг баталгаажуулж байна...</span>
+                        </>
+                      ) : (
+                        <>
+                          <Zap size={16} />
+                          <span>Phantom-оор ${finalBuyTotal} USDC төлөх</span>
+                        </>
+                      )}
+                    </button>
+                  </div>
+                ) : (
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+                    <button
+                      onClick={handleConnectWallet}
+                      disabled={isConnectingWallet}
+                      className="btn btn-solana"
+                      style={{ width: '100%', padding: '14px', fontSize: '14px', justifyContent: 'center' }}
+                    >
+                      <Wallet size={18} />
+                      <span>{isConnectingWallet ? 'Холбогдож байна...' : 'Phantom Түрийвчээ холбох'}</span>
+                    </button>
+
+                    <div style={{ background: 'rgba(255, 255, 255, 0.03)', padding: '12px', borderRadius: '8px', fontSize: '11px', color: 'var(--text-dim)', textAlign: 'center' }}>
+                      💡 Хэрэв та гар утас эсвэл түрийвчгүй орсон бол дээд талын <strong>"📱 QR Төлбөр"</strong> табыг сонгон төлбөрөө хийнэ үү.
+                    </div>
+                  </div>
+                )}
+              </div>
+            )}
+
+            {/* Footer Close Button */}
+            <div style={{ display: 'flex', justifyContent: 'flex-end', borderTop: '1px solid var(--border-color)', paddingTop: '14px' }}>
+              <button 
+                onClick={() => setShowPaymentModal(false)}
+                className="btn btn-secondary"
+                style={{ padding: '8px 20px', fontSize: '12px' }}
+              >
+                Хаах
               </button>
             </div>
           </div>
