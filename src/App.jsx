@@ -460,24 +460,29 @@ export default function App() {
             <span>Support</span>
           </a>
 
-          {connectedSolanaWallet ? (
-            <div className="badge" style={{ background: 'var(--bg-main)', border: '1px solid var(--border-glow)' }}>
-              <span style={{ color: '#38bdf8', fontWeight: 'bold' }}>USDC:</span>
-              <span className="mono" style={{ color: '#fff' }}>
-                ${visitorUsdc !== null ? visitorUsdc : '...'}
-              </span>
-              <span style={{ color: 'var(--text-dim)' }}>|</span>
-              <span style={{ color: '#a855f7', fontWeight: 'bold' }}>SOL:</span>
-              <span className="mono" style={{ color: '#fff' }}>
-                {visitorSol !== null ? visitorSol : '...'}
-              </span>
-            </div>
-          ) : (
-            <div className="badge" style={{ background: 'var(--bg-main)', border: '1px solid var(--border-glow)' }}>
-              <span className="badge-dot"></span>
-              <span style={{ color: 'var(--color-green)' }}>Mainnet Active</span>
-            </div>
-          )}
+          <div className="badge" style={{ background: 'var(--bg-main)', border: '1px solid var(--border-glow)' }}>
+            <span style={{ color: '#f7931a', fontWeight: 'bold' }}>RESET:</span>
+            <span className="mono" style={{ color: '#fff' }}>{freeReset}</span>
+            <span style={{ color: 'var(--text-dim)' }}>|</span>
+            {connectedSolanaWallet ? (
+              <>
+                <span style={{ color: '#38bdf8', fontWeight: 'bold' }}>USDC:</span>
+                <span className="mono" style={{ color: '#fff' }}>
+                  ${visitorUsdc !== null ? visitorUsdc : '0.00'}
+                </span>
+                <span style={{ color: 'var(--text-dim)' }}>|</span>
+                <span style={{ color: '#a855f7', fontWeight: 'bold' }}>SOL:</span>
+                <span className="mono" style={{ color: '#fff' }}>
+                  {visitorSol !== null ? visitorSol : '0.00'}
+                </span>
+              </>
+            ) : (
+              <>
+                <span style={{ color: '#38bdf8', fontWeight: 'bold' }}>USDC:</span>
+                <span className="mono" style={{ color: '#fff' }}>${freeUsdc}</span>
+              </>
+            )}
+          </div>
 
           {connectedSolanaWallet ? (
             <div style={{ position: 'relative' }}>
@@ -780,7 +785,7 @@ export default function App() {
 
         {/* Center: Live Candlestick K-Line Chart */}
         <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
-          <CandleChart pair={pair} />
+          <CandleChart pair={pair} currentPrice={bestAsk} />
 
           {/* Protocol Trust & Proof Status */}
           <div className="card" style={{ padding: '16px 20px', flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>

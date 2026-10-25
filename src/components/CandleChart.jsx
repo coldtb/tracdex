@@ -3,10 +3,11 @@ import { createChart, ColorType, CandlestickSeries, HistogramSeries, CrosshairMo
 import { BarChart3, Clock, TrendingUp, RefreshCw, ZoomIn, ZoomOut } from 'lucide-react';
 import marketSnapshot from '../data/market-snapshot.json';
 
-export default function CandleChart({ pair = 'RESET/USDC' }) {
+export default function CandleChart({ pair = 'RESET/USDC', currentPrice = '36.00' }) {
   const [interval, setIntervalVal] = useState('1h');
   const [loading, setLoading] = useState(true);
   const [activeCandle, setActiveCandle] = useState(null);
+  const latestCandleRef = useRef(null);
   const chartContainerRef = useRef(null);
   const chartInstanceRef = useRef(null);
   const seriesRef = useRef(null);
@@ -102,6 +103,9 @@ export default function CandleChart({ pair = 'RESET/USDC' }) {
     // Crosshair hover listener
     chart.subscribeCrosshairMove((param) => {
       if (!param || !param.time || !param.seriesData || !candleSeries) {
+        if (latestCandleRef.current) {
+          setActiveCandle(latestCandleRef.current);
+        }
         return;
       }
       const data = param.seriesData.get(candleSeries);
@@ -181,26 +185,38 @@ export default function CandleChart({ pair = 'RESET/USDC' }) {
           }
         }
 
-        seriesRef.current.setData(uniqueCandles);
-
-        // Volumes
-        if (volumeSeriesRef.current) {
-          const volData = rawCandles.map((c) => {
-            const val = parseFloat(c.v?.text || '12.5');
-            const isUp = parseFloat(c.c) >= parseFloat(c.o);
-            return {
-              time: c.t,
-              value: val,
-              color: isUp ? 'rgba(16, 185, 129, 0.35)' : 'rgba(244, 63, 94, 0.35)',
-            };
-          }).filter((v, idx, arr) => arr.findIndex(x => x.time === v.time) === idx)
-            .sort((a, b) => a.time - b.time);
-
-          volumeSeriesRef.current.setData(volData);
-        }
-
         if (uniqueCandles.length) {
-          const last = uniqueCandles[uniqueCandles.length - 1];
+          // Harmonize the latest candle with live orderbook price
+          const activeLivePrice = parseFloat(currentPrice || '36.00');
+          const lastIdx = uniqueCandles.length - 1;
+          uniqueCandles[lastIdx].close = activeLivePrice;
+          if (activeLivePrice > uniqueCandles[lastIdx].high) {
+            uniqueCandles[lastIdx].high = activeLivePrice;
+          }
+          if (activeLivePrice < uniqueCandles[lastIdx].low) {
+            uniqueCandles[lastIdx].low = activeLivePrice;
+          }
+
+          seriesRef.current.setData(uniqueCandles);
+
+          // Volumes
+          if (volumeSeriesRef.current) {
+            const volData = rawCandles.map((c) => {
+              const val = parseFloat(c.v?.text || '12.5');
+              const isUp = parseFloat(c.c) >= parseFloat(c.o);
+              return {
+                time: c.t,
+                value: val,
+                color: isUp ? 'rgba(16, 185, 129, 0.35)' : 'rgba(244, 63, 94, 0.35)',
+              };
+            }).filter((v, idx, arr) => arr.findIndex(x => x.time === v.time) === idx)
+              .sort((a, b) => a.time - b.time);
+
+            volumeSeriesRef.current.setData(volData);
+          }
+
+          const last = uniqueCandles[lastIdx];
+          latestCandleRef.current = last;
           setActiveCandle(last);
         }
       }
@@ -213,9 +229,9 @@ export default function CandleChart({ pair = 'RESET/USDC' }) {
 
   useEffect(() => {
     loadCandles();
-    const intervalTimer = setInterval(loadCandles, 10000);
+    const intervalTimer = setInterval(loadCandles, 8000);
     return () => clearInterval(intervalTimer);
-  }, [pair, interval]);
+  }, [pair, interval, currentPrice]);
 
   return (
     <div className="card" style={{ flex: 1, minHeight: '420px', display: 'flex', flexDirection: 'column' }}>
