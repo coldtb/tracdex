@@ -306,7 +306,7 @@ export default function App() {
       setVisitorSol(freeSol || '0.0158');
     } else {
       const savedBal = localStorage.getItem(`tracdex_reset_${connectedSolanaWallet}`);
-      setVisitorReset(savedBal || LIVE_RESET_FREE);
+      setVisitorReset(savedBal || '0.0000');
     }
 
     // Robust multi-endpoint Solana RPC query helper
@@ -566,17 +566,23 @@ export default function App() {
     setSliderPct(pct);
     const p = Math.max(0, Math.min(100, Number(pct)));
     if (tradeMode === 'buy') {
-      const avail = parseFloat(visitorUsdc || '0.40');
+      const avail = parseFloat(visitorUsdc || '0');
       const effP = orderType === 'limit' ? parseFloat(customPrice || '42.00') : parseFloat(bestAsk || '42.00');
-      if (effP > 0) {
+      if (effP > 0 && avail > 0) {
         const maxReset = avail / (effP * 1.01);
         const calcAmt = (maxReset * (p / 100)).toFixed(4);
         setTradeAmount(Math.max(0.0001, parseFloat(calcAmt)).toString());
+      } else {
+        setTradeAmount('0.0000');
       }
     } else {
-      const avail = parseFloat(visitorReset || '0.0863');
-      const calcAmt = (avail * (p / 100)).toFixed(4);
-      setTradeAmount(Math.max(0.0001, parseFloat(calcAmt)).toString());
+      const avail = parseFloat(visitorReset || '0');
+      if (avail > 0) {
+        const calcAmt = (avail * (p / 100)).toFixed(4);
+        setTradeAmount(Math.max(0.0001, parseFloat(calcAmt)).toString());
+      } else {
+        setTradeAmount('0.0000');
+      }
     }
   };
 
@@ -854,17 +860,21 @@ export default function App() {
                   {/* Asset Balances */}
                   <div style={{ display: 'flex', flexDirection: 'column', gap: '6px', background: '#0a0d12', border: '1px solid #1a202c', padding: '10px', borderRadius: '6px' }}>
                     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: '12px' }}>
-                      <span style={{ color: 'var(--muted)' }}>RESET (Available)</span>
-                      <span className="mono" style={{ color: '#fff', fontWeight: 'bold' }}>{visitorReset} RESET</span>
+                      <span style={{ color: 'var(--muted)' }}>RESET Balance</span>
+                      <span className="mono" style={{ color: '#fff', fontWeight: 'bold' }}>{visitorReset || '0.0000'} RESET</span>
                     </div>
-                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: '11px' }}>
-                      <span style={{ color: 'var(--muted)' }}>RESET (Mining Locked)</span>
-                      <span className="mono" style={{ color: '#f7931a', fontWeight: '600' }}>0.1000 RESET</span>
-                    </div>
-                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: '11px', borderTop: '1px solid #1a222e', paddingTop: '4px' }}>
-                      <span style={{ color: 'var(--muted)' }}>Total RESET Owned</span>
-                      <span className="mono" style={{ color: '#20d6a5', fontWeight: 'bold' }}>{(parseFloat(visitorReset || '0') + 0.1000).toFixed(4)} RESET</span>
-                    </div>
+                    {connectedSolanaWallet && connectedSolanaWallet.toLowerCase() === PLATFORM_COLLECTOR.toLowerCase() && (
+                      <>
+                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: '11px' }}>
+                          <span style={{ color: 'var(--muted)' }}>RESET (Mining Locked)</span>
+                          <span className="mono" style={{ color: '#f7931a', fontWeight: '600' }}>0.1000 RESET</span>
+                        </div>
+                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: '11px', borderTop: '1px solid #1a222e', paddingTop: '4px' }}>
+                          <span style={{ color: 'var(--muted)' }}>Total RESET Owned</span>
+                          <span className="mono" style={{ color: '#20d6a5', fontWeight: 'bold' }}>{(parseFloat(visitorReset || '0') + 0.1000).toFixed(4)} RESET</span>
+                        </div>
+                      </>
+                    )}
                     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: '12px' }}>
                       <span style={{ color: 'var(--muted)' }}>USDC Balance</span>
                       <span className="mono" style={{ color: '#2ebd85', fontWeight: 'bold' }}>${visitorUsdc !== null ? visitorUsdc : '0.00'}</span>
@@ -1040,13 +1050,13 @@ export default function App() {
                   <span className="k">Available to Trade</span>
                   <span className="v">
                     {tradeMode === 'buy' 
-                      ? `${visitorUsdc || '0.40'} USDC` 
-                      : `${visitorReset || '0.0863'} RESET`}
+                      ? `${connectedSolanaWallet ? (visitorUsdc !== null ? visitorUsdc : '0.00') : '0.00'} USDC` 
+                      : `${connectedSolanaWallet ? (visitorReset || '0.0000') : '0.0000'} RESET`}
                   </span>
                 </div>
                 <div className="terminal-info-row">
                   <span className="k">Current Position</span>
-                  <span className="v">{visitorReset || '0.0863'} RESET</span>
+                  <span className="v">{connectedSolanaWallet ? (visitorReset || '0.0000') : '0.0000'} RESET</span>
                 </div>
               </div>
 
@@ -1198,7 +1208,7 @@ export default function App() {
                   <div className="pro-input-top">
                     <span className="pro-label">YOU PAY</span>
                     <div className="pro-balance">
-                      <span>Bal: <strong className="mono" style={{ color: '#fff' }}>${visitorUsdc || '0.00'}</strong></span>
+                      <span>Bal: <strong className="mono" style={{ color: '#fff' }}>${connectedSolanaWallet ? (visitorUsdc !== null ? visitorUsdc : '0.00') : '0.00'}</strong></span>
                       {parseFloat(visitorUsdc || '0') > 0 && (
                         <button
                           type="button"
@@ -1363,7 +1373,7 @@ export default function App() {
                   <div className="pro-input-top">
                     <span className="pro-label">YOU PAY</span>
                     <div className="pro-balance">
-                      <span>Bal: <strong className="mono" style={{ color: '#fff' }}>{visitorReset}</strong> RESET</span>
+                      <span>Bal: <strong className="mono" style={{ color: '#fff' }}>{connectedSolanaWallet ? (visitorReset || '0.0000') : '0.0000'}</strong> RESET</span>
                       {parseFloat(visitorReset || '0') > 0 && (
                         <button
                           type="button"
