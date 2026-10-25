@@ -98,6 +98,8 @@ export default function CandleChart({ pair = 'RESET/USDC', currentPrice = '36.00
   const seriesRef = useRef(null);
   const volumeSeriesRef = useRef(null);
   const latestCandleRef = useRef(null);
+  const lastTfRef = useRef(null);
+  const initialFitDoneRef = useRef(false);
 
   // Initialize TradingView Lightweight Chart with intercom-dex color palette
   useEffect(() => {
@@ -132,20 +134,38 @@ export default function CandleChart({ pair = 'RESET/USDC', currentPrice = '36.00
       },
       rightPriceScale: {
         borderColor: '#252a33',
-        entireTextOnly: true,
-        scaleMargins: { top: 0.08, bottom: 0.26 },
+        entireTextOnly: false,
+        autoScale: true,
+        scaleMargins: { top: 0.08, bottom: 0.22 },
       },
       timeScale: {
         borderColor: '#252a33',
-        rightOffset: 3,
-        barSpacing: 8,
-        minBarSpacing: 0.5,
-        fixLeftEdge: true,
+        rightOffset: 12,
+        barSpacing: 10,
+        minBarSpacing: 0.1,
+        fixLeftEdge: false,
+        fixRightEdge: false,
         timeVisible: true,
         secondsVisible: false,
       },
-      handleScroll: true,
-      handleScale: true,
+      handleScroll: {
+        mouseWheel: true,
+        pressedMouseMove: true,
+        horzTouchDrag: true,
+        vertTouchDrag: true,
+      },
+      handleScale: {
+        axisPressedMouseMove: {
+          time: true,
+          price: true,
+        },
+        mouseWheel: true,
+        pinch: true,
+      },
+      kineticScroll: {
+        touch: true,
+        mouse: true,
+      },
     });
 
     // Add Candlestick Series
@@ -247,7 +267,12 @@ export default function CandleChart({ pair = 'RESET/USDC', currentPrice = '36.00
         volumeSeriesRef.current.setData(volPoints);
       }
 
-      chartInstanceRef.current?.timeScale().fitContent();
+      // Only auto-fit on initial load or when timeframe changes, preserving user pan & zoom
+      if (!initialFitDoneRef.current || lastTfRef.current !== interval) {
+        chartInstanceRef.current?.timeScale().fitContent();
+        initialFitDoneRef.current = true;
+        lastTfRef.current = interval;
+      }
 
       const latest = aggregated[aggregated.length - 1];
       latestCandleRef.current = latest;

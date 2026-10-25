@@ -609,16 +609,8 @@ export default function App() {
           <button 
             type="button" 
             role="tab" 
-            aria-selected={pair === 'TNK/USDC'} 
-            onClick={() => setPair('TNK/USDC')}
-          >
-            TNK/USDC
-          </button>
-          <button 
-            type="button" 
-            role="tab" 
-            aria-selected={pair === 'RESET/USDC'} 
-            onClick={() => setPair('RESET/USDC')}
+            aria-selected="true"
+            style={{ cursor: 'default', background: 'var(--raised)', color: 'var(--text)' }}
           >
             RESET/USDC
           </button>
@@ -651,14 +643,9 @@ export default function App() {
           </span>
         </div>
 
-        <div className="signers">
-          <span className="dot on"></span>
-          <span>5 signers</span>
-        </div>
-
         {/* Connected Wallet Pill or Connect Button */}
         {connectedSolanaWallet ? (
-          <div style={{ position: 'relative' }}>
+          <div style={{ position: 'relative', marginLeft: 'auto' }}>
             <button 
               onClick={() => setShowAccountDropdown(!showAccountDropdown)}
               className="btn btn-secondary" 
@@ -721,7 +708,7 @@ export default function App() {
           <button 
             onClick={() => setShowWalletModal(true)}
             className="btn btn-secondary" 
-            style={{ padding: '6px 14px', fontSize: '12px', display: 'flex', alignItems: 'center', gap: '6px' }}
+            style={{ marginLeft: 'auto', padding: '6px 14px', fontSize: '12px', display: 'flex', alignItems: 'center', gap: '6px' }}
           >
             <Wallet size={14} />
             <span>Connect Wallet</span>
@@ -797,35 +784,71 @@ export default function App() {
           </div>
         </div>
 
-        {/* Column 3: Modern Unified Swap Terminal */}
-        <div className="swap-card">
-          {/* Unified Swap Header */}
-          <div className="card-header" style={{ padding: '13px 18px', background: 'rgba(255, 255, 255, 0.015)' }}>
-            <span className="card-title" style={{ fontSize: '14px', fontWeight: '800' }}>
-              <ArrowUpDown size={16} style={{ color: 'var(--color-solana)' }} />
-              <span>Swap</span>
-            </span>
+        {/* Column 3: Pro DEX Swap Terminal */}
+        <div className="pro-swap-card">
+          {/* Header: Title & Network Badge */}
+          <div className="pro-swap-header">
             <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-              <span className="brand-badge" style={{ color: 'var(--color-green)', borderColor: 'var(--color-green-border)' }}>
-                {tradeMode === 'buy' ? 'Buy RESET' : 'Sell RESET'}
+              <span style={{ fontSize: '12px', fontWeight: '800', letterSpacing: '0.4px', color: '#fff' }}>
+                SWAP TERMINAL
               </span>
-              <span style={{ fontSize: '11px', color: 'var(--text-dim)', fontWeight: '600' }}>Slippage: 0.5%</span>
+              <span style={{ display: 'inline-flex', alignItems: 'center', gap: '4px', fontSize: '10px', color: '#2ebd85', background: 'rgba(46, 189, 133, 0.1)', padding: '2px 6px', borderRadius: '4px', fontWeight: '600' }}>
+                <span style={{ width: '5px', height: '5px', borderRadius: '50%', background: '#2ebd85' }}></span>
+                Instant P2P
+              </span>
+            </div>
+            <span style={{ fontSize: '11px', color: 'var(--muted)', fontFamily: "'JetBrains Mono', monospace" }}>
+              Slippage 0.5%
+            </span>
+          </div>
+
+          {/* Mode Switcher Tabs */}
+          <div style={{ padding: '10px 14px 2px' }}>
+            <div className="pro-swap-tabs">
+              <button
+                type="button"
+                className={`pro-swap-tab ${tradeMode === 'buy' ? 'active-buy' : ''}`}
+                onClick={() => setTradeMode('buy')}
+              >
+                <span style={{ width: '6px', height: '6px', borderRadius: '50%', background: tradeMode === 'buy' ? '#2ebd85' : 'var(--muted)' }}></span>
+                Buy RESET
+              </button>
+              <button
+                type="button"
+                className={`pro-swap-tab ${tradeMode === 'sell' ? 'active-sell' : ''}`}
+                onClick={() => setTradeMode('sell')}
+              >
+                <span style={{ width: '6px', height: '6px', borderRadius: '50%', background: tradeMode === 'sell' ? '#f0616d' : 'var(--muted)' }}></span>
+                Sell RESET
+              </button>
             </div>
           </div>
 
-          <div style={{ padding: '16px', display: 'flex', flexDirection: 'column', gap: '14px' }}>
+          <div style={{ padding: '12px 14px 16px', display: 'flex', flexDirection: 'column', gap: '10px' }}>
             {tradeMode === 'buy' ? (
               /* BUY MODE: PAY USDC -> RECEIVE RESET */
               <>
                 {/* Top Box: You Pay (USDC) */}
-                <div className="swap-input-container">
-                  <div className="swap-input-header">
-                    <span>You Pay</span>
-                    <span>
-                      Balance: <strong className="mono" style={{ color: '#fff' }}>${visitorUsdc || '0.00'}</strong> USDC
-                    </span>
+                <div className="pro-input-box buy-mode">
+                  <div className="pro-input-top">
+                    <span className="pro-label">YOU PAY</span>
+                    <div className="pro-balance">
+                      <span>Bal: <strong className="mono" style={{ color: '#fff' }}>${visitorUsdc || '0.00'}</strong></span>
+                      {parseFloat(visitorUsdc || '0') > 0 && (
+                        <button
+                          type="button"
+                          className="pro-max-btn"
+                          onClick={() => {
+                            const maxAmt = Math.max(0.01, (parseFloat(visitorUsdc) / (parseFloat(activePriceDisplay) * 1.01))).toFixed(4);
+                            setTradeAmount(maxAmt);
+                          }}
+                        >
+                          MAX
+                        </button>
+                      )}
+                    </div>
                   </div>
-                  <div className="swap-input-row">
+                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '8px' }}>
                     <input
                       type="number"
                       step="0.01"
@@ -834,45 +857,39 @@ export default function App() {
                       className="swap-numeric-input"
                       placeholder="0.00"
                     />
-                    <div className="token-badge">
-                      <span style={{ width: '18px', height: '18px', borderRadius: '50%', background: '#2775ca', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', fontSize: '10px', fontWeight: 'bold' }}>$</span>
+                    <div className="pro-token-badge">
+                      <span style={{ width: '20px', height: '20px', borderRadius: '50%', background: '#2775ca', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', fontSize: '11px', fontWeight: 'bold', color: '#fff' }}>$</span>
                       <span>USDC</span>
+                      <span className="token-sub">SPL</span>
                     </div>
+                  </div>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '10px', color: 'var(--muted)' }}>
+                    <span>Estimated Cost</span>
+                    <span className="mono">≈ ${finalBuyTotal} USD</span>
                   </div>
                 </div>
 
-                {/* Center Flip Button (Flips to Sell) */}
-                <div style={{ display: 'flex', justifyContent: 'center', margin: '-8px 0', zIndex: 10 }}>
+                {/* Flip Button */}
+                <div className="pro-flip-wrapper">
                   <button
                     type="button"
                     onClick={() => setTradeMode('sell')}
-                    style={{
-                      width: '36px',
-                      height: '36px',
-                      borderRadius: '50%',
-                      background: 'var(--bg-card-sub)',
-                      border: '2px solid var(--bg-card)',
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      color: 'var(--color-solana)',
-                      cursor: 'pointer',
-                      boxShadow: '0 4px 12px rgba(0,0,0,0.4)',
-                      transition: 'all 0.2s cubic-bezier(0.16, 1, 0.3, 1)'
-                    }}
-                    title="Click to flip: Sell RESET for USDC"
+                    className="pro-flip-btn"
+                    title="Switch to Sell RESET"
                   >
-                    <ArrowUpDown size={16} />
+                    <ArrowUpDown size={14} />
                   </button>
                 </div>
 
                 {/* Bottom Box: You Receive (RESET) */}
-                <div className="swap-input-container">
-                  <div className="swap-input-header">
-                    <span>You Receive</span>
-                    <span>1 RESET ≈ ${parseFloat(bestAsk).toFixed(2)}</span>
+                <div className="pro-input-box buy-mode">
+                  <div className="pro-input-top">
+                    <span className="pro-label">YOU RECEIVE</span>
+                    <span style={{ fontSize: '11px', color: 'var(--muted)', fontFamily: 'monospace' }}>
+                      1 RESET ≈ ${parseFloat(bestAsk).toFixed(2)}
+                    </span>
                   </div>
-                  <div className="swap-input-row">
+                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '8px' }}>
                     <input
                       type="number"
                       step="0.01"
@@ -881,102 +898,79 @@ export default function App() {
                       className="swap-numeric-input"
                       placeholder="0.10"
                     />
-                    <div className="token-badge">
-                      <span style={{ width: '18px', height: '18px', borderRadius: '50%', background: '#f7931a', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', fontSize: '10px', fontWeight: 'bold' }}>R</span>
+                    <div className="pro-token-badge">
+                      <span style={{ width: '20px', height: '20px', borderRadius: '50%', background: '#f7931a', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', fontSize: '11px', fontWeight: 'bold', color: '#fff' }}>R</span>
                       <span>RESET</span>
+                      <span className="token-sub">TRAC</span>
                     </div>
+                  </div>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '10px', color: 'var(--muted)' }}>
+                    <span>Spot market value</span>
+                    <span className="mono">≈ ${subtotal.toFixed(2)} USD</span>
                   </div>
                 </div>
 
-                {/* Quick Amount Selector Chips */}
-                <div style={{ display: 'flex', gap: '6px' }}>
+                {/* Quick Presets */}
+                <div className="pro-chips-row">
                   {['0.05', '0.10', '0.25', '0.50', '1.00'].map((amt) => (
                     <button
                       key={amt}
                       type="button"
                       onClick={() => setTradeAmount(amt)}
-                      style={{
-                        flex: 1,
-                        padding: '6px 0',
-                        borderRadius: '6px',
-                        border: '1px solid',
-                        borderColor: tradeAmount === amt ? 'var(--color-accent)' : 'var(--border-color)',
-                        background: tradeAmount === amt ? 'var(--color-accent-soft)' : 'rgba(255, 255, 255, 0.02)',
-                        color: tradeAmount === amt ? '#fff' : 'var(--text-dim)',
-                        fontSize: '11px',
-                        fontFamily: "'JetBrains Mono', monospace",
-                        fontWeight: '600',
-                        cursor: 'pointer',
-                        transition: 'all 0.12s ease'
-                      }}
+                      className={`pro-chip-btn ${tradeAmount === amt ? 'active' : ''}`}
                     >
                       {amt}
                     </button>
                   ))}
                 </div>
 
-                {/* Optional Custom Recipient Toggle */}
-                <div>
-                  {!showCustomRecipient ? (
-                    <button
-                      type="button"
-                      onClick={() => setShowCustomRecipient(true)}
-                      style={{ background: 'none', border: 'none', color: 'var(--text-dim)', fontSize: '11px', cursor: 'pointer', padding: '0', display: 'flex', alignItems: 'center', gap: '4px' }}
-                    >
-                      <span>+ Custom recipient Trac address (optional)</span>
-                    </button>
-                  ) : (
-                    <div style={{ background: '#070a12', padding: '10px 12px', borderRadius: '8px', border: '1px solid var(--border-color)', display: 'flex', flexDirection: 'column', gap: '6px' }}>
-                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                        <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-                          <label style={{ fontSize: '11px', color: 'var(--text-muted)', fontWeight: '600' }}>Recipient Trac Address:</label>
-                          {tracAddress.length > 0 && (
-                            <span style={{ fontSize: '10px', color: tracAddress.length === 64 ? 'var(--color-green)' : 'var(--text-dim)', fontFamily: 'monospace' }}>
-                              {tracAddress.length}/64 chars
-                            </span>
-                          )}
-                        </div>
-                        <button type="button" onClick={() => setShowCustomRecipient(false)} style={{ background: 'none', border: 'none', color: 'var(--text-dim)', fontSize: '11px', cursor: 'pointer' }}>Cancel</button>
-                      </div>
-                      <textarea
-                        rows={2}
-                        value={tracAddress}
-                        onChange={(e) => setTracAddress(e.target.value.trim())}
-                        className="input-textarea"
-                        style={{ fontSize: '11px', lineHeight: '1.45', padding: '8px 10px', wordBreak: 'break-all' }}
-                        placeholder="Paste 64-character Trac address (e.g. 6c098c07983817e6c984f09be414b162e25a272b3fa7deadb154c7f6ea977333)"
-                      />
-                    </div>
-                  )}
+                {/* Recipient Address */}
+                <div style={{ background: '#090c12', padding: '10px 12px', borderRadius: '8px', border: '1px solid #1a1e27', display: 'flex', flexDirection: 'column', gap: '6px' }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                    <label style={{ fontSize: '10px', color: '#7a838f', fontWeight: '700', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
+                      Recipient Trac Address
+                    </label>
+                    <span style={{ fontSize: '10px', color: tracAddress.length === 64 ? '#2ebd85' : 'var(--muted)', fontFamily: 'monospace' }}>
+                      {tracAddress.length}/64 hex
+                    </span>
+                  </div>
+                  <textarea
+                    rows={2}
+                    value={tracAddress}
+                    onChange={(e) => setTracAddress(e.target.value.trim())}
+                    className="input-textarea"
+                    style={{ fontSize: '11px', lineHeight: '1.4', padding: '6px 8px', wordBreak: 'break-all', background: '#06080c', border: '1px solid #181d26', borderRadius: '6px' }}
+                    placeholder="Auto-linked from connected wallet or paste 64-char address"
+                  />
                 </div>
 
-                {/* Order Summary */}
-                <div style={{ background: 'var(--bg-input)', padding: '12px 14px', borderRadius: '8px', border: '1px solid var(--border-color)', display: 'flex', flexDirection: 'column', gap: '7px', fontSize: '11px' }}>
-                  <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                    <span style={{ color: 'var(--text-dim)' }}>Rate</span>
-                    <span className="mono" style={{ color: 'var(--text-main)', fontWeight: '600' }}>1 RESET = ${parseFloat(activePriceDisplay).toFixed(2)} USDC</span>
+                {/* Order Summary Breakdown */}
+                <div className="pro-breakdown-box">
+                  <div className="pro-breakdown-row">
+                    <span style={{ color: 'var(--muted)' }}>Execution Rate</span>
+                    <span className="mono" style={{ color: 'var(--text)', fontWeight: '600' }}>1 RESET = ${parseFloat(activePriceDisplay).toFixed(2)} USDC</span>
                   </div>
-                  <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                    <span style={{ color: 'var(--text-dim)' }}>Protocol Fee (1.0%)</span>
-                    <span className="mono" style={{ color: 'var(--color-solana)', fontWeight: '600' }}>+${platformFee.toFixed(3)} USDC</span>
+                  <div className="pro-breakdown-row">
+                    <span style={{ color: 'var(--muted)' }}>Protocol Fee (1.0%)</span>
+                    <span className="mono" style={{ color: '#8b9bb4', fontWeight: '600' }}>+${platformFee.toFixed(3)} USDC</span>
                   </div>
-                  <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                    <span style={{ color: 'var(--text-dim)' }}>Settlement</span>
-                    <span style={{ color: 'var(--text-muted)' }}>Solana Smart Escrow · P2P</span>
+                  <div className="pro-breakdown-row">
+                    <span style={{ color: 'var(--muted)' }}>Route</span>
+                    <span style={{ color: '#2ebd85', fontWeight: '500' }}>Solana Escrow ↔ Trac Core</span>
                   </div>
-                  <div style={{ borderTop: '1px solid var(--border-color)', paddingTop: '7px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                    <span style={{ fontWeight: '600', color: '#fff' }}>Total to Pay</span>
-                    <span className="mono" style={{ color: 'var(--color-green)', fontWeight: '700', fontSize: '15px' }}>
+                  <div style={{ borderTop: '1px solid #1a1e27', paddingTop: '6px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                    <span style={{ fontWeight: '700', color: '#fff' }}>Total Required</span>
+                    <span className="mono" style={{ color: '#2ebd85', fontWeight: '800', fontSize: '15px' }}>
                       ${finalBuyTotal} USDC
                     </span>
                   </div>
                 </div>
 
+                {/* Primary CTA Button */}
                 <button 
                   onClick={() => setShowPaymentModal(true)}
                   disabled={isTrading}
-                  className="btn btn-primary"
-                  style={{ width: '100%', padding: '13px', fontSize: '14px', borderRadius: '8px' }}
+                  className="pro-cta-buy"
                 >
                   <Zap size={16} />
                   <span>Swap USDC for {tradeAmount} RESET (${finalBuyTotal} USDC)</span>
@@ -986,14 +980,24 @@ export default function App() {
               /* SELL MODE: PAY RESET -> RECEIVE USDC */
               <>
                 {/* Top Box: You Pay (RESET) */}
-                <div className="swap-input-container">
-                  <div className="swap-input-header">
-                    <span>You Pay</span>
-                    <span>
-                      Balance: <strong className="mono" style={{ color: '#fff' }}>{visitorReset}</strong> RESET
-                    </span>
+                <div className="pro-input-box sell-mode">
+                  <div className="pro-input-top">
+                    <span className="pro-label">YOU PAY</span>
+                    <div className="pro-balance">
+                      <span>Bal: <strong className="mono" style={{ color: '#fff' }}>{visitorReset}</strong> RESET</span>
+                      {parseFloat(visitorReset || '0') > 0 && (
+                        <button
+                          type="button"
+                          className="pro-max-btn"
+                          style={{ background: 'rgba(240, 97, 109, 0.14)', color: '#f0616d', borderColor: 'rgba(240, 97, 109, 0.35)' }}
+                          onClick={() => setTradeAmount(visitorReset)}
+                        >
+                          MAX
+                        </button>
+                      )}
+                    </div>
                   </div>
-                  <div className="swap-input-row">
+                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '8px' }}>
                     <input 
                       type="number"
                       step="0.01"
@@ -1002,45 +1006,39 @@ export default function App() {
                       className="swap-numeric-input"
                       placeholder="0.10"
                     />
-                    <div className="token-badge">
-                      <span style={{ width: '18px', height: '18px', borderRadius: '50%', background: '#f7931a', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', fontSize: '10px', fontWeight: 'bold' }}>R</span>
+                    <div className="pro-token-badge">
+                      <span style={{ width: '20px', height: '20px', borderRadius: '50%', background: '#f7931a', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', fontSize: '11px', fontWeight: 'bold', color: '#fff' }}>R</span>
                       <span>RESET</span>
+                      <span className="token-sub">TRAC</span>
                     </div>
+                  </div>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '10px', color: 'var(--muted)' }}>
+                    <span>Spot market value</span>
+                    <span className="mono">≈ ${subtotal.toFixed(2)} USD</span>
                   </div>
                 </div>
 
-                {/* Center Flip Button (Flips to Buy) */}
-                <div style={{ display: 'flex', justifyContent: 'center', margin: '-8px 0', zIndex: 10 }}>
+                {/* Flip Button */}
+                <div className="pro-flip-wrapper">
                   <button
                     type="button"
                     onClick={() => setTradeMode('buy')}
-                    style={{
-                      width: '36px',
-                      height: '36px',
-                      borderRadius: '50%',
-                      background: 'var(--bg-card-sub)',
-                      border: '2px solid var(--bg-card)',
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      color: 'var(--color-solana)',
-                      cursor: 'pointer',
-                      boxShadow: '0 4px 12px rgba(0,0,0,0.4)',
-                      transition: 'all 0.2s cubic-bezier(0.16, 1, 0.3, 1)'
-                    }}
-                    title="Click to flip: Buy RESET with USDC"
+                    className="pro-flip-btn"
+                    title="Switch to Buy RESET"
                   >
-                    <ArrowUpDown size={16} />
+                    <ArrowUpDown size={14} />
                   </button>
                 </div>
 
                 {/* Bottom Box: You Receive (USDC) */}
-                <div className="swap-input-container">
-                  <div className="swap-input-header">
-                    <span>You Receive</span>
-                    <span>1 RESET ≈ ${parseFloat(bestBid).toFixed(2)}</span>
+                <div className="pro-input-box sell-mode">
+                  <div className="pro-input-top">
+                    <span className="pro-label">YOU RECEIVE</span>
+                    <span style={{ fontSize: '11px', color: 'var(--muted)', fontFamily: 'monospace' }}>
+                      1 RESET ≈ ${parseFloat(bestBid).toFixed(2)}
+                    </span>
                   </div>
-                  <div className="swap-input-row">
+                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '8px' }}>
                     <input
                       type="number"
                       step="0.01"
@@ -1049,34 +1047,26 @@ export default function App() {
                       className="swap-numeric-input"
                       placeholder="0.00"
                     />
-                    <div className="token-badge">
-                      <span style={{ width: '18px', height: '18px', borderRadius: '50%', background: '#2775ca', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', fontSize: '10px', fontWeight: 'bold' }}>$</span>
+                    <div className="pro-token-badge">
+                      <span style={{ width: '20px', height: '20px', borderRadius: '50%', background: '#2775ca', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', fontSize: '11px', fontWeight: 'bold', color: '#fff' }}>$</span>
                       <span>USDC</span>
+                      <span className="token-sub">SPL</span>
                     </div>
+                  </div>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '10px', color: 'var(--muted)' }}>
+                    <span>Net to receive after fee</span>
+                    <span className="mono" style={{ color: '#2ebd85' }}>≈ ${finalSellProceeds} USDC</span>
                   </div>
                 </div>
 
-                {/* Quick Amount Selector Chips */}
-                <div style={{ display: 'flex', gap: '6px' }}>
+                {/* Quick Presets */}
+                <div className="pro-chips-row">
                   {['0.05', '0.10', '0.25', '0.50', '1.00'].map((amt) => (
                     <button
                       key={amt}
                       type="button"
                       onClick={() => setTradeAmount(amt)}
-                      style={{
-                        flex: 1,
-                        padding: '6px 0',
-                        borderRadius: '6px',
-                        border: '1px solid',
-                        borderColor: tradeAmount === amt ? 'var(--color-accent)' : 'var(--border-color)',
-                        background: tradeAmount === amt ? 'var(--color-accent-soft)' : 'rgba(255, 255, 255, 0.02)',
-                        color: tradeAmount === amt ? '#fff' : 'var(--text-dim)',
-                        fontSize: '11px',
-                        fontFamily: "'JetBrains Mono', monospace",
-                        fontWeight: '600',
-                        cursor: 'pointer',
-                        transition: 'all 0.12s ease'
-                      }}
+                      className={`pro-chip-btn ${tradeAmount === amt ? 'active' : ''}`}
                     >
                       {amt}
                     </button>
@@ -1084,30 +1074,34 @@ export default function App() {
                 </div>
 
                 {/* Sell Breakdown */}
-                <div style={{ background: 'var(--bg-input)', padding: '12px 14px', borderRadius: '8px', border: '1px solid var(--border-color)', display: 'flex', flexDirection: 'column', gap: '7px', fontSize: '11px' }}>
-                  <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                    <span style={{ color: 'var(--text-dim)' }}>Price</span>
-                    <span className="mono" style={{ fontWeight: '600' }}>
+                <div className="pro-breakdown-box">
+                  <div className="pro-breakdown-row">
+                    <span style={{ color: 'var(--muted)' }}>Bid Price</span>
+                    <span className="mono" style={{ fontWeight: '600', color: 'var(--text)' }}>
                       ${parseFloat(bestBid).toFixed(2)} USDC
                     </span>
                   </div>
-                  <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                    <span style={{ color: 'var(--text-dim)' }}>Platform Fee (1.0%)</span>
-                    <span className="mono" style={{ color: 'var(--color-solana)', fontWeight: '600' }}>-${platformFee.toFixed(3)} USDC</span>
+                  <div className="pro-breakdown-row">
+                    <span style={{ color: 'var(--muted)' }}>Platform Fee (1.0%)</span>
+                    <span className="mono" style={{ color: '#f0616d', fontWeight: '600' }}>-${platformFee.toFixed(3)} USDC</span>
                   </div>
-                  <div style={{ borderTop: '1px solid var(--border-color)', paddingTop: '7px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                    <span style={{ fontWeight: '600', color: '#fff' }}>Net Proceeds</span>
-                    <span className="mono" style={{ color: 'var(--color-green)', fontWeight: '700', fontSize: '15px' }}>
+                  <div className="pro-breakdown-row">
+                    <span style={{ color: 'var(--muted)' }}>Settlement Destination</span>
+                    <span style={{ color: '#8b9bb4', fontWeight: '500' }}>Connected Solana Wallet</span>
+                  </div>
+                  <div style={{ borderTop: '1px solid #1a1e27', paddingTop: '6px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                    <span style={{ fontWeight: '700', color: '#fff' }}>Net Proceeds</span>
+                    <span className="mono" style={{ color: '#2ebd85', fontWeight: '800', fontSize: '15px' }}>
                       ${finalSellProceeds} USDC
                     </span>
                   </div>
                 </div>
 
+                {/* Primary CTA Button */}
                 <button 
                   onClick={() => setShowPaymentModal(true)}
                   disabled={isTrading}
-                  className="btn btn-danger"
-                  style={{ width: '100%', padding: '13px', fontSize: '14px', borderRadius: '8px' }}
+                  className="pro-cta-sell"
                 >
                   <ArrowUpRight size={16} />
                   <span>Swap {tradeAmount} RESET for ${finalSellProceeds} USDC</span>
