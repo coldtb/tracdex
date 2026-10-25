@@ -130,6 +130,7 @@ export default function App() {
   const [visitorUsdc, setVisitorUsdc] = useState(null);
   const [visitorSol, setVisitorSol] = useState(null);
   const [visitorReset, setVisitorReset] = useState('0.0000');
+  const [showCustomRecipient, setShowCustomRecipient] = useState(false);
   const [tradeHistoryTab, setTradeHistoryTab] = useState('market'); // 'market' | 'my'
   const [marketTrades, setMarketTrades] = useState([
     { id: 'tx-1', side: 'buy', price: '36.00', amount: '0.0112', total: '0.40', fee: '0.004', blockTime: 1792932618, sig: '5gmTDj9S2SFum9cEpNqbyyK11Az35CUego6H7cBwCPNni3p5s79Lf3USFcu6txe7zPt6AytT7Rj7GX11mgozNQ7N' },
@@ -467,43 +468,41 @@ export default function App() {
     <div className="app-container">
       {/* Top Header */}
       <header className="header">
-        <div className="brand">
-          <div className="brand-logo-mark">
-            <span>TX</span>
-          </div>
-          <div style={{ display: 'flex', flexDirection: 'column' }}>
-            <span className="brand-title">
-              Trac<span style={{ color: 'var(--color-accent)' }}>DEX</span>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
+          <div className="brand">
+            <svg width="26" height="26" viewBox="0 0 32 32" fill="none">
+              <circle cx="16" cy="16" r="14" stroke="url(#logo-grad)" strokeWidth="2.5" />
+              <path d="M10 16L16 10L22 16L16 22Z" fill="url(#logo-grad)" />
+              <defs>
+                <linearGradient id="logo-grad" x1="0" y1="0" x2="32" y2="32" gradientUnits="userSpaceOnUse">
+                  <stop stopColor="#6366f1" />
+                  <stop offset="0.5" stopColor="#a855f7" />
+                  <stop offset="1" stopColor="#14f195" />
+                </linearGradient>
+              </defs>
+            </svg>
+            <span style={{ fontSize: '17px', fontWeight: '800', letterSpacing: '-0.5px', color: '#fff' }}>
+              Trac<span style={{ color: 'var(--color-solana)' }}>DEX</span>
             </span>
           </div>
-          <span className="brand-badge">Solana · Trac P2P</span>
-        </div>
 
-        {/* 24h Ticker Strip */}
-        <div className="ticker-strip">
-          <div className="ticker-item">
-            <span className="ticker-label">Last Price</span>
-            <span className="ticker-val" style={{ color: 'var(--color-green)' }}>
-              ${parseFloat(ticker.last).toFixed(2)} USDC
+          <div style={{
+            display: 'flex',
+            alignItems: 'center',
+            gap: '8px',
+            padding: '4px 10px',
+            borderRadius: '20px',
+            background: 'rgba(255, 255, 255, 0.04)',
+            border: '1px solid var(--border-color)',
+            fontSize: '12px'
+          }}>
+            <span style={{ fontWeight: '700', color: '#fff' }}>RESET/USDC</span>
+            <span className="mono" style={{ color: 'var(--color-green)', fontWeight: '700' }}>
+              ${parseFloat(ticker.last).toFixed(2)}
             </span>
-          </div>
-          <div className="ticker-item">
-            <span className="ticker-label">24h High</span>
-            <span className="ticker-val">${parseFloat(ticker.high24h).toFixed(2)}</span>
-          </div>
-          <div className="ticker-item">
-            <span className="ticker-label">24h Low</span>
-            <span className="ticker-val">${parseFloat(ticker.low24h).toFixed(2)}</span>
-          </div>
-          <div className="ticker-item">
-            <span className="ticker-label">24h Volume</span>
-            <span className="ticker-val">
-              ${(Number(ticker.volume24h) / 1e6).toLocaleString(undefined, { maximumFractionDigits: 0 })} USDC
+            <span style={{ fontSize: '10px', color: 'var(--color-green)', background: 'var(--color-green-soft)', padding: '1px 5px', borderRadius: '4px', fontWeight: 'bold' }}>
+              +4.12%
             </span>
-          </div>
-          <div className="ticker-item">
-            <span className="ticker-label">Platform Fee</span>
-            <span className="ticker-val" style={{ color: 'var(--color-solana)' }}>1.0%</span>
           </div>
         </div>
 
@@ -714,46 +713,14 @@ export default function App() {
             <button 
               onClick={handleConnectWallet}
               className="btn btn-solana" 
-              style={{ padding: '8px 14px', fontSize: '13px', display: 'flex', alignItems: 'center', gap: '8px' }}
+              style={{ padding: '8px 16px', fontSize: '13px', display: 'flex', alignItems: 'center', gap: '8px', borderRadius: '8px' }}
             >
-              <Wallet size={16} />
+              <Wallet size={15} />
               <span>{isConnectingWallet ? 'Connecting...' : 'Connect Wallet'}</span>
-              <span style={{ fontSize: '10px', background: 'rgba(16, 185, 129, 0.25)', color: '#34d399', padding: '2px 6px', borderRadius: '4px' }}>
-                QR Ready
-              </span>
             </button>
           )}
         </div>
       </header>
-
-      {/* Security Status Ribbon */}
-      <div className="security-ribbon">
-        <div className="ribbon-badges">
-          <div className="ribbon-item">
-            <Lock size={13} style={{ color: 'var(--color-green)' }} />
-            <span>Smart Contract Escrow</span>
-          </div>
-          <span style={{ color: 'var(--border-color)' }}>•</span>
-          <div className="ribbon-item">
-            <RotateCcw size={13} style={{ color: '#38bdf8' }} />
-            <span>10m Auto-Refund Guarantee</span>
-          </div>
-          <span style={{ color: 'var(--border-color)' }}>•</span>
-          <div className="ribbon-item">
-            <ShieldCheck size={13} style={{ color: '#a855f7' }} />
-            <span>PLONK ZK-SNARK 5-Signer Quorum</span>
-          </div>
-        </div>
-        <a 
-          href={`https://solscan.io/account/${PLATFORM_COLLECTOR}`}
-          target="_blank"
-          rel="noreferrer"
-          style={{ color: 'var(--color-solana)', textDecoration: 'none', display: 'flex', alignItems: 'center', gap: '5px', fontSize: '11px', fontWeight: '600' }}
-        >
-          <span>Solana Mainnet Contract</span>
-          <ExternalLink size={11} />
-        </a>
-      </div>
 
       {/* Main Trading Floor */}
       <div className="dashboard-grid">
@@ -1146,19 +1113,32 @@ export default function App() {
                   ))}
                 </div>
 
-                {/* Destination Trac Address */}
+                {/* Optional Custom Recipient Toggle */}
                 <div>
-                  <label style={{ fontSize: '11px', fontWeight: '600', color: 'var(--text-dim)', marginBottom: '6px', display: 'block' }}>
-                    Destination Trac Address (Optional):
-                  </label>
-                  <input
-                    type="text"
-                    value={tracAddress}
-                    onChange={(e) => setTracAddress(e.target.value)}
-                    className="input-field mono"
-                    style={{ fontSize: '12px', padding: '10px 12px' }}
-                    placeholder="Enter recipient Trac wallet address"
-                  />
+                  {!showCustomRecipient ? (
+                    <button
+                      type="button"
+                      onClick={() => setShowCustomRecipient(true)}
+                      style={{ background: 'none', border: 'none', color: 'var(--text-dim)', fontSize: '11px', cursor: 'pointer', padding: '0', display: 'flex', alignItems: 'center', gap: '4px' }}
+                    >
+                      <span>+ Custom recipient Trac address (optional)</span>
+                    </button>
+                  ) : (
+                    <div style={{ background: 'var(--bg-input)', padding: '10px 12px', borderRadius: '8px', border: '1px solid var(--border-color)' }}>
+                      <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '4px' }}>
+                        <label style={{ fontSize: '11px', color: 'var(--text-dim)', fontWeight: '600' }}>Recipient Trac Address:</label>
+                        <button type="button" onClick={() => setShowCustomRecipient(false)} style={{ background: 'none', border: 'none', color: 'var(--text-dim)', fontSize: '11px', cursor: 'pointer' }}>Cancel</button>
+                      </div>
+                      <input
+                        type="text"
+                        value={tracAddress}
+                        onChange={(e) => setTracAddress(e.target.value)}
+                        className="input-field mono"
+                        style={{ fontSize: '11px', padding: '8px 10px' }}
+                        placeholder="e.g. 6c098c0798...7333"
+                      />
+                    </div>
+                  )}
                 </div>
 
                 {/* Order Summary */}
