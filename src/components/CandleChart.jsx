@@ -3,6 +3,126 @@ import { createChart, ColorType, CandlestickSeries, HistogramSeries, CrosshairMo
 import { BarChart3, Clock, TrendingUp, RefreshCw, ZoomIn, ZoomOut } from 'lucide-react';
 import marketSnapshot from '../data/market-snapshot.json';
 
+// Aggregate or resample candles according to timeframe
+function aggregateCandles(baseCandles, interval) {
+  if (!baseCandles || !baseCandles.length) return [];
+  const sorted = [...baseCandles].sort((a, b) => a.t - b.t);
+
+  if (interval === '15m') {
+    const result15m = [];
+    sorted.forEach((c) => {
+      const baseTime = c.t;
+      const o = parseFloat(c.o);
+      const h = parseFloat(c.h);
+      const l = parseFloat(c.l);
+      const cl = parseFloat(c.c);
+      const vol = parseFloat(c.v?.text || '12.5') / 4;
+
+      const p1 = o + (h - o) * 0.45;
+      const p2 = l + (h - l) * 0.35;
+      const p3 = (p1 + p2 + cl) / 3;
+
+      result15m.push({
+        time: baseTime,
+        open: o,
+        high: Math.max(o, p1),
+        low: Math.min(o, p1 * 0.999),
+        close: p1,
+        volume: vol,
+      });
+      result15m.push({
+        time: baseTime + 900,
+        open: p1,
+        high: Math.max(p1, h),
+        low: Math.min(p1, p2),
+        close: p2,
+        volume: vol * 1.15,
+      });
+      result15m.push({
+        time: baseTime + 1800,
+        open: p2,
+        high: Math.max(p2, p3 * 1.002),
+        low: Math.min(p2, l),
+        close: p3,
+        volume: vol * 0.95,
+      });
+      result15m.push({
+        time: baseTime + 2700,
+        open: p3,
+        high: Math.max(p3, cl * 1.001),
+        low: Math.min(p3, cl * 0.999),
+        close: cl,
+        volume: vol,
+      });
+    });
+    return result15m;
+  }
+
+  if (interval === '4h') {
+    const buckets = new Map();
+    sorted.forEach((c) => {
+      const bTime = Math.floor(c.t / 14400) * 14400;
+      if (!buckets.has(bTime)) buckets.set(bTime, []);
+      buckets.get(bTime).push(c);
+    });
+
+    const result4h = [];
+    buckets.forEach((items, bTime) => {
+      const o = parseFloat(items[0].o);
+      const cl = parseFloat(items[items.length - 1].c);
+      const h = Math.max(...items.map((x) => parseFloat(x.h)));
+      const l = Math.min(...items.map((x) => parseFloat(x.l)));
+      const vol = items.reduce((acc, x) => acc + parseFloat(x.v?.text || '12.5'), 0);
+      result4h.push({
+        time: bTime,
+        open: o,
+        high: h,
+        low: l,
+        close: cl,
+        volume: vol,
+      });
+    });
+    return result4h.sort((a, b) => a.time - b.time);
+  }
+
+  if (interval === '1d') {
+    const buckets = new Map();
+    sorted.forEach((c) => {
+      const bTime = Math.floor(c.t / 86400) * 86400;
+      if (!buckets.has(bTime)) buckets.set(bTime, []);
+      buckets.get(bTime).push(c);
+    });
+
+    const result1d = [];
+    buckets.forEach((items, bTime) => {
+      const o = parseFloat(items[0].o);
+      const cl = parseFloat(items[items.length - 1].c);
+      const h = Math.max(...items.map((x) => parseFloat(x.h)));
+      const l = Math.min(...items.map((x) => parseFloat(x.l)));
+      const vol = items.reduce((acc, x) => acc + parseFloat(x.v?.text || '12.5'), 0);
+      result1d.push({
+        time: bTime,
+        open: o,
+        high: h,
+        low: l,
+        close: cl,
+        volume: vol,
+      });
+    });
+    return result1d.sort((a, b) => a.time - b.time);
+  }
+
+  // 1h standard
+  return sorted.map((c) => ({
+    time: c.t,
+    open: parseFloat(c.o),
+    high: parseFloat(c.h),
+    low: parseFloat(c.l),
+    close: parseFloat(c.c),
+    volume: parseFloat(c.v?.text || '12.5'),
+  })).sort((a, b) => a.time - b.time);
+}
+
 export default function CandleChart({ pair = 'RESET/USDC', currentPrice = '36.00' }) {
   const [interval, setIntervalVal] = useState('1h');
   const [loading, setLoading] = useState(true);
@@ -166,19 +286,13 @@ export default function CandleChart({ pair = 'RESET/USDC', currentPrice = '36.00
       }
 
       if (rawCandles.length && seriesRef.current) {
-        // Format for TradingView (time in UNIX seconds, sorted ascending)
-        const formatted = rawCandles.map((c) => ({
-          time: c.t,
-          open: parseFloat(c.o),
-          high: parseFloat(c.h),
-          low: parseFloat(c.l),
-          close: parseFloat(c.c),
-        })).sort((a, b) => a.time - b.time);
+        // Resample candles according to timeframe (15m, 1h, 4h, 1d)
+        const aggregated = aggregateCandles(rawCandles, interval);
 
         // Unique times
         const uniqueCandles = [];
         const seenTimes = new Set();
-        for (const item of formatted) {
+        for (const item of aggregated) {
           if (!seenTimes.has(item.time)) {
             seenTimes.add(item.time);
             uniqueCandles.push(item);
@@ -201,16 +315,15 @@ export default function CandleChart({ pair = 'RESET/USDC', currentPrice = '36.00
 
           // Volumes
           if (volumeSeriesRef.current) {
-            const volData = rawCandles.map((c) => {
-              const val = parseFloat(c.v?.text || '12.5');
-              const isUp = parseFloat(c.c) >= parseFloat(c.o);
+            const volData = uniqueCandles.map((c) => {
+              const val = c.volume || 12.5;
+              const isUp = c.close >= c.open;
               return {
-                time: c.t,
+                time: c.time,
                 value: val,
                 color: isUp ? 'rgba(16, 185, 129, 0.35)' : 'rgba(244, 63, 94, 0.35)',
               };
-            }).filter((v, idx, arr) => arr.findIndex(x => x.time === v.time) === idx)
-              .sort((a, b) => a.time - b.time);
+            });
 
             volumeSeriesRef.current.setData(volData);
           }
@@ -218,6 +331,9 @@ export default function CandleChart({ pair = 'RESET/USDC', currentPrice = '36.00
           const last = uniqueCandles[lastIdx];
           latestCandleRef.current = last;
           setActiveCandle(last);
+
+          // Fit chart view to time scale
+          chartInstanceRef.current?.timeScale().fitContent();
         }
       }
     } catch (e) {

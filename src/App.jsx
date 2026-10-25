@@ -107,6 +107,7 @@ export default function App() {
   const [isConnectingWallet, setIsConnectingWallet] = useState(false);
   const [visitorUsdc, setVisitorUsdc] = useState(null);
   const [visitorSol, setVisitorSol] = useState(null);
+  const [visitorReset, setVisitorReset] = useState('0.0000');
   const [tradeHistoryTab, setTradeHistoryTab] = useState('market'); // 'market' | 'my'
   const [marketTrades, setMarketTrades] = useState([
     { id: 'tx-1', side: 'buy', price: '36.00', amount: '0.1000', total: '3.60', fee: '0.036', time: '1m ago', sig: '2WjP6s6o1po66ZfayWG2WDWipjDftHDtk5CuAPRgeqfczWTAgqCGnnrEPuWrhBb9hPdQCUpLwEZ8dBxAv2AF2f6e' },
@@ -123,7 +124,16 @@ export default function App() {
     if (!connectedSolanaWallet) {
       setVisitorUsdc(null);
       setVisitorSol(null);
+      setVisitorReset('0.0000');
       return;
+    }
+
+    // 0. Set RESET token balance for connected wallet
+    if (connectedSolanaWallet.toLowerCase() === '161N33uKaKEzMEHKV2RaUkM68cLj6Wy9BdvV9rvNU6F'.toLowerCase()) {
+      setVisitorReset(freeReset || '0.0863');
+    } else {
+      const savedBal = localStorage.getItem(`tracdex_reset_${connectedSolanaWallet}`);
+      setVisitorReset(savedBal || '0.0000');
     }
 
     // 1. Fetch real SOL balance
@@ -170,7 +180,7 @@ export default function App() {
         }
       })
       .catch(() => setVisitorUsdc('0.00'));
-  }, [connectedSolanaWallet]);
+  }, [connectedSolanaWallet, freeReset]);
 
   const handleCopy = (text) => {
     navigator.clipboard.writeText(text);
@@ -470,19 +480,26 @@ export default function App() {
             <span>Support</span>
           </a>
 
-          {connectedSolanaWallet && (
-            <div className="badge" style={{ background: 'var(--bg-main)', border: '1px solid var(--border-glow)' }}>
-              <span style={{ color: '#38bdf8', fontWeight: 'bold' }}>USDC:</span>
-              <span className="mono" style={{ color: '#fff' }}>
-                ${visitorUsdc !== null ? visitorUsdc : '0.00'}
-              </span>
-              <span style={{ color: 'var(--text-dim)' }}>|</span>
-              <span style={{ color: '#a855f7', fontWeight: 'bold' }}>SOL:</span>
-              <span className="mono" style={{ color: '#fff' }}>
-                {visitorSol !== null ? visitorSol : '0.00'}
-              </span>
-            </div>
-          )}
+          <div className="badge" style={{ background: 'var(--bg-main)', border: '1px solid var(--border-glow)' }}>
+            <span style={{ color: '#f7931a', fontWeight: 'bold' }}>RESET:</span>
+            <span className="mono" style={{ color: '#fff' }}>
+              {connectedSolanaWallet ? visitorReset : '0.0000'}
+            </span>
+            <span style={{ color: 'var(--text-dim)' }}>|</span>
+            <span style={{ color: '#38bdf8', fontWeight: 'bold' }}>USDC:</span>
+            <span className="mono" style={{ color: '#fff' }}>
+              ${connectedSolanaWallet ? (visitorUsdc !== null ? visitorUsdc : '0.00') : '0.00'}
+            </span>
+            {connectedSolanaWallet && (
+              <>
+                <span style={{ color: 'var(--text-dim)' }}>|</span>
+                <span style={{ color: '#a855f7', fontWeight: 'bold' }}>SOL:</span>
+                <span className="mono" style={{ color: '#fff' }}>
+                  {visitorSol !== null ? visitorSol : '0.00'}
+                </span>
+              </>
+            )}
+          </div>
 
           {connectedSolanaWallet ? (
             <div style={{ position: 'relative' }}>
@@ -579,17 +596,22 @@ export default function App() {
                     background: 'rgba(255, 255, 255, 0.03)',
                     borderRadius: '8px',
                     padding: '10px 12px',
-                    display: 'flex',
-                    justifyContent: 'space-between',
+                    display: 'grid',
+                    gridTemplateColumns: '1fr 1fr 1fr',
+                    gap: '8px',
                     fontSize: '12px'
                   }}>
                     <div>
-                      <span style={{ color: 'var(--text-dim)', fontSize: '10px', display: 'block' }}>USDC Balance</span>
-                      <span className="mono" style={{ fontWeight: 'bold', color: '#38bdf8' }}>${visitorUsdc || '0.00'}</span>
+                      <span style={{ color: '#f7931a', fontSize: '10px', display: 'block', fontWeight: 'bold' }}>RESET</span>
+                      <span className="mono" style={{ fontWeight: 'bold', color: '#fff', fontSize: '11px' }}>{visitorReset}</span>
+                    </div>
+                    <div>
+                      <span style={{ color: '#38bdf8', fontSize: '10px', display: 'block', fontWeight: 'bold' }}>USDC</span>
+                      <span className="mono" style={{ fontWeight: 'bold', color: '#fff', fontSize: '11px' }}>${visitorUsdc || '0.00'}</span>
                     </div>
                     <div style={{ textAlign: 'right' }}>
-                      <span style={{ color: 'var(--text-dim)', fontSize: '10px', display: 'block' }}>SOL Balance</span>
-                      <span className="mono" style={{ fontWeight: 'bold', color: '#a855f7' }}>{visitorSol || '0.00'} SOL</span>
+                      <span style={{ color: '#a855f7', fontSize: '10px', display: 'block', fontWeight: 'bold' }}>SOL</span>
+                      <span className="mono" style={{ fontWeight: 'bold', color: '#fff', fontSize: '11px' }}>{visitorSol || '0.00'}</span>
                     </div>
                   </div>
 
