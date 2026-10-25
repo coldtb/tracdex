@@ -297,6 +297,79 @@ body {
   border-color: var(--border-glow);
 }
 
+/* Form Inputs */
+.input-field {
+  width: 100%;
+  box-sizing: border-box;
+  background: #070a12 !important;
+  color: #ffffff !important;
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  padding: 10px 12px;
+  font-size: 11.5px;
+  font-family: 'JetBrains Mono', monospace;
+  outline: none;
+  transition: all 0.15s ease;
+  word-break: break-all;
+}
+
+.input-field:focus {
+  border-color: var(--color-accent);
+  box-shadow: 0 0 0 2px rgba(16, 185, 129, 0.15);
+}
+
+.input-field::placeholder {
+  color: var(--text-dim);
+  opacity: 0.6;
+}
+
+.input-textarea {
+  width: 100%;
+  box-sizing: border-box;
+  background: #070a12 !important;
+  color: #ffffff !important;
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  padding: 10px 12px;
+  font-size: 11px;
+  line-height: 1.5;
+  font-family: 'JetBrains Mono', monospace;
+  outline: none;
+  resize: none;
+  transition: all 0.15s ease;
+  word-break: break-all;
+  white-space: pre-wrap;
+}
+
+.input-textarea:focus {
+  border-color: var(--color-accent);
+  box-shadow: 0 0 0 2px rgba(16, 185, 129, 0.15);
+}
+
+.input-textarea::placeholder {
+  color: var(--text-dim);
+  opacity: 0.6;
+}
+
+/* Header Balance Pill */
+.balance-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 4px 10px;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 20px;
+  font-size: 11px;
+  letter-spacing: 0.2px;
+  transition: all 0.15s ease;
+}
+
+.balance-pill:hover {
+  background: rgba(255, 255, 255, 0.05);
+  border-color: rgba(255, 255, 255, 0.12);
+}
+
 /* Order Book */
 .ob-row {
   display: grid;
