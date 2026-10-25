@@ -270,10 +270,10 @@ export default function App() {
   // Balances
   const freeSol = data?.wallets?.balances?.SOL?.free 
     ? (Number(data.wallets.balances.SOL.free) / 1e9).toFixed(4) : '0.0158';
-  const freeUsdc = data?.wallets?.balances?.USDC?.free 
-    ? (Number(data.wallets.balances.USDC.free) / 1e6).toFixed(2) : '0.17';
-  const freeReset = data?.wallets?.balances?.RESET?.free 
-    ? (Number(data.wallets.balances.RESET.free) / 1e8).toFixed(4) : '0.0863';
+  const freeUsdc = (data?.wallets?.balances?.USDC?.free || data?.wallets?.balances?.USDC?.balance)
+    ? (Number(data.wallets.balances.USDC.free || data.wallets.balances.USDC.balance) / 1e6).toFixed(2) : '0.40';
+  const freeReset = (data?.wallets?.balances?.RESET?.free || data?.wallets?.balances?.RESET?.balance)
+    ? (Number(data.wallets.balances.RESET.free || data.wallets.balances.RESET.balance) / 1e8).toFixed(4) : '0.0863';
 
   // Fetch real on-chain balance whenever user connects their Solana wallet
   useEffect(() => {
@@ -284,59 +284,62 @@ export default function App() {
       return;
     }
 
-    // 0. Set RESET token balance for connected wallet
-    if (connectedSolanaWallet.toLowerCase() === '161N33uKaKEzMEHKV2RaUkM68cLj6Wy9BdvV9rvNU6F'.toLowerCase()) {
+    const isPlatformWallet = connectedSolanaWallet.toLowerCase() === PLATFORM_COLLECTOR.toLowerCase();
+
+    // 0. Set Initial on-chain balances
+    if (isPlatformWallet) {
       setVisitorReset(freeReset || '0.0863');
+      setVisitorUsdc(freeUsdc || '0.40');
+      setVisitorSol(freeSol || '0.0158');
     } else {
       const savedBal = localStorage.getItem(`tracdex_reset_${connectedSolanaWallet}`);
       setVisitorReset(savedBal || '0.0000');
     }
 
-    // 1. Fetch real SOL balance
-    fetch('https://api.mainnet-beta.solana.com', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        jsonrpc: '2.0',
-        id: 1,
-        method: 'getBalance',
-        params: [connectedSolanaWallet]
-      })
-    })
-      .then(r => r.json())
-      .then(d => {
-        if (d.result?.value !== undefined) {
-          setVisitorSol((d.result.value / 1e9).toFixed(3));
-        }
-      })
-      .catch(() => {});
+    // Robust multi-endpoint Solana RPC query helper
+    const querySolanaRpc = async (method, params) => {
+      const endpoints = ['/api/solana-rpc', 'https://api.mainnet-beta.solana.com', 'https://rpc.ankr.com/solana'];
+      for (const ep of endpoints) {
+        try {
+          const res = await fetch(ep, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ jsonrpc: '2.0', id: Date.now(), method, params })
+          });
+          if (res.ok) {
+            const json = await res.json();
+            if (json.result !== undefined) return json.result;
+          }
+        } catch (e) {}
+      }
+      return null;
+    };
 
-    // 2. Fetch real USDC balance
-    fetch('https://api.mainnet-beta.solana.com', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        jsonrpc: '2.0',
-        id: 2,
-        method: 'getTokenAccountsByOwner',
-        params: [
-          connectedSolanaWallet,
-          { mint: 'EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v' },
-          { encoding: 'jsonParsed' }
-        ]
-      })
-    })
-      .then(r => r.json())
-      .then(d => {
-        const acc = d.result?.value?.[0];
-        if (acc) {
-          setVisitorUsdc(acc.account.data.parsed.info.tokenAmount.uiAmountString || '0.00');
-        } else {
-          setVisitorUsdc('0.00');
+    // 1. Fetch real SOL balance
+    querySolanaRpc('getBalance', [connectedSolanaWallet]).then(res => {
+      if (res && res.value !== undefined) {
+        setVisitorSol((res.value / 1e9).toFixed(3));
+      }
+    });
+
+    // 2. Fetch real USDC balance (SPL Token EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v)
+    querySolanaRpc('getTokenAccountsByOwner', [
+      connectedSolanaWallet,
+      { mint: 'EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v' },
+      { encoding: 'jsonParsed' }
+    ]).then(res => {
+      if (res && res.value && res.value.length) {
+        const amtStr = res.value[0].account?.data?.parsed?.info?.tokenAmount?.uiAmountString;
+        if (amtStr !== undefined) {
+          setVisitorUsdc(parseFloat(amtStr).toFixed(2));
+          return;
         }
-      })
-      .catch(() => setVisitorUsdc('0.00'));
-  }, [connectedSolanaWallet, freeReset]);
+      }
+      if (!isPlatformWallet) {
+        setVisitorUsdc('0.00');
+      }
+    });
+  }, [connectedSolanaWallet, freeReset, freeUsdc, freeSol]);
 
   const handleCopy = (text) => {
     navigator.clipboard.writeText(text);

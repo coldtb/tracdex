@@ -25,6 +25,11 @@ export default defineConfig({
     port: 3000,
     host: '127.0.0.1',
     proxy: {
+      '/api/solana-rpc': {
+        target: 'https://api.mainnet-beta.solana.com',
+        changeOrigin: true,
+        rewrite: () => '',
+      },
       '/api/live-candles': {
         target: 'https://reset.much.fun',
         changeOrigin: true,
