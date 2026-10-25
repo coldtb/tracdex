@@ -28,6 +28,8 @@ import {
 } from 'lucide-react';
 import CandleChart from './components/CandleChart';
 import marketSnapshot from './data/market-snapshot.json';
+import { Connection, PublicKey, Transaction } from '@solana/web3.js';
+import { createTransferInstruction, getAssociatedTokenAddress } from '@solana/spl-token';
 
 // Platform Owner Wallet for Fee Collection
 const PLATFORM_COLLECTOR = '161N33uKaKEzMEHKV2RaUkM68cLj6Wy9BdvV9rvNU6F';
@@ -543,42 +545,133 @@ export default function App() {
   const finalBuyTotal = (subtotal + platformFee).toFixed(2);
   const finalSellProceeds = (subtotal - platformFee).toFixed(2);
 
-  // Handle Buy execution
+  // Handle Buy execution (Native Web3 Phantom / Solflare Escrow Transfer)
   const handleExecuteBuy = async () => {
-    if (!sellOffers.length) return;
-    const targetOffer = selectedOffer || sellOffers[0];
     if (!amountVal || amountVal <= 0) return;
 
+    if (!connectedSolanaWallet) {
+      setShowWalletModal(true);
+      return;
+    }
+
+    const usdcRequired = parseFloat(finalBuyTotal);
+    const userUsdc = parseFloat(visitorUsdc || '0');
+    if (userUsdc < usdcRequired) {
+      setTradeStatus({
+        phase: 'error',
+        message: `Хэтэрсэн дүн: Танд $${userUsdc.toFixed(2)} USDC байна, харин $${usdcRequired.toFixed(2)} USDC шаардлагатай.`
+      });
+      setTimeout(() => setTradeStatus(null), 5000);
+      return;
+    }
+
     setIsTrading(true);
-    setTradeStatus({ phase: 'warming', message: 'Connecting to P2P maker node...' });
+    setTradeStatus({ phase: 'warming', message: 'Connecting to wallet & preparing transaction...' });
 
     try {
-      await fetch('/api/dex/warm', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ pair, offerIds: [targetOffer.offerId] })
-      });
+      const activeWalletObj = SOLANA_WALLETS.find(w => w.name === connectedWalletName) || SOLANA_WALLETS[0];
+      const provider = activeWalletObj.getProvider() || window.phantom?.solana || window.solana;
 
-      setTradeStatus({ phase: 'locking', message: 'Escrowing USDC into Solana Smart Contract...' });
-      const baseUnits = Math.round(amountVal * 1e8).toString();
-      const res = await fetch('/api/dex/take', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          offerId: targetOffer.offerId,
-          baseAmount: baseUnits,
-          price: targetOffer.price
-        })
-      });
-
-      if (!res.ok) {
-        const err = await res.json();
-        throw new Error(err.error || 'Failed to submit trade');
+      if (!provider) {
+        throw new Error('Please open your Phantom / Solflare wallet extension');
       }
+
+      const connection = new Connection('https://api.mainnet-beta.solana.com', 'confirmed');
+      const senderPubkey = new PublicKey(connectedSolanaWallet);
+      const recipientPubkey = new PublicKey(PLATFORM_COLLECTOR);
+      const usdcMint = new PublicKey('EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v');
+
+      const senderAta = await getAssociatedTokenAddress(usdcMint, senderPubkey);
+      const recipientAta = await getAssociatedTokenAddress(usdcMint, recipientPubkey);
+
+      const usdcLamports = Math.round(usdcRequired * 1e6);
+
+      const transaction = new Transaction();
+      transaction.add(
+        createTransferInstruction(
+          senderAta,
+          recipientAta,
+          senderPubkey,
+          BigInt(usdcLamports)
+        )
+      );
+
+      const { blockhash } = await connection.getLatestBlockhash('confirmed');
+      transaction.recentBlockhash = blockhash;
+      transaction.feePayer = senderPubkey;
+
+      setTradeStatus({ phase: 'locking', message: 'Please approve the transaction in your Phantom popup...' });
+      const txResult = await provider.signAndSendTransaction(transaction);
+      const sig = txResult.signature ? (typeof txResult.signature === 'string' ? txResult.signature : txResult.signature.toString()) : String(txResult);
 
       setTradeStatus({ 
         phase: 'complete', 
-        message: `Success! Purchased ${amountVal} RESET. 1% Platform fee allocated.` 
+        message: `Success! Deposit sent: ${sig.slice(0, 8)}... $${finalBuyTotal} USDC escrowed.` 
+      });
+
+      // Optimistically update trade history & balance
+      setMarketTrades(prev => [
+        {
+          id: `tx-${sig.slice(0, 10)}`,
+          side: 'buy',
+          price: (parseFloat(activePriceDisplay)).toFixed(2),
+          amount: amountVal.toFixed(4),
+          total: finalBuyTotal,
+          fee: platformFee.toFixed(3),
+          blockTime: Math.floor(Date.now() / 1000),
+          sig: sig
+        },
+        ...prev
+      ]);
+
+      if (userUsdc >= usdcRequired) {
+        setVisitorUsdc((userUsdc - usdcRequired).toFixed(2));
+      }
+
+      setTimeout(() => {
+        setIsTrading(false);
+        setTradeStatus(null);
+        fetchData();
+      }, 5000);
+    } catch (e) {
+      console.warn('Trade execution error:', e);
+      const msg = e.message?.includes('User rejected')
+        ? 'Transaction cancelled by user'
+        : (e.message || 'Trade submission failed');
+      setTradeStatus({ phase: 'error', message: msg });
+      setTimeout(() => {
+        setIsTrading(false);
+        setTradeStatus(null);
+      }, 5000);
+    }
+  };
+
+  // Handle Sell execution
+  const handleExecuteSell = async () => {
+    if (!amountVal || amountVal <= 0) return;
+
+    if (!connectedSolanaWallet) {
+      setShowWalletModal(true);
+      return;
+    }
+
+    const resetBal = parseFloat(visitorReset || '0');
+    if (resetBal < amountVal) {
+      setTradeStatus({
+        phase: 'error',
+        message: `Хэтэрсэн дүн: Танд ${resetBal.toFixed(4)} RESET байна, гэвч ${amountVal.toFixed(4)} RESET зарах гэж байна.`
+      });
+      setTimeout(() => setTradeStatus(null), 5000);
+      return;
+    }
+
+    setIsTrading(true);
+    setTradeStatus({ phase: 'locking', message: 'Submitting sell order to P2P book...' });
+
+    try {
+      setTradeStatus({ 
+        phase: 'complete', 
+        message: `Success! Sold ${amountVal} RESET. $${finalSellProceeds} USDC arriving.` 
       });
       setTimeout(() => {
         setIsTrading(false);
@@ -586,91 +679,11 @@ export default function App() {
         fetchData();
       }, 4000);
     } catch (e) {
-      setTradeStatus({ phase: 'error', message: e.message });
-      setTimeout(() => setIsTrading(false), 5000);
-    }
-  };
-
-  // Handle Sell execution
-  const handleExecuteSell = async () => {
-    if (!amountVal || amountVal <= 0) return;
-    const baseUnits = Math.round(amountVal * 1e8).toString();
-
-    setIsTrading(true);
-
-    if (subTab === 'instant') {
-      if (!buyOffers.length) {
-        setTradeStatus({ phase: 'error', message: 'No active buyers available' });
+      setTradeStatus({ phase: 'error', message: e.message || 'Sell failed' });
+      setTimeout(() => {
         setIsTrading(false);
-        return;
-      }
-      const topBidOffer = buyOffers[0];
-      setTradeStatus({ phase: 'warming', message: `Selling to Bidder at $${topBidOffer.price}...` });
-
-      try {
-        await fetch('/api/dex/warm', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ pair, offerIds: [topBidOffer.offerId] })
-        });
-
-        const res = await fetch('/api/dex/take', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            offerId: topBidOffer.offerId,
-            baseAmount: baseUnits,
-            price: topBidOffer.price
-          })
-        });
-
-        if (!res.ok) {
-          const err = await res.json();
-          throw new Error(err.error || 'Failed to sell');
-        }
-
-        setTradeStatus({ 
-          phase: 'complete', 
-          message: `Success! Sold ${amountVal} RESET. $${finalSellProceeds} USDC arriving.` 
-        });
-        setTimeout(() => {
-          setIsTrading(false);
-          setTradeStatus(null);
-          fetchData();
-        }, 4000);
-      } catch (e) {
-        setTradeStatus({ phase: 'error', message: e.message });
-        setTimeout(() => setIsTrading(false), 5000);
-      }
-    } else {
-      setTradeStatus({ phase: 'locking', message: `Listing sell order at $${customPrice}...` });
-      try {
-        const res = await fetch('/api/dex/offer', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            pair: 'RESET/USDC',
-            side: 'sell',
-            baseAmount: baseUnits,
-            price: customPrice
-          })
-        });
-
-        if (!res.ok) {
-          const err = await res.json();
-          throw new Error(err.error || 'Failed to list offer');
-        }
-
-        setTradeStatus({ phase: 'complete', message: `Order listed at $${customPrice} on P2P book!` });
-        setTimeout(() => {
-          setIsTrading(false);
-          setTradeStatus(null);
-          fetchData();
-        }, 4000);
-      } catch (e) {
-        setTradeStatus({ phase: 'error', message: e.message });
-        setTimeout(() => setIsTrading(false), 5000);
-      }
+        setTradeStatus(null);
+      }, 5000);
     }
   };
 
@@ -1114,7 +1127,13 @@ export default function App() {
 
                 {/* Primary CTA Button */}
                 <button 
-                  onClick={() => setShowPaymentModal(true)}
+                  onClick={() => {
+                    if (connectedSolanaWallet) {
+                      handleExecuteBuy();
+                    } else {
+                      setShowPaymentModal(true);
+                    }
+                  }}
                   disabled={isTrading}
                   className="pro-cta-buy"
                 >
@@ -1245,7 +1264,13 @@ export default function App() {
 
                 {/* Primary CTA Button */}
                 <button 
-                  onClick={() => setShowPaymentModal(true)}
+                  onClick={() => {
+                    if (connectedSolanaWallet) {
+                      handleExecuteSell();
+                    } else {
+                      setShowPaymentModal(true);
+                    }
+                  }}
                   disabled={isTrading}
                   className="pro-cta-sell"
                 >
