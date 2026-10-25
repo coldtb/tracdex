@@ -318,51 +318,30 @@ export default function App() {
     }
   };
 
-  // Re-render timer every 3s to keep "Xs ago" live and counting
+  // Keep relative time labels updated quietly every 30s
   useEffect(() => {
-    const timer = setInterval(() => setTimeTick(t => t + 1), 3000);
+    const timer = setInterval(() => setTimeTick(t => t + 1), 30000);
     return () => clearInterval(timer);
   }, []);
 
-  // Fetch live orderbook and tickers from Intercom-DEX (with dynamic live market pulse fallback)
+  // Fetch live orderbook and tickers quietly from Intercom-DEX without UI jitter
   const fetchData = async () => {
     try {
-      setLoading(true);
       const res = await fetch('/api/dex/status');
       if (res.ok) {
         const json = await res.json();
         if (json.offers && json.offers.length) {
           setData(json);
-          return;
         }
       }
     } catch (e) {
-      // Fallback for public static deployment
-    } finally {
-      setLoading(false);
+      // Quiet background check
     }
-
-    // Keep orderbook lively and reactive
-    setData(prev => {
-      if (!prev || !prev.offers) return prev;
-      const updatedOffers = prev.offers.map((o, idx) => {
-        if (idx < 8 && Math.random() > 0.4) {
-          const p = parseFloat(o.price);
-          const newP = Math.max(20, (p + (Math.random() - 0.48) * 0.05)).toFixed(2);
-          return { ...o, price: newP };
-        }
-        return o;
-      });
-      return {
-        ...prev,
-        offers: updatedOffers
-      };
-    });
   };
 
   useEffect(() => {
     fetchData();
-    const interval = setInterval(fetchData, 4000);
+    const interval = setInterval(fetchData, 30000);
     return () => clearInterval(interval);
   }, [pair]);
 

@@ -218,7 +218,7 @@ export default function CandleChart({ pair = 'RESET/USDC', currentPrice = '36.00
     };
   }, []);
 
-  // Load and apply candles
+  // Load and apply candles when interval or pair changes
   useEffect(() => {
     if (!seriesRef.current) return;
 
@@ -226,13 +226,6 @@ export default function CandleChart({ pair = 'RESET/USDC', currentPrice = '36.00
     const aggregated = aggregateCandles(baseData, interval);
 
     if (aggregated.length) {
-      // Harmonize latest bar close with live price
-      const liveP = parseFloat(currentPrice || '36.00');
-      const last = aggregated[aggregated.length - 1];
-      last.close = liveP;
-      if (liveP > last.high) last.high = liveP;
-      if (liveP < last.low) last.low = liveP;
-
       const candlePoints = aggregated.map((c) => ({
         time: c.time,
         open: c.open,
@@ -268,7 +261,26 @@ export default function CandleChart({ pair = 'RESET/USDC', currentPrice = '36.00
       latestCandleRef.current = latest;
       setActiveCandle(latest);
     }
-  }, [pair, interval, currentPrice]);
+  }, [pair, interval]);
+
+  // Update only the latest live bar smoothly when price changes without re-rendering the whole chart
+  useEffect(() => {
+    if (!seriesRef.current || !latestCandleRef.current) return;
+    const liveP = parseFloat(currentPrice || '35.00');
+    const last = { ...latestCandleRef.current };
+    last.close = liveP;
+    if (liveP > last.high) last.high = liveP;
+    if (liveP < last.low) last.low = liveP;
+
+    seriesRef.current.update({
+      time: last.time,
+      open: last.open,
+      high: last.high,
+      low: last.low,
+      close: last.close,
+    });
+    latestCandleRef.current = last;
+  }, [currentPrice]);
 
   const active = activeCandle || latestCandleRef.current || {
     open: 36.00, high: 36.00, low: 36.00, close: 36.00, volume: 7.5
