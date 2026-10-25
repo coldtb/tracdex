@@ -245,7 +245,7 @@ export default function App() {
       <header className="header">
         <div className="brand">
           <div className="brand-logo">⚡</div>
-          <span className="brand-text">MAYHEM DEX</span>
+          <span className="brand-text">Trac<span style={{ color: 'var(--color-primary)' }}>DEX</span></span>
           <div className="badge">
             <span className="badge-dot"></span>
             <span>Solana ⇄ Trac P2P</span>
@@ -301,7 +301,7 @@ export default function App() {
             rel="noreferrer"
             className="btn btn-secondary" 
             style={{ padding: '8px 12px', fontSize: '12px' }}
-            title="Join Mayhem DEX Support Telegram"
+            title="Join TracDEX Support Telegram"
           >
             <MessageCircle size={15} style={{ color: '#38bdf8' }} />
             <span>Support</span>
@@ -802,7 +802,7 @@ export default function App() {
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
                 <ShieldCheck size={24} style={{ color: 'var(--color-green)' }} />
-                <span style={{ fontSize: '18px', fontWeight: '800' }}>Mayhem DEX Escrow Security</span>
+                <span style={{ fontSize: '18px', fontWeight: '800' }}>TracDEX Escrow Security</span>
               </div>
               <button 
                 onClick={() => setShowTrustModal(false)}
