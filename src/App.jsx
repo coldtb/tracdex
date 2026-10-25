@@ -103,6 +103,62 @@ export default function App() {
   const [copiedAddress, setCopiedAddress] = useState(false);
   const [connectedSolanaWallet, setConnectedSolanaWallet] = useState(null);
   const [isConnectingWallet, setIsConnectingWallet] = useState(false);
+  const [visitorUsdc, setVisitorUsdc] = useState(null);
+  const [visitorSol, setVisitorSol] = useState(null);
+
+  // Fetch real on-chain balance whenever user connects their Solana wallet
+  useEffect(() => {
+    if (!connectedSolanaWallet) {
+      setVisitorUsdc(null);
+      setVisitorSol(null);
+      return;
+    }
+
+    // 1. Fetch real SOL balance
+    fetch('https://api.mainnet-beta.solana.com', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        jsonrpc: '2.0',
+        id: 1,
+        method: 'getBalance',
+        params: [connectedSolanaWallet]
+      })
+    })
+      .then(r => r.json())
+      .then(d => {
+        if (d.result?.value !== undefined) {
+          setVisitorSol((d.result.value / 1e9).toFixed(3));
+        }
+      })
+      .catch(() => {});
+
+    // 2. Fetch real USDC balance
+    fetch('https://api.mainnet-beta.solana.com', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        jsonrpc: '2.0',
+        id: 2,
+        method: 'getTokenAccountsByOwner',
+        params: [
+          connectedSolanaWallet,
+          { mint: 'EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v' },
+          { encoding: 'jsonParsed' }
+        ]
+      })
+    })
+      .then(r => r.json())
+      .then(d => {
+        const acc = d.result?.value?.[0];
+        if (acc) {
+          setVisitorUsdc(acc.account.data.parsed.info.tokenAmount.uiAmountString || '0.00');
+        } else {
+          setVisitorUsdc('0.00');
+        }
+      })
+      .catch(() => setVisitorUsdc('0.00'));
+  }, [connectedSolanaWallet]);
 
   const handleCopy = (text) => {
     navigator.clipboard.writeText(text);
@@ -404,16 +460,20 @@ export default function App() {
 
           {connectedSolanaWallet ? (
             <div className="badge" style={{ background: 'var(--bg-main)', border: '1px solid var(--border-glow)' }}>
-              <span style={{ color: '#f7931a', fontWeight: 'bold' }}>RESET:</span>
-              <span className="mono" style={{ color: '#fff' }}>{freeReset}</span>
-              <span style={{ color: 'var(--text-dim)' }}>|</span>
               <span style={{ color: '#38bdf8', fontWeight: 'bold' }}>USDC:</span>
-              <span className="mono" style={{ color: '#fff' }}>${freeUsdc}</span>
+              <span className="mono" style={{ color: '#fff' }}>
+                ${visitorUsdc !== null ? visitorUsdc : '...'}
+              </span>
+              <span style={{ color: 'var(--text-dim)' }}>|</span>
+              <span style={{ color: '#a855f7', fontWeight: 'bold' }}>SOL:</span>
+              <span className="mono" style={{ color: '#fff' }}>
+                {visitorSol !== null ? visitorSol : '...'}
+              </span>
             </div>
           ) : (
             <div className="badge" style={{ background: 'var(--bg-main)', border: '1px solid var(--border-glow)' }}>
               <span className="badge-dot"></span>
-              <span style={{ color: 'var(--color-green)' }}>Mainnet Connected</span>
+              <span style={{ color: 'var(--color-green)' }}>Mainnet Active</span>
             </div>
           )}
 
