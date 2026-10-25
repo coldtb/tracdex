@@ -33,14 +33,64 @@ import marketSnapshot from './data/market-snapshot.json';
 const PLATFORM_COLLECTOR = '161N33uKaKEzMEHKV2RaUkM68cLj6Wy9BdvV9rvNU6F';
 const PLATFORM_FEE_PCT = 1.0; // 1% platform fee
 
-// Supported Solana Wallets
+// Official Web3 Wallet Vector SVG Logos
+const PhantomIcon = ({ size = 26 }) => (
+  <svg width={size} height={size} viewBox="0 0 128 128" fill="none">
+    <rect width="128" height="128" rx="28" fill="#AB9FF2" />
+    <path d="M110.5 64C110.5 89.6802 89.6802 110.5 64 110.5C40.6732 110.5 21.3197 93.3072 18.0125 70.8875C17.6749 68.6001 19.5312 66.625 21.8488 66.625H42.75C44.8211 66.625 46.5 68.3039 46.5 70.375C46.5 75.3456 50.5294 79.375 55.5 79.375C60.4706 79.375 64.5 75.3456 64.5 70.375V41.5C64.5 30.1782 73.6782 21 85 21C96.3218 21 105.5 30.1782 105.5 41.5V64H110.5Z" fill="#FFF" />
+    <circle cx="74.5" cy="50" r="4.5" fill="#AB9FF2" />
+    <circle cx="93.5" cy="50" r="4.5" fill="#AB9FF2" />
+  </svg>
+);
+
+const SolflareIcon = ({ size = 26 }) => (
+  <svg width={size} height={size} viewBox="0 0 128 128" fill="none">
+    <rect width="128" height="128" rx="28" fill="#181424" />
+    <path d="M64 24C64 24 48 44 48 62C48 70.8 51.6 78.8 57.2 84.4C56 80.8 55.6 76.8 56.8 72.8C58 68 61.2 64 65.2 61.2C67.2 60 69.6 58.8 72 58.8C78 58.8 83.2 62.8 84.8 68.4C86.8 74.8 84.4 81.6 79.2 86C84.8 82.8 88.4 77.2 89.6 70.8C90.8 64 88.8 56.8 84 51.6C78.4 45.6 72 36 72 24L64 24Z" fill="url(#solflareGradModal)" />
+    <path d="M64 104C52.8 104 44 95.2 44 84C44 76.8 48 70.4 54 66.8C52.8 70.4 53.2 74.4 55.2 78C57.6 82 62 84.8 66.8 84.8C68.8 84.8 70.8 84.4 72.8 83.2C75.2 81.6 76.8 79.2 77.6 76.4C79.2 80.8 78.4 86 75.2 90C71.2 94.8 65.6 98 59.6 98.8C61.2 102 64.4 104 68 104H64Z" fill="#FFC83B" />
+    <defs>
+      <linearGradient id="solflareGradModal" x1="48" y1="24" x2="90" y2="86" gradientUnits="userSpaceOnUse">
+        <stop stopColor="#FF8F3D" />
+        <stop offset="1" stopColor="#FF3B30" />
+      </linearGradient>
+    </defs>
+  </svg>
+);
+
+const BackpackIcon = ({ size = 26 }) => (
+  <svg width={size} height={size} viewBox="0 0 128 128" fill="none">
+    <rect width="128" height="128" rx="28" fill="#E33E38" />
+    <path d="M48 36C48 31.5817 51.5817 28 56 28H72C76.4183 28 80 31.5817 80 36V40H88C92.4183 40 96 43.5817 96 48V92C96 96.4183 92.4183 100 88 100H40C35.5817 100 32 96.4183 32 92V48C32 43.5817 35.5817 40 40 40H48V36ZM56 36V40H72V36H56ZM40 56V68H88V56H40ZM40 76V92H88V76H40Z" fill="white" />
+  </svg>
+);
+
+const OkxIcon = ({ size = 26 }) => (
+  <svg width={size} height={size} viewBox="0 0 128 128" fill="none">
+    <rect width="128" height="128" rx="28" fill="#000000" stroke="#333842" strokeWidth="4" />
+    <rect x="28" y="28" width="24" height="24" rx="4" fill="#FFFFFF" />
+    <rect x="76" y="28" width="24" height="24" rx="4" fill="#FFFFFF" />
+    <rect x="52" y="52" width="24" height="24" rx="4" fill="#FFFFFF" />
+    <rect x="28" y="76" width="24" height="24" rx="4" fill="#FFFFFF" />
+    <rect x="76" y="76" width="24" height="24" rx="4" fill="#FFFFFF" />
+  </svg>
+);
+
+const CoinbaseIcon = ({ size = 26 }) => (
+  <svg width={size} height={size} viewBox="0 0 128 128" fill="none">
+    <rect width="128" height="128" rx="28" fill="#0052FF" />
+    <circle cx="64" cy="64" r="32" fill="white" />
+    <rect x="52" y="52" width="24" height="24" rx="6" fill="#0052FF" />
+  </svg>
+);
+
+// Supported Solana Wallets with Official Logos
 const SOLANA_WALLETS = [
   {
     id: 'phantom',
     name: 'Phantom',
     badge: 'Popular',
     color: '#ab9ff2',
-    icon: '👻',
+    icon: PhantomIcon,
     getProvider: () => (typeof window !== 'undefined' ? (window.phantom?.solana || (window.solana?.isPhantom ? window.solana : null)) : null),
     installUrl: 'https://phantom.app/'
   },
@@ -49,7 +99,7 @@ const SOLANA_WALLETS = [
     name: 'Solflare',
     badge: 'Native',
     color: '#fc6a38',
-    icon: '🔥',
+    icon: SolflareIcon,
     getProvider: () => (typeof window !== 'undefined' ? (window.solflare?.isSolflare ? window.solflare : null) : null),
     installUrl: 'https://solflare.com/'
   },
@@ -58,7 +108,7 @@ const SOLANA_WALLETS = [
     name: 'Backpack',
     badge: 'Web3',
     color: '#e33e38',
-    icon: '🎒',
+    icon: BackpackIcon,
     getProvider: () => (typeof window !== 'undefined' ? window.backpack : null),
     installUrl: 'https://backpack.app/'
   },
@@ -67,7 +117,7 @@ const SOLANA_WALLETS = [
     name: 'OKX Wallet',
     badge: 'Multi-Chain',
     color: '#ffffff',
-    icon: '⬛',
+    icon: OkxIcon,
     getProvider: () => (typeof window !== 'undefined' ? window.okxwallet?.solana : null),
     installUrl: 'https://www.okx.com/web3'
   },
@@ -76,7 +126,7 @@ const SOLANA_WALLETS = [
     name: 'Coinbase Wallet',
     badge: 'Ecosystem',
     color: '#0052ff',
-    icon: '🔵',
+    icon: CoinbaseIcon,
     getProvider: () => (typeof window !== 'undefined' ? window.coinbaseSolana : null),
     installUrl: 'https://www.coinbase.com/wallet'
   }
@@ -1503,8 +1553,10 @@ export default function App() {
                             transition: 'all 0.2s',
                           }}
                         >
-                          <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                            <span style={{ fontSize: '18px' }}>{w.icon}</span>
+                          <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', width: '28px', height: '28px', flexShrink: 0 }}>
+                              {typeof w.icon === 'function' ? <w.icon size={26} /> : <span>{w.icon}</span>}
+                            </div>
                             <span style={{ fontWeight: 'bold', fontSize: '13px', color: '#fff' }}>{w.name}</span>
                           </div>
                           <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
@@ -1599,8 +1651,10 @@ export default function App() {
                       transition: 'all 0.2s',
                     }}
                   >
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-                      <span style={{ fontSize: '20px' }}>{w.icon}</span>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '14px' }}>
+                      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', width: '28px', height: '28px', flexShrink: 0 }}>
+                        {typeof w.icon === 'function' ? <w.icon size={28} /> : <span>{w.icon}</span>}
+                      </div>
                       <span style={{ fontWeight: 'bold', fontSize: '14px', color: '#fff' }}>{w.name}</span>
                     </div>
 
