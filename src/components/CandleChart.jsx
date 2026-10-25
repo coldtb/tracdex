@@ -41,26 +41,36 @@ function aggregateCandles(baseCandles, interval) {
   }
   aggregated.sort((a, b) => a.t - b.t);
 
-  // Fill gap buckets densely (flat bar at previous close with 0 volume)
+  // For small intervals (1m-15m): only fill gaps up to 6 hours back from last candle
+  // For larger intervals: fill entire range (gaps are natural and rare)
   if (!aggregated.length) return [];
   const byT = new Map(aggregated.map(c => [c.t, c]));
-  const first = aggregated[0].t;
-  const last = aggregated[aggregated.length - 1].t;
 
-  let close = aggregated[0].o;
+  const lastTs = aggregated[aggregated.length - 1].t;
+  const secPerBar = SECONDS[interval] || 900;
+  // For fine-grained intervals, only show last 200 real+gap bars max to avoid chart clutter
+  const maxBarsBack = Math.min(aggregated.length + 200, 400);
+  const first = Math.max(aggregated[0].t, lastTs - maxBarsBack * secPerBar);
+
+  let close = (() => {
+    // Find the close price at or before `first`
+    const beforeFirst = aggregated.filter(c => c.t <= first);
+    return beforeFirst.length ? parseFloat(beforeFirst[beforeFirst.length - 1].c) : parseFloat(aggregated[0].o);
+  })();
+
   const out = [];
-  for (let t = first; t <= last; t = nextBucket(t, interval)) {
+  for (let t = first; t <= lastTs; t = nextBucket(t, interval)) {
     const c = byT.get(t);
     if (c) {
       out.push({
         time: t,
-        open: c.o,
-        high: c.h,
-        low: c.l,
-        close: c.c,
-        volume: Number(c.v.toFixed(2))
+        open: parseFloat(c.o),
+        high: parseFloat(c.h),
+        low: parseFloat(c.l),
+        close: parseFloat(c.c),
+        volume: Number(parseFloat(c.v || 0).toFixed(2))
       });
-      close = c.c;
+      close = parseFloat(c.c);
     } else {
       out.push({
         time: t,
@@ -124,9 +134,9 @@ export default function CandleChart({ pair = 'RESET/USDC', currentPrice = '36.00
       },
       timeScale: {
         borderColor: '#252a33',
-        rightOffset: 12,
-        barSpacing: 10,
-        minBarSpacing: 0.1,
+        rightOffset: 6,
+        barSpacing: 8,
+        minBarSpacing: 2,
         fixLeftEdge: false,
         fixRightEdge: false,
         timeVisible: true,
@@ -163,16 +173,17 @@ export default function CandleChart({ pair = 'RESET/USDC', currentPrice = '36.00
       priceFormat: { type: 'price', precision: 2, minMove: 0.01 },
     });
 
-    // Add Volume Series
+    // Add Volume Series — separate overlay scale so it never contaminates price axis
     const volSeries = chart.addSeries(HistogramSeries, {
       priceFormat: { type: 'volume' },
-      priceScaleId: '',
+      priceScaleId: 'vol',
       lastValueVisible: false,
       priceLineVisible: false,
     });
 
     volSeries.priceScale().applyOptions({
-      scaleMargins: { top: 0.8, bottom: 0 },
+      scaleMargins: { top: 0.82, bottom: 0 },
+      visible: false,
     });
 
     // Crosshair hover listener
@@ -219,44 +230,57 @@ export default function CandleChart({ pair = 'RESET/USDC', currentPrice = '36.00
 
   // Load and apply candles when interval or pair changes
   useEffect(() => {
-    if (!seriesRef.current) return;
+    if (!seriesRef.current || !chartInstanceRef.current) return;
 
     const baseData = marketSnapshot?.candles || [];
+    // Filter only candles with actual trading activity (non-flat gap-fills) for sparse intervals
     const aggregated = aggregateCandles(baseData, interval);
 
-    if (aggregated.length) {
-      const candlePoints = aggregated.map((c) => ({
-        time: c.time,
-        open: c.open,
-        high: c.high,
-        low: c.low,
-        close: c.close,
-      }));
+    if (!aggregated.length) return;
 
-      const volPoints = aggregated.map((c) => ({
-        time: c.time,
-        value: c.volume,
-        color: c.close >= c.open ? 'rgba(46, 189, 133, 0.45)' : 'rgba(240, 97, 109, 0.45)',
-      }));
+    const candlePoints = aggregated.map((c) => ({
+      time: c.time,
+      open: c.open,
+      high: c.high,
+      low: c.low,
+      close: c.close,
+    }));
 
-      seriesRef.current.setData(candlePoints);
-      if (volumeSeriesRef.current) {
-        volumeSeriesRef.current.setData(volPoints);
-      }
+    const volPoints = aggregated.map((c) => ({
+      time: c.time,
+      value: c.volume,
+      color: c.close >= c.open ? 'rgba(46, 189, 133, 0.45)' : 'rgba(240, 97, 109, 0.45)',
+    }));
 
-      // Always re-fit when interval changes: show last 65 active bars
-      const count = candlePoints.length;
-      const visibleBars = Math.min(count, 65);
-      chartInstanceRef.current?.timeScale().setVisibleLogicalRange({
-        from: Math.max(0, count - visibleBars),
-        to: count + 2,
-      });
-      lastTfRef.current = interval;
-
-      const latest = aggregated[aggregated.length - 1];
-      latestCandleRef.current = latest;
-      setActiveCandle(latest);
+    seriesRef.current.setData(candlePoints);
+    if (volumeSeriesRef.current) {
+      volumeSeriesRef.current.setData(volPoints);
     }
+
+    const count = candlePoints.length;
+
+    // Defer view positioning to AFTER TradingView finishes rendering the new data
+    // Without this delay, fitContent() inside setData() overrides our range
+    requestAnimationFrame(() => {
+      if (!chartInstanceRef.current) return;
+      const ts = chartInstanceRef.current.timeScale();
+
+      // Determine how many non-gap bars exist to decide visible window
+      const activeBars = aggregated.filter(c => c.volume > 0).length;
+      const targetBars = Math.min(Math.max(activeBars, 40), 80);
+      const visibleBars = Math.min(count, targetBars);
+
+      ts.setVisibleLogicalRange({
+        from: Math.max(0, count - visibleBars),
+        to: count + 3,
+      });
+    });
+
+    lastTfRef.current = interval;
+
+    const latest = aggregated[aggregated.length - 1];
+    latestCandleRef.current = latest;
+    setActiveCandle(latest);
   }, [pair, interval]);
 
   // Update only the latest live bar smoothly when price changes without re-rendering the whole chart
