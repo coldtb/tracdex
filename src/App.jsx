@@ -22,6 +22,7 @@ import {
   RotateCcw
 } from 'lucide-react';
 import CandleChart from './components/CandleChart';
+import marketSnapshot from './data/market-snapshot.json';
 
 // Platform Owner Wallet for Fee Collection
 const PLATFORM_COLLECTOR = '161N33uKaKEzMEHKV2RaUkM68cLj6Wy9BdvV9rvNU6F';
@@ -29,8 +30,8 @@ const PLATFORM_FEE_PCT = 1.0; // 1% platform fee
 
 export default function App() {
   const [pair, setPair] = useState('RESET/USDC');
-  const [data, setData] = useState(null);
-  const [loading, setLoading] = useState(true);
+  const [data, setData] = useState(marketSnapshot);
+  const [loading, setLoading] = useState(false);
   const [selectedOffer, setSelectedOffer] = useState(null);
   const [tradeMode, setTradeMode] = useState('buy'); // 'buy' | 'sell'
   const [subTab, setSubTab] = useState('instant'); // 'instant' | 'limit'
@@ -42,18 +43,18 @@ export default function App() {
   const [isTrading, setIsTrading] = useState(false);
   const [showTrustModal, setShowTrustModal] = useState(false);
 
-  // Fetch live orderbook and tickers from Intercom-DEX
+  // Fetch live orderbook and tickers from Intercom-DEX (with snapshot fallback)
   const fetchData = async () => {
     try {
       const res = await fetch('/api/dex/status');
       if (res.ok) {
         const json = await res.json();
-        setData(json);
-      } else {
-        throw new Error('API offline');
+        if (json.offers && json.offers.length) {
+          setData(json);
+        }
       }
     } catch (e) {
-      console.warn('DEX API fetch error:', e.message);
+      // Keeps real snapshot active on public hosting
     } finally {
       setLoading(false);
     }

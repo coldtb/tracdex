@@ -1,0 +1,2422 @@
+{
+  "candles": [
+    {
+      "t": 1792573200,
+      "o": "400",
+      "h": "444",
+      "l": "200",
+      "c": "200",
+      "v": {
+        "units": "179015376",
+        "text": "179.015376",
+        "unit": "USDC"
+      }
+    },
+    {
+      "t": 1792576800,
+      "o": "425",
+      "h": "449",
+      "l": "400",
+      "c": "449",
+      "v": {
+        "units": "130749685",
+        "text": "130.749685",
+        "unit": "USDC"
+      }
+    },
+    {
+      "t": 1792580400,
+      "o": "216.75",
+      "h": "400",
+      "l": "216.749998460218",
+      "c": "216.75",
+      "v": {
+        "units": "146572650",
+        "text": "146.57265",
+        "unit": "USDC"
+      }
+    },
+    {
+      "t": 1792584000,
+      "o": "216.75",
+      "h": "400",
+      "l": "200",
+      "c": "200",
+      "v": {
+        "units": "498071114",
+        "text": "498.071114",
+        "unit": "USDC"
+      }
+    },
+    {
+      "t": 1792587600,
+      "o": "230.1",
+      "h": "398",
+      "l": "211.5",
+      "c": "398",
+      "v": {
+        "units": "109090000",
+        "text": "109.09",
+        "unit": "USDC"
+      }
+    },
+    {
+      "t": 1792591200,
+      "o": "400",
+      "h": "400",
+      "l": "250.51",
+      "c": "368",
+      "v": {
+        "units": "79991000",
+        "text": "79.991",
+        "unit": "USDC"
+      }
+    },
+    {
+      "t": 1792594800,
+      "o": "367.999978908849",
+      "h": "369",
+      "l": "367.999978908849",
+      "c": "369",
+      "v": {
+        "units": "45972999",
+        "text": "45.972999",
+        "unit": "USDC"
+      }
+    },
+    {
+      "t": 1792598400,
+      "o": "370",
+      "h": "370",
+      "l": "363.999966815753",
+      "c": "363.999966815753",
+      "v": {
+        "units": "32730297",
+        "text": "32.730297",
+        "unit": "USDC"
+      }
+    },
+    {
+      "t": 1792602000,
+      "o": "325",
+      "h": "620",
+      "l": "280",
+      "c": "620",
+      "v": {
+        "units": "158300000",
+        "text": "158.3",
+        "unit": "USDC"
+      }
+    },
+    {
+      "t": 1792605600,
+      "o": "310",
+      "h": "400",
+      "l": "280",
+      "c": "280",
+      "v": {
+        "units": "228800000",
+        "text": "228.8",
+        "unit": "USDC"
+      }
+    },
+    {
+      "t": 1792609200,
+      "o": "300",
+      "h": "400",
+      "l": "300",
+      "c": "350",
+      "v": {
+        "units": "221616276",
+        "text": "221.616276",
+        "unit": "USDC"
+      }
+    },
+    {
+      "t": 1792612800,
+      "o": "300",
+      "h": "300",
+      "l": "280",
+      "c": "300",
+      "v": {
+        "units": "414880000",
+        "text": "414.88",
+        "unit": "USDC"
+      }
+    },
+    {
+      "t": 1792616400,
+      "o": "250",
+      "h": "284.999998431639",
+      "l": "250",
+      "c": "284.999998431639",
+      "v": {
+        "units": "257656964",
+        "text": "257.656964",
+        "unit": "USDC"
+      }
+    },
+    {
+      "t": 1792620000,
+      "o": "285",
+      "h": "300",
+      "l": "285",
+      "c": "290",
+      "v": {
+        "units": "164000000",
+        "text": "164",
+        "unit": "USDC"
+      }
+    },
+    {
+      "t": 1792623600,
+      "o": "255",
+      "h": "420",
+      "l": "250",
+      "c": "300",
+      "v": {
+        "units": "593711879",
+        "text": "593.711879",
+        "unit": "USDC"
+      }
+    },
+    {
+      "t": 1792627200,
+      "o": "270",
+      "h": "401",
+      "l": "150",
+      "c": "298.9",
+      "v": {
+        "units": "1065929020",
+        "text": "1,065.92902",
+        "unit": "USDC"
+      }
+    },
+    {
+      "t": 1792630800,
+      "o": "300",
+      "h": "300",
+      "l": "151",
+      "c": "270",
+      "v": {
+        "units": "740025316",
+        "text": "740.025316",
+        "unit": "USDC"
+      }
+    },
+    {
+      "t": 1792634400,
+      "o": "298",
+      "h": "300",
+      "l": "229",
+      "c": "300",
+      "v": {
+        "units": "140879400",
+        "text": "140.8794",
+        "unit": "USDC"
+      }
+    },
+    {
+      "t": 1792638000,
+      "o": "285",
+      "h": "550",
+      "l": "151",
+      "c": "275.5",
+      "v": {
+        "units": "624693987",
+        "text": "624.693987",
+        "unit": "USDC"
+      }
+    },
+    {
+      "t": 1792641600,
+      "o": "298",
+      "h": "298",
+      "l": "130",
+      "c": "298",
+      "v": {
+        "units": "40020000",
+        "text": "40.02",
+        "unit": "USDC"
+      }
+    },
+    {
+      "t": 1792645200,
+      "o": "266.9",
+      "h": "300",
+      "l": "130",
+      "c": "260",
+      "v": {
+        "units": "246190920",
+        "text": "246.19092",
+        "unit": "USDC"
+      }
+    },
+    {
+      "t": 1792648800,
+      "o": "273",
+      "h": "274",
+      "l": "268.999973461548",
+      "c": "274",
+      "v": {
+        "units": "129581737",
+        "text": "129.581737",
+        "unit": "USDC"
+      }
+    },
+    {
+      "t": 1792652400,
+      "o": "274",
+      "h": "274",
+      "l": "130",
+      "c": "260",
+      "v": {
+        "units": "373355090",
+        "text": "373.35509",
+        "unit": "USDC"
+      }
+    },
+    {
+      "t": 1792656000,
+      "o": "263",
+      "h": "275",
+      "l": "130",
+      "c": "269.997391077484",
+      "v": {
+        "units": "1058544778",
+        "text": "1,058.544778",
+        "unit": "USDC"
+      }
+    },
+    {
+      "t": 1792659600,
+      "o": "228.999995820166",
+      "h": "230",
+      "l": "209.999989386159",
+      "c": "209.999989386159",
+      "v": {
+        "units": "147526088",
+        "text": "147.526088",
+        "unit": "USDC"
+      }
+    },
+    {
+      "t": 1792663200,
+      "o": "220",
+      "h": "249",
+      "l": "171",
+      "c": "249",
+      "v": {
+        "units": "499500000",
+        "text": "499.5",
+        "unit": "USDC"
+      }
+    },
+    {
+      "t": 1792666800,
+      "o": "249",
+      "h": "249",
+      "l": "131",
+      "c": "235",
+      "v": {
+        "units": "537029716",
+        "text": "537.029716",
+        "unit": "USDC"
+      }
+    },
+    {
+      "t": 1792670400,
+      "o": "230",
+      "h": "250",
+      "l": "190",
+      "c": "230",
+      "v": {
+        "units": "1386455000",
+        "text": "1,386.455",
+        "unit": "USDC"
+      }
+    },
+    {
+      "t": 1792674000,
+      "o": "231",
+      "h": "250",
+      "l": "220",
+      "c": "228.999989498783",
+      "v": {
+        "units": "92365626",
+        "text": "92.365626",
+        "unit": "USDC"
+      }
+    },
+    {
+      "t": 1792681200,
+      "o": "210",
+      "h": "210",
+      "l": "210",
+      "c": "210",
+      "v": {
+        "units": "2100000",
+        "text": "2.1",
+        "unit": "USDC"
+      }
+    },
+    {
+      "t": 1792684800,
+      "o": "225",
+      "h": "434",
+      "l": "210",
+      "c": "249",
+      "v": {
+        "units": "1110099684",
+        "text": "1,110.099684",
+        "unit": "USDC"
+      }
+    },
+    {
+      "t": 1792688400,
+      "o": "230",
+      "h": "260",
+      "l": "150",
+      "c": "250",
+      "v": {
+        "units": "1228905200",
+        "text": "1,228.9052",
+        "unit": "USDC"
+      }
+    },
+    {
+      "t": 1792692000,
+      "o": "226.999996620242",
+      "h": "244.999992864777",
+      "l": "190",
+      "c": "229.999997987355",
+      "v": {
+        "units": "380487588",
+        "text": "380.487588",
+        "unit": "USDC"
+      }
+    },
+    {
+      "t": 1792695600,
+      "o": "222",
+      "h": "246",
+      "l": "185",
+      "c": "246",
+      "v": {
+        "units": "70530300",
+        "text": "70.5303",
+        "unit": "USDC"
+      }
+    },
+    {
+      "t": 1792699200,
+      "o": "248",
+      "h": "248",
+      "l": "190",
+      "c": "228",
+      "v": {
+        "units": "96040000",
+        "text": "96.04",
+        "unit": "USDC"
+      }
+    },
+    {
+      "t": 1792702800,
+      "o": "139.999998160865",
+      "h": "228",
+      "l": "139.999998160865",
+      "c": "218",
+      "v": {
+        "units": "81764556",
+        "text": "81.764556",
+        "unit": "USDC"
+      }
+    },
+    {
+      "t": 1792706400,
+      "o": "232",
+      "h": "247.999999919487",
+      "l": "185",
+      "c": "247.999999919487",
+      "v": {
+        "units": "405679632",
+        "text": "405.679632",
+        "unit": "USDC"
+      }
+    },
+    {
+      "t": 1792710000,
+      "o": "245.999998111313",
+      "h": "245.999998111313",
+      "l": "165",
+      "c": "223.999954556299",
+      "v": {
+        "units": "830636737",
+        "text": "830.636737",
+        "unit": "USDC"
+      }
+    },
+    {
+      "t": 1792713600,
+      "o": "171",
+      "h": "250",
+      "l": "171",
+      "c": "229",
+      "v": {
+        "units": "573358242",
+        "text": "573.358242",
+        "unit": "USDC"
+      }
+    },
+    {
+      "t": 1792717200,
+      "o": "245",
+      "h": "400",
+      "l": "140",
+      "c": "220",
+      "v": {
+        "units": "559393331",
+        "text": "559.393331",
+        "unit": "USDC"
+      }
+    },
+    {
+      "t": 1792720800,
+      "o": "190",
+      "h": "239.999872910368",
+      "l": "179.999999503143",
+      "c": "200",
+      "v": {
+        "units": "267719950",
+        "text": "267.71995",
+        "unit": "USDC"
+      }
+    },
+    {
+      "t": 1792724400,
+      "o": "200",
+      "h": "200",
+      "l": "169",
+      "c": "169",
+      "v": {
+        "units": "415955638",
+        "text": "415.955638",
+        "unit": "USDC"
+      }
+    },
+    {
+      "t": 1792728000,
+      "o": "180.999997156117",
+      "h": "180.999997156117",
+      "l": "149.999996028947",
+      "c": "172",
+      "v": {
+        "units": "213010857",
+        "text": "213.010857",
+        "unit": "USDC"
+      }
+    },
+    {
+      "t": 1792731600,
+      "o": "172",
+      "h": "180.999999872732",
+      "l": "129.999951372037",
+      "c": "150",
+      "v": {
+        "units": "317516450",
+        "text": "317.51645",
+        "unit": "USDC"
+      }
+    },
+    {
+      "t": 1792735200,
+      "o": "240",
+      "h": "275",
+      "l": "130",
+      "c": "157.999998536402",
+      "v": {
+        "units": "408071224",
+        "text": "408.071224",
+        "unit": "USDC"
+      }
+    },
+    {
+      "t": 1792738800,
+      "o": "155",
+      "h": "549",
+      "l": "119.999983141511",
+      "c": "140",
+      "v": {
+        "units": "118671195",
+        "text": "118.671195",
+        "unit": "USDC"
+      }
+    },
+    {
+      "t": 1792742400,
+      "o": "145",
+      "h": "150",
+      "l": "145",
+      "c": "146",
+      "v": {
+        "units": "25420000",
+        "text": "25.42",
+        "unit": "USDC"
+      }
+    },
+    {
+      "t": 1792746000,
+      "o": "173.999999519498",
+      "h": "173.999999519498",
+      "l": "147",
+      "c": "147",
+      "v": {
+        "units": "109497007",
+        "text": "109.497007",
+        "unit": "USDC"
+      }
+    },
+    {
+      "t": 1792749600,
+      "o": "144.999985610475",
+      "h": "151",
+      "l": "144.999985610475",
+      "c": "150",
+      "v": {
+        "units": "64881482",
+        "text": "64.881482",
+        "unit": "USDC"
+      }
+    },
+    {
+      "t": 1792753200,
+      "o": "150",
+      "h": "152",
+      "l": "129.999995934148",
+      "c": "129.999995934148",
+      "v": {
+        "units": "212589448",
+        "text": "212.589448",
+        "unit": "USDC"
+      }
+    },
+    {
+      "t": 1792756800,
+      "o": "150",
+      "h": "190",
+      "l": "21.009996753313",
+      "c": "129",
+      "v": {
+        "units": "282204591",
+        "text": "282.204591",
+        "unit": "USDC"
+      }
+    },
+    {
+      "t": 1792760400,
+      "o": "120",
+      "h": "189.999998347103",
+      "l": "110",
+      "c": "120.009995578952",
+      "v": {
+        "units": "216131211",
+        "text": "216.131211",
+        "unit": "USDC"
+      }
+    },
+    {
+      "t": 1792764000,
+      "o": "171.989993171137",
+      "h": "241",
+      "l": "119",
+      "c": "148",
+      "v": {
+        "units": "169960259",
+        "text": "169.960259",
+        "unit": "USDC"
+      }
+    },
+    {
+      "t": 1792767600,
+      "o": "149",
+      "h": "149",
+      "l": "120.09999711505",
+      "c": "120.09999711505",
+      "v": {
+        "units": "17896495",
+        "text": "17.896495",
+        "unit": "USDC"
+      }
+    },
+    {
+      "t": 1792771200,
+      "o": "135",
+      "h": "138",
+      "l": "119.999997294561",
+      "c": "120",
+      "v": {
+        "units": "64382728",
+        "text": "64.382728",
+        "unit": "USDC"
+      }
+    },
+    {
+      "t": 1792774800,
+      "o": "120",
+      "h": "133.99997758865",
+      "l": "81.009998230401",
+      "c": "119",
+      "v": {
+        "units": "178977953",
+        "text": "178.977953",
+        "unit": "USDC"
+      }
+    },
+    {
+      "t": 1792778400,
+      "o": "150",
+      "h": "150",
+      "l": "90",
+      "c": "148",
+      "v": {
+        "units": "489194756",
+        "text": "489.194756",
+        "unit": "USDC"
+      }
+    },
+    {
+      "t": 1792782000,
+      "o": "147.999995975664",
+      "h": "150",
+      "l": "115",
+      "c": "127",
+      "v": {
+        "units": "143584151",
+        "text": "143.584151",
+        "unit": "USDC"
+      }
+    },
+    {
+      "t": 1792785600,
+      "o": "115",
+      "h": "200",
+      "l": "114",
+      "c": "199",
+      "v": {
+        "units": "64272415",
+        "text": "64.272415",
+        "unit": "USDC"
+      }
+    },
+    {
+      "t": 1792789200,
+      "o": "240",
+      "h": "240",
+      "l": "90.5",
+      "c": "90.5",
+      "v": {
+        "units": "206397366",
+        "text": "206.397366",
+        "unit": "USDC"
+      }
+    },
+    {
+      "t": 1792792800,
+      "o": "179",
+      "h": "179",
+      "l": "169.999999035903",
+      "c": "169.999999035903",
+      "v": {
+        "units": "18080585",
+        "text": "18.080585",
+        "unit": "USDC"
+      }
+    },
+    {
+      "t": 1792796400,
+      "o": "187.999998820974",
+      "h": "187.999998820974",
+      "l": "93",
+      "c": "93",
+      "v": {
+        "units": "69666756",
+        "text": "69.666756",
+        "unit": "USDC"
+      }
+    },
+    {
+      "t": 1792800000,
+      "o": "102",
+      "h": "120",
+      "l": "102",
+      "c": "115",
+      "v": {
+        "units": "132924361",
+        "text": "132.924361",
+        "unit": "USDC"
+      }
+    },
+    {
+      "t": 1792803600,
+      "o": "176",
+      "h": "176",
+      "l": "91",
+      "c": "91",
+      "v": {
+        "units": "110212775",
+        "text": "110.212775",
+        "unit": "USDC"
+      }
+    },
+    {
+      "t": 1792807200,
+      "o": "100",
+      "h": "110",
+      "l": "100",
+      "c": "100",
+      "v": {
+        "units": "79962429",
+        "text": "79.962429",
+        "unit": "USDC"
+      }
+    },
+    {
+      "t": 1792810800,
+      "o": "89.999998329211",
+      "h": "109.999999236293",
+      "l": "89.999998329211",
+      "c": "109.999999236293",
+      "v": {
+        "units": "541006767",
+        "text": "541.006767",
+        "unit": "USDC"
+      }
+    },
+    {
+      "t": 1792814400,
+      "o": "79.999994169171",
+      "h": "115",
+      "l": "79.999994169171",
+      "c": "104",
+      "v": {
+        "units": "179945985",
+        "text": "179.945985",
+        "unit": "USDC"
+      }
+    },
+    {
+      "t": 1792818000,
+      "o": "115",
+      "h": "115",
+      "l": "90",
+      "c": "100",
+      "v": {
+        "units": "17515578",
+        "text": "17.515578",
+        "unit": "USDC"
+      }
+    },
+    {
+      "t": 1792821600,
+      "o": "97",
+      "h": "110.46",
+      "l": "79.999995976",
+      "c": "84.599999234031",
+      "v": {
+        "units": "457790618",
+        "text": "457.790618",
+        "unit": "USDC"
+      }
+    },
+    {
+      "t": 1792825200,
+      "o": "79.199958577258",
+      "h": "180",
+      "l": "79.199958577258",
+      "c": "179.999995161004",
+      "v": {
+        "units": "284871688",
+        "text": "284.871688",
+        "unit": "USDC"
+      }
+    },
+    {
+      "t": 1792828800,
+      "o": "95",
+      "h": "101.999999773711",
+      "l": "91.99984135367",
+      "c": "95",
+      "v": {
+        "units": "502053120",
+        "text": "502.05312",
+        "unit": "USDC"
+      }
+    },
+    {
+      "t": 1792832400,
+      "o": "95",
+      "h": "95",
+      "l": "45",
+      "c": "72",
+      "v": {
+        "units": "644552190",
+        "text": "644.55219",
+        "unit": "USDC"
+      }
+    },
+    {
+      "t": 1792836000,
+      "o": "79.999960418789",
+      "h": "89.999999032882",
+      "l": "60",
+      "c": "60",
+      "v": {
+        "units": "493594044",
+        "text": "493.594044",
+        "unit": "USDC"
+      }
+    },
+    {
+      "t": 1792839600,
+      "o": "60",
+      "h": "87",
+      "l": "60",
+      "c": "87",
+      "v": {
+        "units": "317410295",
+        "text": "317.410295",
+        "unit": "USDC"
+      }
+    },
+    {
+      "t": 1792843200,
+      "o": "66",
+      "h": "66",
+      "l": "50",
+      "c": "60",
+      "v": {
+        "units": "204944047",
+        "text": "204.944047",
+        "unit": "USDC"
+      }
+    },
+    {
+      "t": 1792846800,
+      "o": "58",
+      "h": "100",
+      "l": "46",
+      "c": "59.999987250036",
+      "v": {
+        "units": "756281434",
+        "text": "756.281434",
+        "unit": "USDC"
+      }
+    },
+    {
+      "t": 1792850400,
+      "o": "67",
+      "h": "108.999992670651",
+      "l": "52.199979955666",
+      "c": "52.199999840605",
+      "v": {
+        "units": "183258620",
+        "text": "183.25862",
+        "unit": "USDC"
+      }
+    },
+    {
+      "t": 1792854000,
+      "o": "68.999992279721",
+      "h": "68.999992279721",
+      "l": "47.5",
+      "c": "60",
+      "v": {
+        "units": "21455000",
+        "text": "21.455",
+        "unit": "USDC"
+      }
+    },
+    {
+      "t": 1792857600,
+      "o": "60",
+      "h": "60",
+      "l": "48.999991644438",
+      "c": "51.5",
+      "v": {
+        "units": "17232626",
+        "text": "17.232626",
+        "unit": "USDC"
+      }
+    },
+    {
+      "t": 1792861200,
+      "o": "58.399970365154",
+      "h": "100",
+      "l": "26",
+      "c": "32",
+      "v": {
+        "units": "566164608",
+        "text": "566.164608",
+        "unit": "USDC"
+      }
+    },
+    {
+      "t": 1792864800,
+      "o": "27.1",
+      "h": "40",
+      "l": "24.999999390091",
+      "c": "39.999998789161",
+      "v": {
+        "units": "747569399",
+        "text": "747.569399",
+        "unit": "USDC"
+      }
+    },
+    {
+      "t": 1792868400,
+      "o": "21.999989643366",
+      "h": "40",
+      "l": "21.999989643366",
+      "c": "38.2",
+      "v": {
+        "units": "105691096",
+        "text": "105.691096",
+        "unit": "USDC"
+      }
+    },
+    {
+      "t": 1792872000,
+      "o": "33.999999257115",
+      "h": "41",
+      "l": "33.999999257115",
+      "c": "41",
+      "v": {
+        "units": "553959999",
+        "text": "553.959999",
+        "unit": "USDC"
+      }
+    },
+    {
+      "t": 1792875600,
+      "o": "36.999999556878",
+      "h": "37",
+      "l": "36.999999556878",
+      "c": "37",
+      "v": {
+        "units": "54898120",
+        "text": "54.89812",
+        "unit": "USDC"
+      }
+    },
+    {
+      "t": 1792879200,
+      "o": "36.999999061125",
+      "h": "50",
+      "l": "28.5",
+      "c": "37.5",
+      "v": {
+        "units": "318589378",
+        "text": "318.589378",
+        "unit": "USDC"
+      }
+    },
+    {
+      "t": 1792882800,
+      "o": "25",
+      "h": "25",
+      "l": "25",
+      "c": "25",
+      "v": {
+        "units": "124750000",
+        "text": "124.75",
+        "unit": "USDC"
+      }
+    },
+    {
+      "t": 1792890000,
+      "o": "25.5",
+      "h": "38.2",
+      "l": "19.99998614897",
+      "c": "38.2",
+      "v": {
+        "units": "257448247",
+        "text": "257.448247",
+        "unit": "USDC"
+      }
+    },
+    {
+      "t": 1792893600,
+      "o": "32",
+      "h": "32.999998182485",
+      "l": "23.699998373984",
+      "c": "23.699998373984",
+      "v": {
+        "units": "38393498",
+        "text": "38.393498",
+        "unit": "USDC"
+      }
+    },
+    {
+      "t": 1792897200,
+      "o": "38.2",
+      "h": "38.2",
+      "l": "30",
+      "c": "34.5",
+      "v": {
+        "units": "152256138",
+        "text": "152.256138",
+        "unit": "USDC"
+      }
+    },
+    {
+      "t": 1792900800,
+      "o": "27",
+      "h": "27",
+      "l": "25.999998813996",
+      "c": "25.999998813996",
+      "v": {
+        "units": "83630683",
+        "text": "83.630683",
+        "unit": "USDC"
+      }
+    },
+    {
+      "t": 1792904400,
+      "o": "34.5",
+      "h": "35",
+      "l": "24.5",
+      "c": "35",
+      "v": {
+        "units": "442292131",
+        "text": "442.292131",
+        "unit": "USDC"
+      }
+    },
+    {
+      "t": 1792908000,
+      "o": "25",
+      "h": "41.4",
+      "l": "23",
+      "c": "40",
+      "v": {
+        "units": "591245911",
+        "text": "591.245911",
+        "unit": "USDC"
+      }
+    },
+    {
+      "t": 1792911600,
+      "o": "49.999995025355",
+      "h": "60",
+      "l": "49.999995025355",
+      "c": "60",
+      "v": {
+        "units": "6225484",
+        "text": "6.225484",
+        "unit": "USDC"
+      }
+    },
+    {
+      "t": 1792915200,
+      "o": "42",
+      "h": "43.5",
+      "l": "25",
+      "c": "39.989983085886",
+      "v": {
+        "units": "167510528",
+        "text": "167.510528",
+        "unit": "USDC"
+      }
+    },
+    {
+      "t": 1792918800,
+      "o": "43.5",
+      "h": "50",
+      "l": "35.71",
+      "c": "43",
+      "v": {
+        "units": "14858196",
+        "text": "14.858196",
+        "unit": "USDC"
+      }
+    },
+    {
+      "t": 1792922400,
+      "o": "34",
+      "h": "45",
+      "l": "25.999997988563",
+      "c": "25.999997988563",
+      "v": {
+        "units": "229069761",
+        "text": "229.069761",
+        "unit": "USDC"
+      }
+    },
+    {
+      "t": 1792926000,
+      "o": "28",
+      "h": "32.199998275315",
+      "l": "28",
+      "c": "30",
+      "v": {
+        "units": "33081228",
+        "text": "33.081228",
+        "unit": "USDC"
+      }
+    },
+    {
+      "t": 1792929600,
+      "o": "31",
+      "h": "37.169999707341",
+      "l": "25",
+      "c": "37.169999707341",
+      "v": {
+        "units": "217865328",
+        "text": "217.865328",
+        "unit": "USDC"
+      }
+    },
+    {
+      "t": 1792933200,
+      "o": "34",
+      "h": "36",
+      "l": "32",
+      "c": "34",
+      "v": {
+        "units": "14420603",
+        "text": "14.420603",
+        "unit": "USDC"
+      }
+    },
+    {
+      "t": 1792936800,
+      "o": "34",
+      "h": "38.17",
+      "l": "34",
+      "c": "38.17",
+      "v": {
+        "units": "4973857",
+        "text": "4.973857",
+        "unit": "USDC"
+      }
+    }
+  ],
+  "offers": [
+    {
+      "offerId": "5d442db47e52636aad28a8808678e2c912e6e7df3a9e9432c0307b9503bad802",
+      "pair": "RESET/USDC",
+      "side": "sell",
+      "baseAmount": "85000000",
+      "price": "63.80",
+      "maker": {
+        "dexKey": "7a941c0a79575e1c0d5cc44c502da2ff888a63a73b89d50b98ac2103fcb44fb6",
+        "tracAddr": "trac13w8jqqf8fne5lqllnanuzehdqtzshj39mu86u4ra0m23epvqmspquey0hd",
+        "solAddr": "9b5SkRBvx7u7z8C9xdyWaHfY4uZBwP6H4eqo34PCMs6P"
+      },
+      "peerKey": "449fb296cc03c6dbb53887582d732b16a7e991e08fe3051684737c98b01d8d15",
+      "expiresAt": 1792957269,
+      "registryVersion": 11,
+      "software": "0.1.33",
+      "lastSeen": 1792936929
+    },
+    {
+      "offerId": "17c45e933f4ff4a420c5afd57dc44fb8816ab6fb22c29892a7b9b7518bd50440",
+      "pair": "RESET/USDC",
+      "side": "sell",
+      "baseAmount": "10000000",
+      "price": "180",
+      "maker": {
+        "dexKey": "0f96de5023949fff2c6f5002c99a22b1cb094b897a3257616d2ea4452cb9c8c9",
+        "tracAddr": "trac1p4d37sj3a7kr6mqdemamd5cx3hqrf2yv05gygpz72s83jlryms8qcyjk6t",
+        "solAddr": "Fwv1Q3pBd9t3h9gwZENq2cqqtck1ewD12pWj46QgNFvk"
+      },
+      "peerKey": "3ed12162b2fc88ff747ce57a202064d447f44f3cba64606bdb31045753caa9ec",
+      "expiresAt": 1793485046,
+      "registryVersion": 11,
+      "software": "0.1.33",
+      "lastSeen": 1792936918
+    },
+    {
+      "offerId": "0cc496b1a8fae2642103e7f2d0b1c6971a9a76053a4da99d43b66dd25122a2af",
+      "pair": "RESET/USDC",
+      "side": "sell",
+      "baseAmount": "14180382",
+      "price": "240",
+      "maker": {
+        "dexKey": "8bafe553973eadb174f547c2992a05550f65c9fa5939e557e4ac52ce5b4957f1",
+        "tracAddr": "trac1lxtwm3cghp9y60tsm9leul54gypudh4vm8skwdyzpw98xuyau3fqcnkzns",
+        "solAddr": "2hqB7tdfZmYUcwmR4qv2gtZkxSpp964TDiSWxfkbrcSG"
+      },
+      "peerKey": "729c9ce1178194b0126ac67b3516698e824a59ff9b4aa836962e52ffb949ff2f",
+      "expiresAt": 1793473359,
+      "registryVersion": 11,
+      "software": "0.1.30",
+      "lastSeen": 1792936936
+    },
+    {
+      "offerId": "2cbe2605354ac40231a662f5ff5f96f479804fdd3886dcf1bfc98e7a4d3b545d",
+      "pair": "RESET/USDC",
+      "side": "sell",
+      "baseAmount": "9500000",
+      "price": "200",
+      "maker": {
+        "dexKey": "0f96de5023949fff2c6f5002c99a22b1cb094b897a3257616d2ea4452cb9c8c9",
+        "tracAddr": "trac1p4d37sj3a7kr6mqdemamd5cx3hqrf2yv05gygpz72s83jlryms8qcyjk6t",
+        "solAddr": "Fwv1Q3pBd9t3h9gwZENq2cqqtck1ewD12pWj46QgNFvk"
+      },
+      "peerKey": "3ed12162b2fc88ff747ce57a202064d447f44f3cba64606bdb31045753caa9ec",
+      "expiresAt": 1793485035,
+      "registryVersion": 11,
+      "software": "0.1.33",
+      "lastSeen": 1792936918
+    },
+    {
+      "offerId": "7e6f4c7135ef5178318dd9da2b1e3ed9c80bc84b04cc5a351eef1dc7724bbddb",
+      "pair": "RESET/USDC",
+      "side": "sell",
+      "baseAmount": "100000000",
+      "price": "67.00",
+      "maker": {
+        "dexKey": "7a941c0a79575e1c0d5cc44c502da2ff888a63a73b89d50b98ac2103fcb44fb6",
+        "tracAddr": "trac13w8jqqf8fne5lqllnanuzehdqtzshj39mu86u4ra0m23epvqmspquey0hd",
+        "solAddr": "9b5SkRBvx7u7z8C9xdyWaHfY4uZBwP6H4eqo34PCMs6P"
+      },
+      "peerKey": "449fb296cc03c6dbb53887582d732b16a7e991e08fe3051684737c98b01d8d15",
+      "expiresAt": 1792957283,
+      "registryVersion": 11,
+      "software": "0.1.33",
+      "lastSeen": 1792936907
+    },
+    {
+      "offerId": "83188d57af97f629cf23afb471d3612891e9cd8e6d10eb3f90544ffaddf105d1",
+      "pair": "RESET/USDC",
+      "side": "sell",
+      "baseAmount": "26453634",
+      "price": "65.78",
+      "maker": {
+        "dexKey": "8bafe553973eadb174f547c2992a05550f65c9fa5939e557e4ac52ce5b4957f1",
+        "tracAddr": "trac1lxtwm3cghp9y60tsm9leul54gypudh4vm8skwdyzpw98xuyau3fqcnkzns",
+        "solAddr": "2hqB7tdfZmYUcwmR4qv2gtZkxSpp964TDiSWxfkbrcSG"
+      },
+      "peerKey": "729c9ce1178194b0126ac67b3516698e824a59ff9b4aa836962e52ffb949ff2f",
+      "expiresAt": 1793496447,
+      "registryVersion": 11,
+      "software": "0.1.30",
+      "lastSeen": 1792936939
+    },
+    {
+      "offerId": "a28d352e6ac8d70494a6009b175a6fb8b3188d092c23e58f2ae218544819f948",
+      "pair": "RESET/USDC",
+      "side": "sell",
+      "baseAmount": "19132813",
+      "price": "127.09",
+      "maker": {
+        "dexKey": "8bafe553973eadb174f547c2992a05550f65c9fa5939e557e4ac52ce5b4957f1",
+        "tracAddr": "trac1lxtwm3cghp9y60tsm9leul54gypudh4vm8skwdyzpw98xuyau3fqcnkzns",
+        "solAddr": "2hqB7tdfZmYUcwmR4qv2gtZkxSpp964TDiSWxfkbrcSG"
+      },
+      "peerKey": "729c9ce1178194b0126ac67b3516698e824a59ff9b4aa836962e52ffb949ff2f",
+      "expiresAt": 1793495527,
+      "registryVersion": 11,
+      "software": "0.1.30",
+      "lastSeen": 1792936940
+    },
+    {
+      "offerId": "0c7153140f0d698a06caf25aa7ed20ee723711faf9beb10608b23d962dd2a6e8",
+      "pair": "RESET/USDC",
+      "side": "buy",
+      "baseAmount": "200000000",
+      "price": "20.2",
+      "maker": {
+        "dexKey": "15cf59a3cc2f7b4ec9e8c5b1ca6efc963361f91ac1d22dfca7e85f8edbdb6c1d",
+        "tracAddr": "trac1hja62vzdf8qkakqszahqg5wnkpsualp4sew4e2p4yyrm9ex62jzswel9az",
+        "solAddr": "J6ziyC9YWiaaMisds6nRwMGQEM2SmE8VLPFSxnWdHC6d"
+      },
+      "peerKey": "74ef13277420b7c8783d43ff6c0282ae3966226b37d40646c4fa820a0b95862f",
+      "expiresAt": 1792987986,
+      "registryVersion": 11,
+      "software": "0.1.32",
+      "lastSeen": 1792936922
+    },
+    {
+      "offerId": "2d7262db8494c9b9984096cf955d0b83a08b4aa87dea21646ce25b449c362164",
+      "pair": "RESET/USDC",
+      "side": "buy",
+      "baseAmount": "500000000",
+      "price": "12",
+      "maker": {
+        "dexKey": "15cf59a3cc2f7b4ec9e8c5b1ca6efc963361f91ac1d22dfca7e85f8edbdb6c1d",
+        "tracAddr": "trac1hja62vzdf8qkakqszahqg5wnkpsualp4sew4e2p4yyrm9ex62jzswel9az",
+        "solAddr": "J6ziyC9YWiaaMisds6nRwMGQEM2SmE8VLPFSxnWdHC6d"
+      },
+      "peerKey": "74ef13277420b7c8783d43ff6c0282ae3966226b37d40646c4fa820a0b95862f",
+      "expiresAt": 1792959933,
+      "registryVersion": 11,
+      "software": "0.1.32",
+      "lastSeen": 1792936922
+    },
+    {
+      "offerId": "3ba01b8532a08ec2028835fa0869de8fc60ecd411e8706d493deb2dc6a63e19d",
+      "pair": "RESET/USDC",
+      "side": "sell",
+      "baseAmount": "10000000",
+      "price": "200",
+      "maker": {
+        "dexKey": "0f96de5023949fff2c6f5002c99a22b1cb094b897a3257616d2ea4452cb9c8c9",
+        "tracAddr": "trac1p4d37sj3a7kr6mqdemamd5cx3hqrf2yv05gygpz72s83jlryms8qcyjk6t",
+        "solAddr": "Fwv1Q3pBd9t3h9gwZENq2cqqtck1ewD12pWj46QgNFvk"
+      },
+      "peerKey": "3ed12162b2fc88ff747ce57a202064d447f44f3cba64606bdb31045753caa9ec",
+      "expiresAt": 1793485059,
+      "registryVersion": 11,
+      "software": "0.1.33",
+      "lastSeen": 1792936919
+    },
+    {
+      "offerId": "d187aa672061821a32f8fd6acfd1f05274b2c64f77716121d7eaec211db3b527",
+      "pair": "RESET/USDC",
+      "side": "sell",
+      "baseAmount": "15082813",
+      "price": "146.51",
+      "maker": {
+        "dexKey": "8bafe553973eadb174f547c2992a05550f65c9fa5939e557e4ac52ce5b4957f1",
+        "tracAddr": "trac1lxtwm3cghp9y60tsm9leul54gypudh4vm8skwdyzpw98xuyau3fqcnkzns",
+        "solAddr": "2hqB7tdfZmYUcwmR4qv2gtZkxSpp964TDiSWxfkbrcSG"
+      },
+      "peerKey": "729c9ce1178194b0126ac67b3516698e824a59ff9b4aa836962e52ffb949ff2f",
+      "expiresAt": 1793495557,
+      "registryVersion": 11,
+      "software": "0.1.30",
+      "lastSeen": 1792936940
+    },
+    {
+      "offerId": "915a3b510163575f000b7a51c8bd7102a4a6b6e45f080931eef815567de7c77c",
+      "pair": "RESET/USDC",
+      "side": "buy",
+      "baseAmount": "1000000000",
+      "price": "5",
+      "maker": {
+        "dexKey": "15cf59a3cc2f7b4ec9e8c5b1ca6efc963361f91ac1d22dfca7e85f8edbdb6c1d",
+        "tracAddr": "trac1hja62vzdf8qkakqszahqg5wnkpsualp4sew4e2p4yyrm9ex62jzswel9az",
+        "solAddr": "J6ziyC9YWiaaMisds6nRwMGQEM2SmE8VLPFSxnWdHC6d"
+      },
+      "peerKey": "74ef13277420b7c8783d43ff6c0282ae3966226b37d40646c4fa820a0b95862f",
+      "expiresAt": 1792959947,
+      "registryVersion": 11,
+      "software": "0.1.32",
+      "lastSeen": 1792936922
+    },
+    {
+      "offerId": "436b3f59fe51a272f12b03ccdc8b4ff59f31cc39655f5f95b37c542be1b87fd7",
+      "pair": "RESET/USDC",
+      "side": "sell",
+      "baseAmount": "5866911",
+      "price": "180",
+      "maker": {
+        "dexKey": "0f96de5023949fff2c6f5002c99a22b1cb094b897a3257616d2ea4452cb9c8c9",
+        "tracAddr": "trac1p4d37sj3a7kr6mqdemamd5cx3hqrf2yv05gygpz72s83jlryms8qcyjk6t",
+        "solAddr": "Fwv1Q3pBd9t3h9gwZENq2cqqtck1ewD12pWj46QgNFvk"
+      },
+      "peerKey": "3ed12162b2fc88ff747ce57a202064d447f44f3cba64606bdb31045753caa9ec",
+      "expiresAt": 1793485013,
+      "registryVersion": 11,
+      "software": "0.1.33",
+      "lastSeen": 1792936919
+    },
+    {
+      "offerId": "a7af0d0094d0e99e1fb9bc6a8718a256c47f9d07db53537ab334f46576bce211",
+      "pair": "RESET/USDC",
+      "side": "buy",
+      "baseAmount": "2000000000",
+      "price": "2",
+      "maker": {
+        "dexKey": "15cf59a3cc2f7b4ec9e8c5b1ca6efc963361f91ac1d22dfca7e85f8edbdb6c1d",
+        "tracAddr": "trac1hja62vzdf8qkakqszahqg5wnkpsualp4sew4e2p4yyrm9ex62jzswel9az",
+        "solAddr": "J6ziyC9YWiaaMisds6nRwMGQEM2SmE8VLPFSxnWdHC6d"
+      },
+      "peerKey": "74ef13277420b7c8783d43ff6c0282ae3966226b37d40646c4fa820a0b95862f",
+      "expiresAt": 1792955571,
+      "registryVersion": 11,
+      "software": "0.1.32",
+      "lastSeen": 1792936922
+    },
+    {
+      "offerId": "4de366089bf50d8e5b8b4e9ccfddac833e47e13f57df5472ba87d9107c539258",
+      "pair": "RESET/USDC",
+      "side": "sell",
+      "baseAmount": "10000000",
+      "price": "180",
+      "maker": {
+        "dexKey": "0f96de5023949fff2c6f5002c99a22b1cb094b897a3257616d2ea4452cb9c8c9",
+        "tracAddr": "trac1p4d37sj3a7kr6mqdemamd5cx3hqrf2yv05gygpz72s83jlryms8qcyjk6t",
+        "solAddr": "Fwv1Q3pBd9t3h9gwZENq2cqqtck1ewD12pWj46QgNFvk"
+      },
+      "peerKey": "3ed12162b2fc88ff747ce57a202064d447f44f3cba64606bdb31045753caa9ec",
+      "expiresAt": 1793485001,
+      "registryVersion": 11,
+      "software": "0.1.33",
+      "lastSeen": 1792936919
+    },
+    {
+      "offerId": "c5e3445587d3984b0a07bb6a71f313b9f9ab317d2d4bc557703d07e1efd019d1",
+      "pair": "RESET/USDC",
+      "side": "buy",
+      "baseAmount": "500000000",
+      "price": "15",
+      "maker": {
+        "dexKey": "15cf59a3cc2f7b4ec9e8c5b1ca6efc963361f91ac1d22dfca7e85f8edbdb6c1d",
+        "tracAddr": "trac1hja62vzdf8qkakqszahqg5wnkpsualp4sew4e2p4yyrm9ex62jzswel9az",
+        "solAddr": "J6ziyC9YWiaaMisds6nRwMGQEM2SmE8VLPFSxnWdHC6d"
+      },
+      "peerKey": "74ef13277420b7c8783d43ff6c0282ae3966226b37d40646c4fa820a0b95862f",
+      "expiresAt": 1792981761,
+      "registryVersion": 11,
+      "software": "0.1.32",
+      "lastSeen": 1792936923
+    },
+    {
+      "offerId": "d5dbd46c3fab8cc8a9362e0cdcafe8c3b754917c05866e1fbf473e35a1be893f",
+      "pair": "RESET/USDC",
+      "side": "sell",
+      "baseAmount": "6963378",
+      "price": "180",
+      "maker": {
+        "dexKey": "0f96de5023949fff2c6f5002c99a22b1cb094b897a3257616d2ea4452cb9c8c9",
+        "tracAddr": "trac1p4d37sj3a7kr6mqdemamd5cx3hqrf2yv05gygpz72s83jlryms8qcyjk6t",
+        "solAddr": "Fwv1Q3pBd9t3h9gwZENq2cqqtck1ewD12pWj46QgNFvk"
+      },
+      "peerKey": "3ed12162b2fc88ff747ce57a202064d447f44f3cba64606bdb31045753caa9ec",
+      "expiresAt": 1793485070,
+      "registryVersion": 11,
+      "software": "0.1.33",
+      "lastSeen": 1792936919
+    },
+    {
+      "offerId": "c4eadc46427a5fad230dd4d1df22a9ea5122a221772637d93e095838b5780ff8",
+      "pair": "RESET/USDC",
+      "side": "sell",
+      "baseAmount": "120000000",
+      "price": "76.60",
+      "maker": {
+        "dexKey": "7a941c0a79575e1c0d5cc44c502da2ff888a63a73b89d50b98ac2103fcb44fb6",
+        "tracAddr": "trac13w8jqqf8fne5lqllnanuzehdqtzshj39mu86u4ra0m23epvqmspquey0hd",
+        "solAddr": "9b5SkRBvx7u7z8C9xdyWaHfY4uZBwP6H4eqo34PCMs6P"
+      },
+      "peerKey": "449fb296cc03c6dbb53887582d732b16a7e991e08fe3051684737c98b01d8d15",
+      "expiresAt": 1792957334,
+      "registryVersion": 11,
+      "software": "0.1.33",
+      "lastSeen": 1792936918
+    },
+    {
+      "offerId": "015ba941458a53e2bc7bcff4e4708e43471637862e69b362ab8a9f0cc1959db3",
+      "pair": "RESET/USDC",
+      "side": "buy",
+      "baseAmount": "1000000000",
+      "price": "19",
+      "maker": {
+        "dexKey": "a4ccfe31bf81522c2e5ef9d743a9e05ed43c552b33f379edd2fc7dc3b15e8316",
+        "tracAddr": "trac1p58jrl7rulcntduptxk9902v0j4qk8h4wqaqtqmp44r87kyjqzsqwzjwzl",
+        "solAddr": "Hm7HhJraJjS9fmzmpf6cotYHft63cQhckd2QtiJoANVZ"
+      },
+      "peerKey": "00e1c788b98a47f0bfc80e0870db1f5254b724a944fb43dee1a5409dd6930997",
+      "expiresAt": 1792986342,
+      "registryVersion": 11,
+      "software": "0.1.33",
+      "lastSeen": 1792936936
+    },
+    {
+      "offerId": "73e89d902b2a510e5a70b2b64c01d15ea6f3107e830211d8b63d94f4c1d0ae75",
+      "pair": "TNK/USDC",
+      "side": "sell",
+      "baseAmount": "5000000000000000000",
+      "price": "0.16",
+      "maker": {
+        "dexKey": "87e077eed2a31192b4790dfebe4d462549191c103be8af3c2ce51d5272c99e8a",
+        "tracAddr": "trac1cukawh7n5qy8yn29lrzx5drnkaz70lzm08qw4k9j829xqh65au9q4ctets",
+        "solAddr": "BAckep1n8w1mnuGxEPBHgwWrjwcDWXx8iRDVSLFFc3a8"
+      },
+      "peerKey": "5bee79908dfca93335c4378ba5df6e59ec56a98977e88b08a8d48df2cbf37cb7",
+      "expiresAt": 1792958439,
+      "registryVersion": 11,
+      "software": "0.1.32",
+      "lastSeen": 1792936937
+    },
+    {
+      "offerId": "1a7b44aeea51f0fc60b3628ad2059bb604d1f382556b7751dc3675776fe1878b",
+      "pair": "TNK/USDC",
+      "side": "sell",
+      "baseAmount": "5000000000000000000",
+      "price": "0.18",
+      "maker": {
+        "dexKey": "87e077eed2a31192b4790dfebe4d462549191c103be8af3c2ce51d5272c99e8a",
+        "tracAddr": "trac1cukawh7n5qy8yn29lrzx5drnkaz70lzm08qw4k9j829xqh65au9q4ctets",
+        "solAddr": "BAckep1n8w1mnuGxEPBHgwWrjwcDWXx8iRDVSLFFc3a8"
+      },
+      "peerKey": "5bee79908dfca93335c4378ba5df6e59ec56a98977e88b08a8d48df2cbf37cb7",
+      "expiresAt": 1792958448,
+      "registryVersion": 11,
+      "software": "0.1.32",
+      "lastSeen": 1792936937
+    },
+    {
+      "offerId": "58af8edfe6d16b42db04531e629eb1ee810796000b18626ff1994c84d5dbcb7f",
+      "pair": "RESET/USDC",
+      "side": "buy",
+      "baseAmount": "300000000",
+      "price": "20.6",
+      "maker": {
+        "dexKey": "439c88a08829415e020253ee4399095b6c121dc9d1f233662334ab00a0077e8e",
+        "tracAddr": "trac1sxe672cg2nfgnth45fg4c8mp2ud3wm4t4ttd09cc76mqffcxh2ss4egwjj",
+        "solAddr": "5QhnuEZh41dNonA3bXUg4s1DZeVx4SdeUeAjiCGAVAFz"
+      },
+      "peerKey": "98b42cc301b1a8dd71cf036173b0613f3fdc9d16c5547c94b2730a3a72a565c9",
+      "expiresAt": 1792951862,
+      "registryVersion": 11,
+      "software": "0.1.33",
+      "lastSeen": 1792936927
+    },
+    {
+      "offerId": "d9cd9ab7a89399c025cbc9c3b2397b2d63de29cecfeb13f189c4b70c3b93dc49",
+      "pair": "RESET/USDC",
+      "side": "buy",
+      "baseAmount": "300000000",
+      "price": "13",
+      "maker": {
+        "dexKey": "439c88a08829415e020253ee4399095b6c121dc9d1f233662334ab00a0077e8e",
+        "tracAddr": "trac1sxe672cg2nfgnth45fg4c8mp2ud3wm4t4ttd09cc76mqffcxh2ss4egwjj",
+        "solAddr": "5QhnuEZh41dNonA3bXUg4s1DZeVx4SdeUeAjiCGAVAFz"
+      },
+      "peerKey": "98b42cc301b1a8dd71cf036173b0613f3fdc9d16c5547c94b2730a3a72a565c9",
+      "expiresAt": 1792951877,
+      "registryVersion": 11,
+      "software": "0.1.33",
+      "lastSeen": 1792936928
+    },
+    {
+      "offerId": "0c2830ff5d2400a2b6541d49cb397ecca1b47b6688e29fb95a614788c09c5eb8",
+      "pair": "RESET/USDC",
+      "side": "sell",
+      "baseAmount": "100000000",
+      "price": "44",
+      "maker": {
+        "dexKey": "f0f97889c694736af712bece89ae2c167b65e1af456352dfddf850dfef9f52dc",
+        "tracAddr": "trac15l9lfvv9q5xj6087u8f3dc8d659udg2n6fyxpxwvp3vhfmnw0a2szz657v",
+        "solAddr": "3b3LsB2UupFixfyqftLei1RfNnPvhmGRBnE2T4g74zqz"
+      },
+      "peerKey": "f5248fe0abf50e3a9c3f13f6ede71bd006aa65af716e582d724ba842adc3b52b",
+      "expiresAt": 1792999859,
+      "registryVersion": 11,
+      "software": "0.1.33",
+      "lastSeen": 1792936941
+    },
+    {
+      "offerId": "124e82ace792f4daca7ea0434a3dfdab008470f73c66ac46b0ab6af99111c823",
+      "pair": "RESET/USDC",
+      "side": "buy",
+      "baseAmount": "100000000",
+      "price": "29",
+      "maker": {
+        "dexKey": "f0f97889c694736af712bece89ae2c167b65e1af456352dfddf850dfef9f52dc",
+        "tracAddr": "trac15l9lfvv9q5xj6087u8f3dc8d659udg2n6fyxpxwvp3vhfmnw0a2szz657v",
+        "solAddr": "3b3LsB2UupFixfyqftLei1RfNnPvhmGRBnE2T4g74zqz"
+      },
+      "peerKey": "f5248fe0abf50e3a9c3f13f6ede71bd006aa65af716e582d724ba842adc3b52b",
+      "expiresAt": 1792999805,
+      "registryVersion": 11,
+      "software": "0.1.33",
+      "lastSeen": 1792936945
+    },
+    {
+      "offerId": "708d735c990389ae1f2c90ff8142f2e1f29942dbf0233c6d69cfd6dc34dd794a",
+      "pair": "RESET/USDC",
+      "side": "sell",
+      "baseAmount": "100000000",
+      "price": "45",
+      "maker": {
+        "dexKey": "f0f97889c694736af712bece89ae2c167b65e1af456352dfddf850dfef9f52dc",
+        "tracAddr": "trac15l9lfvv9q5xj6087u8f3dc8d659udg2n6fyxpxwvp3vhfmnw0a2szz657v",
+        "solAddr": "3b3LsB2UupFixfyqftLei1RfNnPvhmGRBnE2T4g74zqz"
+      },
+      "peerKey": "f5248fe0abf50e3a9c3f13f6ede71bd006aa65af716e582d724ba842adc3b52b",
+      "expiresAt": 1792999872,
+      "registryVersion": 11,
+      "software": "0.1.33",
+      "lastSeen": 1792936902
+    },
+    {
+      "offerId": "195f7fe27297d5671377a8d8c33f51bf83d8e8fc575cee3a90a83ef92dca5ca0",
+      "pair": "RESET/USDC",
+      "side": "sell",
+      "baseAmount": "70000000",
+      "price": "44.60",
+      "maker": {
+        "dexKey": "7a941c0a79575e1c0d5cc44c502da2ff888a63a73b89d50b98ac2103fcb44fb6",
+        "tracAddr": "trac13w8jqqf8fne5lqllnanuzehdqtzshj39mu86u4ra0m23epvqmspquey0hd",
+        "solAddr": "9b5SkRBvx7u7z8C9xdyWaHfY4uZBwP6H4eqo34PCMs6P"
+      },
+      "peerKey": "449fb296cc03c6dbb53887582d732b16a7e991e08fe3051684737c98b01d8d15",
+      "expiresAt": 1792957189,
+      "registryVersion": 11,
+      "software": "0.1.33",
+      "lastSeen": 1792936901
+    },
+    {
+      "offerId": "9c10082bd64b1c893a45d7292f87622667ce234c6bd34b9e261cfc383b8ced67",
+      "pair": "RESET/USDC",
+      "side": "buy",
+      "baseAmount": "100000000",
+      "price": "27",
+      "maker": {
+        "dexKey": "f0f97889c694736af712bece89ae2c167b65e1af456352dfddf850dfef9f52dc",
+        "tracAddr": "trac15l9lfvv9q5xj6087u8f3dc8d659udg2n6fyxpxwvp3vhfmnw0a2szz657v",
+        "solAddr": "3b3LsB2UupFixfyqftLei1RfNnPvhmGRBnE2T4g74zqz"
+      },
+      "peerKey": "f5248fe0abf50e3a9c3f13f6ede71bd006aa65af716e582d724ba842adc3b52b",
+      "expiresAt": 1792999832,
+      "registryVersion": 11,
+      "software": "0.1.33",
+      "lastSeen": 1792936910
+    },
+    {
+      "offerId": "1f73803cace553123c3b4c7991ed7c0cd5be89c441261bae39ef5904566bb616",
+      "pair": "RESET/USDC",
+      "side": "sell",
+      "baseAmount": "110000000",
+      "price": "54.20",
+      "maker": {
+        "dexKey": "7a941c0a79575e1c0d5cc44c502da2ff888a63a73b89d50b98ac2103fcb44fb6",
+        "tracAddr": "trac13w8jqqf8fne5lqllnanuzehdqtzshj39mu86u4ra0m23epvqmspquey0hd",
+        "solAddr": "9b5SkRBvx7u7z8C9xdyWaHfY4uZBwP6H4eqo34PCMs6P"
+      },
+      "peerKey": "449fb296cc03c6dbb53887582d732b16a7e991e08fe3051684737c98b01d8d15",
+      "expiresAt": 1792957229,
+      "registryVersion": 11,
+      "software": "0.1.33",
+      "lastSeen": 1792936920
+    },
+    {
+      "offerId": "c0255b2e03368df6f15bf16452e3c934e166de5be2cc7317d3a11287b6021bff",
+      "pair": "RESET/USDC",
+      "side": "buy",
+      "baseAmount": "100000000",
+      "price": "30",
+      "maker": {
+        "dexKey": "f0f97889c694736af712bece89ae2c167b65e1af456352dfddf850dfef9f52dc",
+        "tracAddr": "trac15l9lfvv9q5xj6087u8f3dc8d659udg2n6fyxpxwvp3vhfmnw0a2szz657v",
+        "solAddr": "3b3LsB2UupFixfyqftLei1RfNnPvhmGRBnE2T4g74zqz"
+      },
+      "peerKey": "f5248fe0abf50e3a9c3f13f6ede71bd006aa65af716e582d724ba842adc3b52b",
+      "expiresAt": 1792999792,
+      "registryVersion": 11,
+      "software": "0.1.33",
+      "lastSeen": 1792936916
+    },
+    {
+      "offerId": "ebe8cc282cceedd09a041071d55ebc2049b775e6a00bc946c6b10161b4446039",
+      "pair": "RESET/USDC",
+      "side": "buy",
+      "baseAmount": "100000000",
+      "price": "28",
+      "maker": {
+        "dexKey": "f0f97889c694736af712bece89ae2c167b65e1af456352dfddf850dfef9f52dc",
+        "tracAddr": "trac15l9lfvv9q5xj6087u8f3dc8d659udg2n6fyxpxwvp3vhfmnw0a2szz657v",
+        "solAddr": "3b3LsB2UupFixfyqftLei1RfNnPvhmGRBnE2T4g74zqz"
+      },
+      "peerKey": "f5248fe0abf50e3a9c3f13f6ede71bd006aa65af716e582d724ba842adc3b52b",
+      "expiresAt": 1792999820,
+      "registryVersion": 11,
+      "software": "0.1.33",
+      "lastSeen": 1792936918
+    },
+    {
+      "offerId": "ec504e2ae25f982a3fc22518e7aeed9c68a7efdd63c54e196975dd500be1f40b",
+      "pair": "RESET/USDC",
+      "side": "buy",
+      "baseAmount": "100000000",
+      "price": "31",
+      "maker": {
+        "dexKey": "f0f97889c694736af712bece89ae2c167b65e1af456352dfddf850dfef9f52dc",
+        "tracAddr": "trac15l9lfvv9q5xj6087u8f3dc8d659udg2n6fyxpxwvp3vhfmnw0a2szz657v",
+        "solAddr": "3b3LsB2UupFixfyqftLei1RfNnPvhmGRBnE2T4g74zqz"
+      },
+      "peerKey": "f5248fe0abf50e3a9c3f13f6ede71bd006aa65af716e582d724ba842adc3b52b",
+      "expiresAt": 1792999785,
+      "registryVersion": 11,
+      "software": "0.1.33",
+      "lastSeen": 1792936928
+    },
+    {
+      "offerId": "52f5bb319d9cda2fbad4135910548597abb03a89f4ae4abb457f88c201b2c624",
+      "pair": "RESET/USDC",
+      "side": "buy",
+      "baseAmount": "18222471",
+      "price": "21.82",
+      "maker": {
+        "dexKey": "8bafe553973eadb174f547c2992a05550f65c9fa5939e557e4ac52ce5b4957f1",
+        "tracAddr": "trac1lxtwm3cghp9y60tsm9leul54gypudh4vm8skwdyzpw98xuyau3fqcnkzns",
+        "solAddr": "2hqB7tdfZmYUcwmR4qv2gtZkxSpp964TDiSWxfkbrcSG"
+      },
+      "peerKey": "729c9ce1178194b0126ac67b3516698e824a59ff9b4aa836962e52ffb949ff2f",
+      "expiresAt": 1793526919,
+      "registryVersion": 11,
+      "software": "0.1.34",
+      "lastSeen": 1792936937
+    },
+    {
+      "offerId": "bd53cac818f9badb44dbb62255b11c8adf42967589d3a17ad6262cd9b531eba1",
+      "pair": "RESET/USDC",
+      "side": "sell",
+      "baseAmount": "100000000",
+      "price": "43",
+      "maker": {
+        "dexKey": "f0f97889c694736af712bece89ae2c167b65e1af456352dfddf850dfef9f52dc",
+        "tracAddr": "trac15l9lfvv9q5xj6087u8f3dc8d659udg2n6fyxpxwvp3vhfmnw0a2szz657v",
+        "solAddr": "3b3LsB2UupFixfyqftLei1RfNnPvhmGRBnE2T4g74zqz"
+      },
+      "peerKey": "f5248fe0abf50e3a9c3f13f6ede71bd006aa65af716e582d724ba842adc3b52b",
+      "expiresAt": 1793009676,
+      "registryVersion": 11,
+      "software": "0.1.33",
+      "lastSeen": 1792936913
+    },
+    {
+      "offerId": "31e794f3941191b7a3ed5023e5e33c3a89e0ad2806abfb7fbbe00935b682816f",
+      "pair": "RESET/USDC",
+      "side": "sell",
+      "baseAmount": "30561328",
+      "price": "64",
+      "maker": {
+        "dexKey": "8bafe553973eadb174f547c2992a05550f65c9fa5939e557e4ac52ce5b4957f1",
+        "tracAddr": "trac1lxtwm3cghp9y60tsm9leul54gypudh4vm8skwdyzpw98xuyau3fqcnkzns",
+        "solAddr": "2hqB7tdfZmYUcwmR4qv2gtZkxSpp964TDiSWxfkbrcSG"
+      },
+      "peerKey": "729c9ce1178194b0126ac67b3516698e824a59ff9b4aa836962e52ffb949ff2f",
+      "expiresAt": 1793528117,
+      "registryVersion": 11,
+      "software": "0.1.34",
+      "lastSeen": 1792936936
+    },
+    {
+      "offerId": "bb2c1b29dd9ddab91ae75f7e7d1c324777bb4175bb858140cb8d14bf55f01277",
+      "pair": "RESET/USDC",
+      "side": "sell",
+      "baseAmount": "90000000",
+      "price": "45.50",
+      "maker": {
+        "dexKey": "7a941c0a79575e1c0d5cc44c502da2ff888a63a73b89d50b98ac2103fcb44fb6",
+        "tracAddr": "trac13w8jqqf8fne5lqllnanuzehdqtzshj39mu86u4ra0m23epvqmspquey0hd",
+        "solAddr": "9b5SkRBvx7u7z8C9xdyWaHfY4uZBwP6H4eqo34PCMs6P"
+      },
+      "peerKey": "449fb296cc03c6dbb53887582d732b16a7e991e08fe3051684737c98b01d8d15",
+      "expiresAt": 1793010442,
+      "registryVersion": 11,
+      "software": "0.1.33",
+      "lastSeen": 1792936915
+    },
+    {
+      "offerId": "f590c0e8935b2451488d02cf20e9aaa2203c446a33934cf8aeadee5c98b8b5e1",
+      "pair": "RESET/USDC",
+      "side": "buy",
+      "baseAmount": "100000000",
+      "price": "22",
+      "maker": {
+        "dexKey": "b1b77bfa6753ec75b8b908e0ca804d86d87570034d36b02cff183f6c959bd5b5",
+        "tracAddr": "trac1ah6v9cc5jpd03q5r5dp6mdahsnx3wa3v86z5hvcdt0ygyys0cegsk75ssp",
+        "solAddr": "3xkbKaW8U9huZUQh3ia6Tfm1q3eFWRWwMiKMLf3QSAuC"
+      },
+      "peerKey": "4ee198efe8445b92ac3c194bfcc7b7ec9540c29aa5c26fb6dc7d0d85eaeff1c2",
+      "expiresAt": 1793012491,
+      "registryVersion": 11,
+      "software": "0.1.8",
+      "lastSeen": 1792936861
+    },
+    {
+      "offerId": "3b483783275490d0f52b87b312cdcf7639b0de954a34d7b8a0932546cc80f548",
+      "pair": "RESET/USDC",
+      "side": "buy",
+      "baseAmount": "100000000",
+      "price": "20.5",
+      "maker": {
+        "dexKey": "b1b77bfa6753ec75b8b908e0ca804d86d87570034d36b02cff183f6c959bd5b5",
+        "tracAddr": "trac1ah6v9cc5jpd03q5r5dp6mdahsnx3wa3v86z5hvcdt0ygyys0cegsk75ssp",
+        "solAddr": "3xkbKaW8U9huZUQh3ia6Tfm1q3eFWRWwMiKMLf3QSAuC"
+      },
+      "peerKey": "4ee198efe8445b92ac3c194bfcc7b7ec9540c29aa5c26fb6dc7d0d85eaeff1c2",
+      "expiresAt": 1793012503,
+      "registryVersion": 11,
+      "software": "0.1.8",
+      "lastSeen": 1792936861
+    },
+    {
+      "offerId": "4327413a9d0e217b657d71a4ff27ed752cf98ef39ae734aef178c4356cafa685",
+      "pair": "RESET/USDC",
+      "side": "sell",
+      "baseAmount": "65000000",
+      "price": "73.40",
+      "maker": {
+        "dexKey": "7a941c0a79575e1c0d5cc44c502da2ff888a63a73b89d50b98ac2103fcb44fb6",
+        "tracAddr": "trac13w8jqqf8fne5lqllnanuzehdqtzshj39mu86u4ra0m23epvqmspquey0hd",
+        "solAddr": "9b5SkRBvx7u7z8C9xdyWaHfY4uZBwP6H4eqo34PCMs6P"
+      },
+      "peerKey": "449fb296cc03c6dbb53887582d732b16a7e991e08fe3051684737c98b01d8d15",
+      "expiresAt": 1792957319,
+      "registryVersion": 11,
+      "software": "0.1.33",
+      "lastSeen": 1792936937
+    },
+    {
+      "offerId": "44a467ae980fcacd98605a8c18bc48595c637a396fd0c0d07136204cabe5ea4a",
+      "pair": "RESET/USDC",
+      "side": "sell",
+      "baseAmount": "90000000",
+      "price": "51.00",
+      "maker": {
+        "dexKey": "7a941c0a79575e1c0d5cc44c502da2ff888a63a73b89d50b98ac2103fcb44fb6",
+        "tracAddr": "trac13w8jqqf8fne5lqllnanuzehdqtzshj39mu86u4ra0m23epvqmspquey0hd",
+        "solAddr": "9b5SkRBvx7u7z8C9xdyWaHfY4uZBwP6H4eqo34PCMs6P"
+      },
+      "peerKey": "449fb296cc03c6dbb53887582d732b16a7e991e08fe3051684737c98b01d8d15",
+      "expiresAt": 1792957214,
+      "registryVersion": 11,
+      "software": "0.1.33",
+      "lastSeen": 1792936910
+    },
+    {
+      "offerId": "634b2448b2e47d636b3bd891075dc3d948c77b84c0a25f0bd65999972c5f3d7a",
+      "pair": "RESET/USDC",
+      "side": "sell",
+      "baseAmount": "90000000",
+      "price": "70.20",
+      "maker": {
+        "dexKey": "7a941c0a79575e1c0d5cc44c502da2ff888a63a73b89d50b98ac2103fcb44fb6",
+        "tracAddr": "trac13w8jqqf8fne5lqllnanuzehdqtzshj39mu86u4ra0m23epvqmspquey0hd",
+        "solAddr": "9b5SkRBvx7u7z8C9xdyWaHfY4uZBwP6H4eqo34PCMs6P"
+      },
+      "peerKey": "449fb296cc03c6dbb53887582d732b16a7e991e08fe3051684737c98b01d8d15",
+      "expiresAt": 1792957304,
+      "registryVersion": 11,
+      "software": "0.1.33",
+      "lastSeen": 1792936904
+    },
+    {
+      "offerId": "767dec07503b3d1414b59a23c642ba3ce6a82249a276b23da71432e6992020bc",
+      "pair": "RESET/USDC",
+      "side": "sell",
+      "baseAmount": "80000000",
+      "price": "46.50",
+      "maker": {
+        "dexKey": "7a941c0a79575e1c0d5cc44c502da2ff888a63a73b89d50b98ac2103fcb44fb6",
+        "tracAddr": "trac13w8jqqf8fne5lqllnanuzehdqtzshj39mu86u4ra0m23epvqmspquey0hd",
+        "solAddr": "9b5SkRBvx7u7z8C9xdyWaHfY4uZBwP6H4eqo34PCMs6P"
+      },
+      "peerKey": "449fb296cc03c6dbb53887582d732b16a7e991e08fe3051684737c98b01d8d15",
+      "expiresAt": 1793010457,
+      "registryVersion": 11,
+      "software": "0.1.33",
+      "lastSeen": 1792936923
+    },
+    {
+      "offerId": "79317ca5aa4c422c791ff262ec730b5c665d2ac2920da80f99af67434d4bae62",
+      "pair": "RESET/USDC",
+      "side": "sell",
+      "baseAmount": "130000000",
+      "price": "60.60",
+      "maker": {
+        "dexKey": "7a941c0a79575e1c0d5cc44c502da2ff888a63a73b89d50b98ac2103fcb44fb6",
+        "tracAddr": "trac13w8jqqf8fne5lqllnanuzehdqtzshj39mu86u4ra0m23epvqmspquey0hd",
+        "solAddr": "9b5SkRBvx7u7z8C9xdyWaHfY4uZBwP6H4eqo34PCMs6P"
+      },
+      "peerKey": "449fb296cc03c6dbb53887582d732b16a7e991e08fe3051684737c98b01d8d15",
+      "expiresAt": 1792957258,
+      "registryVersion": 11,
+      "software": "0.1.33",
+      "lastSeen": 1792936939
+    },
+    {
+      "offerId": "8ca1008b9d0fafafbf31298a73be2b6ccf38ff7d378b253f298dd8dc2474ac40",
+      "pair": "RESET/USDC",
+      "side": "sell",
+      "baseAmount": "140000000",
+      "price": "47.80",
+      "maker": {
+        "dexKey": "7a941c0a79575e1c0d5cc44c502da2ff888a63a73b89d50b98ac2103fcb44fb6",
+        "tracAddr": "trac13w8jqqf8fne5lqllnanuzehdqtzshj39mu86u4ra0m23epvqmspquey0hd",
+        "solAddr": "9b5SkRBvx7u7z8C9xdyWaHfY4uZBwP6H4eqo34PCMs6P"
+      },
+      "peerKey": "449fb296cc03c6dbb53887582d732b16a7e991e08fe3051684737c98b01d8d15",
+      "expiresAt": 1792957204,
+      "registryVersion": 11,
+      "software": "0.1.33",
+      "lastSeen": 1792936926
+    },
+    {
+      "offerId": "902cf86c7fdd82697d98f5caed59ca7681a01668186eb735160a4025ce56db42",
+      "pair": "RESET/USDC",
+      "side": "sell",
+      "baseAmount": "75000000",
+      "price": "57.40",
+      "maker": {
+        "dexKey": "7a941c0a79575e1c0d5cc44c502da2ff888a63a73b89d50b98ac2103fcb44fb6",
+        "tracAddr": "trac13w8jqqf8fne5lqllnanuzehdqtzshj39mu86u4ra0m23epvqmspquey0hd",
+        "solAddr": "9b5SkRBvx7u7z8C9xdyWaHfY4uZBwP6H4eqo34PCMs6P"
+      },
+      "peerKey": "449fb296cc03c6dbb53887582d732b16a7e991e08fe3051684737c98b01d8d15",
+      "expiresAt": 1792957241,
+      "registryVersion": 11,
+      "software": "0.1.33",
+      "lastSeen": 1792936944
+    },
+    {
+      "offerId": "bbb343baded2f71f491ed71f418e983804afd3fb801a984953ebcb64bc531ef0",
+      "pair": "RESET/USDC",
+      "side": "sell",
+      "baseAmount": "80000000",
+      "price": "79.80",
+      "maker": {
+        "dexKey": "7a941c0a79575e1c0d5cc44c502da2ff888a63a73b89d50b98ac2103fcb44fb6",
+        "tracAddr": "trac13w8jqqf8fne5lqllnanuzehdqtzshj39mu86u4ra0m23epvqmspquey0hd",
+        "solAddr": "9b5SkRBvx7u7z8C9xdyWaHfY4uZBwP6H4eqo34PCMs6P"
+      },
+      "peerKey": "449fb296cc03c6dbb53887582d732b16a7e991e08fe3051684737c98b01d8d15",
+      "expiresAt": 1792957352,
+      "registryVersion": 11,
+      "software": "0.1.33",
+      "lastSeen": 1792936932
+    },
+    {
+      "offerId": "f4d297b8c0494c2b2ccecde371c7218f242445f1eae026cae86a9042bc5607ed",
+      "pair": "RESET/USDC",
+      "side": "sell",
+      "baseAmount": "70000000",
+      "price": "44.30",
+      "maker": {
+        "dexKey": "7a941c0a79575e1c0d5cc44c502da2ff888a63a73b89d50b98ac2103fcb44fb6",
+        "tracAddr": "trac13w8jqqf8fne5lqllnanuzehdqtzshj39mu86u4ra0m23epvqmspquey0hd",
+        "solAddr": "9b5SkRBvx7u7z8C9xdyWaHfY4uZBwP6H4eqo34PCMs6P"
+      },
+      "peerKey": "449fb296cc03c6dbb53887582d732b16a7e991e08fe3051684737c98b01d8d15",
+      "expiresAt": 1793010424,
+      "registryVersion": 11,
+      "software": "0.1.33",
+      "lastSeen": 1792936934
+    },
+    {
+      "offerId": "fd364cee2a17b2e822e5653a9e7e9af56767465bed65fe5d2aea63c3b59544a2",
+      "pair": "RESET/USDC",
+      "side": "sell",
+      "baseAmount": "80000000",
+      "price": "43.80",
+      "maker": {
+        "dexKey": "7a941c0a79575e1c0d5cc44c502da2ff888a63a73b89d50b98ac2103fcb44fb6",
+        "tracAddr": "trac13w8jqqf8fne5lqllnanuzehdqtzshj39mu86u4ra0m23epvqmspquey0hd",
+        "solAddr": "9b5SkRBvx7u7z8C9xdyWaHfY4uZBwP6H4eqo34PCMs6P"
+      },
+      "peerKey": "449fb296cc03c6dbb53887582d732b16a7e991e08fe3051684737c98b01d8d15",
+      "expiresAt": 1793010380,
+      "registryVersion": 11,
+      "software": "0.1.33",
+      "lastSeen": 1792936912
+    },
+    {
+      "offerId": "99c47d447c19fc3534b79fe95b8686d60fc0187a62db389877e552a161773cad",
+      "pair": "RESET/USDC",
+      "side": "buy",
+      "baseAmount": "259280300",
+      "price": "25",
+      "maker": {
+        "dexKey": "aad52d20c62177131c2ced801c71243be6198c6bc255bc71db46309975b38566",
+        "tracAddr": "trac1cqjlthlsmacf9v6mq69tnlp6ve4vt76n84ksqz4ralp74362u7csf5s2cj",
+        "solAddr": "3tzz6MXDzq7wCHfyumTjDmzvjBcpFSAbLxUAwzCjGKgu"
+      },
+      "peerKey": "77e194402a1f7dd86c41065e8fa47dc5acfecbd1218740d7b7b7365a6734e97f",
+      "expiresAt": 1792958103,
+      "registryVersion": 11,
+      "software": "0.1.32",
+      "lastSeen": 1792936926
+    },
+    {
+      "offerId": "76fbe35b190dac2c6b203ac02245001d9752f8309df014adcbbe253b4f7015d9",
+      "pair": "RESET/USDC",
+      "side": "sell",
+      "baseAmount": "100000000",
+      "price": "42",
+      "maker": {
+        "dexKey": "f0f97889c694736af712bece89ae2c167b65e1af456352dfddf850dfef9f52dc",
+        "tracAddr": "trac15l9lfvv9q5xj6087u8f3dc8d659udg2n6fyxpxwvp3vhfmnw0a2szz657v",
+        "solAddr": "3b3LsB2UupFixfyqftLei1RfNnPvhmGRBnE2T4g74zqz"
+      },
+      "peerKey": "f5248fe0abf50e3a9c3f13f6ede71bd006aa65af716e582d724ba842adc3b52b",
+      "expiresAt": 1793018191,
+      "registryVersion": 11,
+      "software": "0.1.34",
+      "lastSeen": 1792936907
+    },
+    {
+      "offerId": "76058612ccaf4f3c48dd3114d4a7e22bb482a811d4f99825db5c07b68daf4e6d",
+      "pair": "TNK/USDC",
+      "side": "sell",
+      "baseAmount": "250000000000000000000",
+      "price": "1",
+      "maker": {
+        "dexKey": "653e11f2c754266d1e63fa3974609401ba36681d3b1c64e9cb29b8ed72cb8ed8",
+        "tracAddr": "trac19tznynergcpnrwe5w800q3ec4dkaers43h49u2rgat85uzftudhqaawrll",
+        "solAddr": "9v5G4T8GYmy19qpDE1CdNd9gFxvtiFi9Y4SuhxbNsDq5"
+      },
+      "peerKey": "2b53770c60fc534484d9e3b400640b4e04d8335bc276a7ca1f9c8c4837fb1f4f",
+      "expiresAt": 1792958079,
+      "registryVersion": 11,
+      "software": "0.1.32",
+      "lastSeen": 1792936896
+    },
+    {
+      "offerId": "71fd72b9c7e47cd5f9845e3d858f799b10976cab845d24870c7703bd26cbf4b1",
+      "pair": "RESET/USDC",
+      "side": "sell",
+      "baseAmount": "210000000",
+      "price": "195",
+      "maker": {
+        "dexKey": "45ceb8f7c1a34abdb12fb3ff9182bff84925c324925b83a90a41ab93cfe23e50",
+        "tracAddr": "trac1kd85f402d3rm8e9pr3xvnyvsygufa0u5vuufc0yncgxunhdmwfnsthc43f",
+        "solAddr": "BixdymahAAE4PUKHaDc2j7nnxXeD7E5Z8GaTfkLFVdK3"
+      },
+      "peerKey": "d4fff83ffa6962a49ddef57978f8dc3fa67b762b6d4525b240367e828e5b0c12",
+      "expiresAt": 1793538381,
+      "registryVersion": 11,
+      "software": "0.1.31",
+      "lastSeen": 1792936923
+    },
+    {
+      "offerId": "7fa84dd4efad918d766bc2731765d9916de8488e365024a9baed3c9a2b49c7ad",
+      "pair": "RESET/USDC",
+      "side": "sell",
+      "baseAmount": "100000000",
+      "price": "36",
+      "maker": {
+        "dexKey": "f0f97889c694736af712bece89ae2c167b65e1af456352dfddf850dfef9f52dc",
+        "tracAddr": "trac15l9lfvv9q5xj6087u8f3dc8d659udg2n6fyxpxwvp3vhfmnw0a2szz657v",
+        "solAddr": "3b3LsB2UupFixfyqftLei1RfNnPvhmGRBnE2T4g74zqz"
+      },
+      "peerKey": "f5248fe0abf50e3a9c3f13f6ede71bd006aa65af716e582d724ba842adc3b52b",
+      "expiresAt": 1793020646,
+      "registryVersion": 11,
+      "software": "0.1.34",
+      "lastSeen": 1792936930
+    },
+    {
+      "offerId": "21bb4942a2140324b142ee1aacf7ccd87994895ce9c96deb2addd7685be2977d",
+      "pair": "RESET/USDC",
+      "side": "sell",
+      "baseAmount": "2322671",
+      "price": "50.0",
+      "maker": {
+        "dexKey": "4f50c294d038ddf8200a219ee08a8600e85a8b5cfd0250047cedf9f231d92065",
+        "tracAddr": "trac1mxqkmmtuqxsf3dc43nhnm4f633rxhydy34t7mam8xzgp754ehdkql40use",
+        "solAddr": "GkE9Nsma15Qeq3PgsXP5kz8tSmHvrax3n1DLGbLmsypu"
+      },
+      "peerKey": "efc3212df9776df1a0a5b3a52ded0e8267f793fb307fddd5c65337a9bc723713",
+      "expiresAt": 1793020864,
+      "registryVersion": 11,
+      "software": "0.1.19",
+      "lastSeen": 1792936919
+    },
+    {
+      "offerId": "e090391843f1b4e2ca3c10070b75e4e7f6ec18e1b9e2d78d7a3461f2f3e959d1",
+      "pair": "RESET/USDC",
+      "side": "buy",
+      "baseAmount": "300000000",
+      "price": "28",
+      "maker": {
+        "dexKey": "cb76049423fe308e1da978b11e57f646762672258ec2a446914ed0e4fe9e2bb5",
+        "tracAddr": "trac1tupltxlngj5ggnjg8ym86lfkukz83wjaksgyv42hcsjy7hzekweqeq3e25",
+        "solAddr": "9Y8FoKuLVEuWuutTa9GUGN67whC8NbbfwRwgsLxdDVNK"
+      },
+      "peerKey": "0e9590b300886fcebe85c2c22598073712fc1c79b3e9b70f17418cf9cdd7a928",
+      "expiresAt": 1793021732,
+      "registryVersion": 11,
+      "software": "0.1.34",
+      "lastSeen": 1792936930
+    },
+    {
+      "offerId": "cdb21492001d973f207c2e44092a5422ad08926218633896b65f4e1c5cfecd30",
+      "pair": "RESET/USDC",
+      "side": "buy",
+      "baseAmount": "300000000",
+      "price": "27",
+      "maker": {
+        "dexKey": "cb76049423fe308e1da978b11e57f646762672258ec2a446914ed0e4fe9e2bb5",
+        "tracAddr": "trac1tupltxlngj5ggnjg8ym86lfkukz83wjaksgyv42hcsjy7hzekweqeq3e25",
+        "solAddr": "9Y8FoKuLVEuWuutTa9GUGN67whC8NbbfwRwgsLxdDVNK"
+      },
+      "peerKey": "0e9590b300886fcebe85c2c22598073712fc1c79b3e9b70f17418cf9cdd7a928",
+      "expiresAt": 1793021740,
+      "registryVersion": 11,
+      "software": "0.1.34",
+      "lastSeen": 1792936930
+    },
+    {
+      "offerId": "438553ba2733e0323ffbd58de4d5532ec9793cb5a22fe7ead5376f536158decb",
+      "pair": "RESET/USDC",
+      "side": "buy",
+      "baseAmount": "121345624",
+      "price": "22.98",
+      "maker": {
+        "dexKey": "7c292d01e78a07ff937517ba7e1bc1b841c140872c242481366bb35109f865f7",
+        "tracAddr": "trac1phyvdpvhg68jnevw39vtdt5dm4t5w7gwd8tcaxtca3pag3hqsvyqqh6fl3",
+        "solAddr": "6xd6uPKzKu6shRqPchD7v5pjBce3KXKuCmLGJSk2Cy24"
+      },
+      "peerKey": "44b1e40a91822c4ebe3dfddb2b1b94c7ad921c5ef67b0e61cd3c4167367ae31a",
+      "expiresAt": 1792942706,
+      "registryVersion": 11,
+      "software": "0.1.33",
+      "lastSeen": 1792936939
+    },
+    {
+      "offerId": "07af30f5d8de47e74f3ff4b9e6cea5c2881421597e001812debedf39e0876549",
+      "pair": "RESET/USDC",
+      "side": "buy",
+      "baseAmount": "143255251",
+      "price": "19.46",
+      "maker": {
+        "dexKey": "7c292d01e78a07ff937517ba7e1bc1b841c140872c242481366bb35109f865f7",
+        "tracAddr": "trac1phyvdpvhg68jnevw39vtdt5dm4t5w7gwd8tcaxtca3pag3hqsvyqqh6fl3",
+        "solAddr": "6xd6uPKzKu6shRqPchD7v5pjBce3KXKuCmLGJSk2Cy24"
+      },
+      "peerKey": "44b1e40a91822c4ebe3dfddb2b1b94c7ad921c5ef67b0e61cd3c4167367ae31a",
+      "expiresAt": 1792942981,
+      "registryVersion": 11,
+      "software": "0.1.33",
+      "lastSeen": 1792936939
+    },
+    {
+      "offerId": "7364525e423aeb4f3c55f3e8a487421cdbd4da86c29e57b48c7cb91fa15e4101",
+      "pair": "RESET/USDC",
+      "side": "buy",
+      "baseAmount": "206287562",
+      "price": "16.22",
+      "maker": {
+        "dexKey": "7c292d01e78a07ff937517ba7e1bc1b841c140872c242481366bb35109f865f7",
+        "tracAddr": "trac1phyvdpvhg68jnevw39vtdt5dm4t5w7gwd8tcaxtca3pag3hqsvyqqh6fl3",
+        "solAddr": "6xd6uPKzKu6shRqPchD7v5pjBce3KXKuCmLGJSk2Cy24"
+      },
+      "peerKey": "44b1e40a91822c4ebe3dfddb2b1b94c7ad921c5ef67b0e61cd3c4167367ae31a",
+      "expiresAt": 1792943248,
+      "registryVersion": 11,
+      "software": "0.1.33",
+      "lastSeen": 1792936940
+    },
+    {
+      "offerId": "32c1d8417efd3a8bce9e8d20fc3165f5922b738c89929876726f1c233e23553a",
+      "pair": "RESET/USDC",
+      "side": "buy",
+      "baseAmount": "20640324",
+      "price": "27.03",
+      "maker": {
+        "dexKey": "7c292d01e78a07ff937517ba7e1bc1b841c140872c242481366bb35109f865f7",
+        "tracAddr": "trac1phyvdpvhg68jnevw39vtdt5dm4t5w7gwd8tcaxtca3pag3hqsvyqqh6fl3",
+        "solAddr": "6xd6uPKzKu6shRqPchD7v5pjBce3KXKuCmLGJSk2Cy24"
+      },
+      "peerKey": "44b1e40a91822c4ebe3dfddb2b1b94c7ad921c5ef67b0e61cd3c4167367ae31a",
+      "expiresAt": 1792943315,
+      "registryVersion": 11,
+      "software": "0.1.33",
+      "lastSeen": 1792936941
+    },
+    {
+      "offerId": "84d53caab0d2f69b9e494bb3bd64360a48bb9bca404780425e235d92d93b2c08",
+      "pair": "RESET/USDC",
+      "side": "sell",
+      "baseAmount": "110029608",
+      "price": "38.17",
+      "maker": {
+        "dexKey": "81f3815d5623a95d1a9edc0b575aa21ea4e939da8b0e21a58b6c6c5d5aa776da",
+        "tracAddr": "trac1wuf48s02km2dt3uytj4tyu7wpgeeh3zzagpzhfs2xh66d20m470qu8j2p4",
+        "solAddr": "asbQX1dviP9wpspdPAc29zLrbnKfYaapW8Fif5K7cWX"
+      },
+      "peerKey": "fa878bc27dca967ede5b7ea81cde5357c66896c513bbc1ff8266625ff4b3cdba",
+      "expiresAt": 1792938247,
+      "registryVersion": 11,
+      "software": "0.1.33",
+      "lastSeen": 1792936939
+    },
+    {
+      "offerId": "ab464b7f4afc37160a09b11bc7ecdd529fa5e93a90984663b3c1a997128e1939",
+      "pair": "RESET/USDC",
+      "side": "buy",
+      "baseAmount": "154652546",
+      "price": "27.00",
+      "maker": {
+        "dexKey": "81f3815d5623a95d1a9edc0b575aa21ea4e939da8b0e21a58b6c6c5d5aa776da",
+        "tracAddr": "trac1wuf48s02km2dt3uytj4tyu7wpgeeh3zzagpzhfs2xh66d20m470qu8j2p4",
+        "solAddr": "asbQX1dviP9wpspdPAc29zLrbnKfYaapW8Fif5K7cWX"
+      },
+      "peerKey": "fa878bc27dca967ede5b7ea81cde5357c66896c513bbc1ff8266625ff4b3cdba",
+      "expiresAt": 1792938294,
+      "registryVersion": 11,
+      "software": "0.1.33",
+      "lastSeen": 1792936941
+    },
+    {
+      "offerId": "991bd27bcab54831a1058c5b9c1129db9872e638b84c86a872703e58a8631610",
+      "pair": "RESET/USDC",
+      "side": "buy",
+      "baseAmount": "93660000",
+      "price": "36",
+      "maker": {
+        "dexKey": "7bb7d2203f955f94b3ea87bc8261de19ed42f16085ce8b5029e83aaa9f70b70b",
+        "tracAddr": "trac1646nrsj6ke0td427gnkgrmatmak4ngxq6xd5ce2f6ah6klxxfc9q6tqmj2",
+        "solAddr": "9GtS98DQgEaUFJkdhQoLZ2LyPpEZ66dermLwJFBoeRuW"
+      },
+      "peerKey": "4dd9ca8dbda6b0fe929057bab6a370e0ddf1e2172ec75a4f6e0f99a7ed318c88",
+      "expiresAt": 1792940207,
+      "registryVersion": 11,
+      "software": "0.1.34",
+      "lastSeen": 1792936923
+    },
+    {
+      "offerId": "b1b543ca0e21a39c40abe3b6a950b0c302f06e9c117bb1606610078ff327c75b",
+      "pair": "RESET/USDC",
+      "side": "buy",
+      "baseAmount": "90000000",
+      "price": "28",
+      "maker": {
+        "dexKey": "cb76049423fe308e1da978b11e57f646762672258ec2a446914ed0e4fe9e2bb5",
+        "tracAddr": "trac1tupltxlngj5ggnjg8ym86lfkukz83wjaksgyv42hcsjy7hzekweqeq3e25",
+        "solAddr": "9Y8FoKuLVEuWuutTa9GUGN67whC8NbbfwRwgsLxdDVNK"
+      },
+      "peerKey": "0e9590b300886fcebe85c2c22598073712fc1c79b3e9b70f17418cf9cdd7a928",
+      "expiresAt": 1793023040,
+      "registryVersion": 11,
+      "software": "0.1.34",
+      "lastSeen": 1792936931
+    },
+    {
+      "offerId": "2af37e6e4e9784d6319fbe25278b0193c915003c332422c2118c6e4419c0c7a3",
+      "pair": "RESET/USDC",
+      "side": "sell",
+      "baseAmount": "31798007",
+      "price": "38.17",
+      "maker": {
+        "dexKey": "81f3815d5623a95d1a9edc0b575aa21ea4e939da8b0e21a58b6c6c5d5aa776da",
+        "tracAddr": "trac1wuf48s02km2dt3uytj4tyu7wpgeeh3zzagpzhfs2xh66d20m470qu8j2p4",
+        "solAddr": "asbQX1dviP9wpspdPAc29zLrbnKfYaapW8Fif5K7cWX"
+      },
+      "peerKey": "fa878bc27dca967ede5b7ea81cde5357c66896c513bbc1ff8266625ff4b3cdba",
+      "expiresAt": 1792938466,
+      "registryVersion": 11,
+      "software": "0.1.33",
+      "lastSeen": 1792936946
+    },
+    {
+      "offerId": "f2fa5c7dc6a8cd61d54220023acc26657c299f028914d6d43cba26314a4b7011",
+      "pair": "RESET/USDC",
+      "side": "sell",
+      "baseAmount": "2540000",
+      "price": "36",
+      "maker": {
+        "dexKey": "8c01440c4d7e68df2a0733d807932ddb59cdfdb4759700f28c7e9d5f52dbab3b",
+        "tracAddr": "trac1z67feejh67a7qs8226rnjtw54anhw5f3ca9kr56t2pxyz52xdnvs9jyh46",
+        "solAddr": "5kPF8hWYD8yN86E53n1XvtjhhMjCq5RzDrM8cXLyMZTh"
+      },
+      "peerKey": "13e10305549d49234aa8db8da40abdbd71285f1488c536cbdc1530b02ae246ad",
+      "expiresAt": 1793023326,
+      "registryVersion": 11,
+      "software": "0.1.34",
+      "lastSeen": 1792936934
+    }
+  ],
+  "tickers": {
+    "TNK/USDC": {
+      "pair": "TNK/USDC",
+      "registryVersion": 11,
+      "ts": 1792936944,
+      "last": "0.144",
+      "volume24h": "33324000",
+      "high24h": "0.149",
+      "low24h": "0.14",
+      "trades24h": 11
+    },
+    "RESET/USDC": {
+      "pair": "RESET/USDC",
+      "registryVersion": 11,
+      "ts": 1792936944,
+      "last": "38.17",
+      "volume24h": "4946840439",
+      "high24h": "108.999992670651",
+      "low24h": "19.99998614897",
+      "trades24h": 191
+    }
+  },
+  "wallets": {
+    "addresses": {
+      "solana": "161N33uKaKEzMEHKV2RaUkM68cLj6Wy9BdvV9rvNU6F",
+      "trac": "trac1dsyccpuc8qt7djvy7zd7g993vt395fet87naatd32nrld65hwves8kd7j6"
+    },
+    "balances": {
+      "USDC": {
+        "decimals": 6,
+        "balance": "404237",
+        "wallet": "404237",
+        "committed": "0",
+        "free": "404237",
+        "breakdown": {
+          "offers": "0",
+          "trades": "0",
+          "escrow": "0",
+          "fees": "0",
+          "withdrawals": "0"
+        }
+      },
+      "SOL": {
+        "decimals": 9,
+        "balance": "8248816",
+        "wallet": "8248816",
+        "committed": "10000000",
+        "free": "0",
+        "breakdown": {
+          "offers": "0",
+          "trades": "0",
+          "escrow": "0",
+          "fees": "10000000",
+          "withdrawals": "0"
+        }
+      },
+      "TNK": {
+        "decimals": 18,
+        "balance": "0",
+        "wallet": "0",
+        "committed": "60000000000000000",
+        "free": "0",
+        "breakdown": {
+          "offers": "0",
+          "trades": "0",
+          "escrow": "0",
+          "fees": "60000000000000000",
+          "withdrawals": "0"
+        }
+      },
+      "RESET": {
+        "decimals": 8,
+        "balance": "8633129",
+        "wallet": "8633129",
+        "committed": "0",
+        "free": "8633129",
+        "breakdown": {
+          "offers": "0",
+          "trades": "0",
+          "escrow": "0",
+          "fees": "0",
+          "withdrawals": "0"
+        }
+      }
+    },
+    "minimumFees": {
+      "SOL": "10000000",
+      "TNK": "60000000000000000",
+      "units": "base units"
+    },
+    "payout": {},
+    "withdrawals": []
+  },
+  "updatedAt": 1792936948795
+}
