@@ -148,7 +148,7 @@ const GithubIcon = ({ size = 14 }) => (
   </svg>
 );
 
-// Helper to calculate realistic relative time from Solana blockTime
+// Helper to calculate realistic relative time from timestamp
 function formatTimeAgo(blockTimeSec) {
   if (!blockTimeSec) return 'Just now';
   const now = Math.floor(Date.now() / 1000);
@@ -162,15 +162,6 @@ function formatTimeAgo(blockTimeSec) {
   if (hours < 24) return remMins > 0 ? `${hours}h ${remMins}m ago` : `${hours}h ago`;
   const days = Math.floor(hours / 24);
   return `${days}d ago`;
-}
-
-function generateRealisticSig() {
-  const chars = '123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz';
-  let res = '';
-  for (let i = 0; i < 88; i++) {
-    res += chars.charAt(Math.floor(Math.random() * chars.length));
-  }
-  return res;
 }
 
 // ── Real market stats derived from on-chain candle snapshot ──────────────────
@@ -252,11 +243,10 @@ export default function App() {
 
   const [marketTrades, setMarketTrades] = useState(() => {
     if (marketSnapshot?.trades && marketSnapshot.trades.length) {
-      // Sort trades newest-first, infer side from price vs prev price
       const sorted = [...marketSnapshot.trades].sort((a, b) => (b.t || 0) - (a.t || 0));
       return sorted.slice(0, 30).map((t, idx, arr) => {
-        const thisPrice = parseFloat(t.price || '35');
-        const prevPrice = idx + 1 < arr.length ? parseFloat(arr[idx + 1].price || '35') : thisPrice;
+        const thisPrice = parseFloat(t.price || '40');
+        const prevPrice = idx + 1 < arr.length ? parseFloat(arr[idx + 1].price || '40') : thisPrice;
         const inferredSide = t.side || (thisPrice >= prevPrice ? 'buy' : 'sell');
         const usdcVal = parseFloat(t.usdc || (parseFloat(t.amount || '0.1') * thisPrice).toFixed(2));
         return {
@@ -267,16 +257,11 @@ export default function App() {
           total: usdcVal.toFixed(2),
           fee: (usdcVal * 0.01).toFixed(3),
           blockTime: t.t,
-          sig: t.id ? t.id.slice(0, 64) : generateRealisticSig()
+          sig: t.id || `trade-${idx}`
         };
       });
     }
-    const now = Math.floor(Date.now() / 1000);
-    const rp = marketStats.price;
-    return [
-      { id: 'tx-0', side: 'buy', price: rp, amount: '0.0425', total: (parseFloat(rp) * 0.0425).toFixed(2), fee: (parseFloat(rp) * 0.0425 * 0.01).toFixed(3), blockTime: now - 18, sig: generateRealisticSig() },
-      { id: 'tx-0b', side: 'sell', price: rp, amount: '0.0810', total: (parseFloat(rp) * 0.0810).toFixed(2), fee: (parseFloat(rp) * 0.0810 * 0.01).toFixed(3), blockTime: now - 52, sig: generateRealisticSig() },
-    ];
+    return [];
   });
 
   // Dynamic wallet balance synchronization for any connected wallet
@@ -332,10 +317,29 @@ export default function App() {
       return;
     }
 
-    // Load persisted orders for this wallet
+    // Load persisted orders for this wallet and scan orderbook for user's open orders
     try {
       const savedOrders = localStorage.getItem(`tracdex_orders_${connectedSolanaWallet}`);
-      setMyOrders(savedOrders ? JSON.parse(savedOrders) : []);
+      let ordersList = savedOrders ? JSON.parse(savedOrders) : [];
+      
+      // Auto-reflect live node offer in My Orders if user has active offer in liveBook
+      if (liveBook?.asks) {
+        const userSell = liveBook.asks.find(a => a.mine);
+        if (userSell && !ordersList.some(o => o.price === userSell.price && o.side === 'sell')) {
+          ordersList.unshift({
+            id: 'node-' + (userSell.take?.offerId || 'active-sell').slice(0, 8),
+            pair: 'RESET/USDC',
+            side: 'sell',
+            type: 'Limit',
+            price: parseFloat(userSell.price).toFixed(2),
+            amount: parseFloat(userSell.amount?.text || userSell.amount || '0').toFixed(4),
+            total: (parseFloat(userSell.price) * parseFloat(userSell.amount?.text || userSell.amount || '0')).toFixed(2),
+            status: 'OPEN',
+            createdAt: Math.floor(Date.now() / 1000)
+          });
+        }
+      }
+      setMyOrders(ordersList);
     } catch (e) {
       setMyOrders([]);
     }
@@ -400,10 +404,29 @@ export default function App() {
       return;
     }
 
-    // Load persisted orders for this wallet
+    // Load persisted orders for this wallet and scan orderbook for user's open orders
     try {
       const savedOrders = localStorage.getItem(`tracdex_orders_${connectedSolanaWallet}`);
-      setMyOrders(savedOrders ? JSON.parse(savedOrders) : []);
+      let ordersList = savedOrders ? JSON.parse(savedOrders) : [];
+      
+      // Auto-reflect live node offer in My Orders if user has active offer in liveBook
+      if (liveBook?.asks) {
+        const userSell = liveBook.asks.find(a => a.mine);
+        if (userSell && !ordersList.some(o => o.price === userSell.price && o.side === 'sell')) {
+          ordersList.unshift({
+            id: 'node-' + (userSell.take?.offerId || 'active-sell').slice(0, 8),
+            pair: 'RESET/USDC',
+            side: 'sell',
+            type: 'Limit',
+            price: parseFloat(userSell.price).toFixed(2),
+            amount: parseFloat(userSell.amount?.text || userSell.amount || '0').toFixed(4),
+            total: (parseFloat(userSell.price) * parseFloat(userSell.amount?.text || userSell.amount || '0')).toFixed(2),
+            status: 'OPEN',
+            createdAt: Math.floor(Date.now() / 1000)
+          });
+        }
+      }
+      setMyOrders(ordersList);
     } catch (e) {
       setMyOrders([]);
     }
@@ -540,31 +563,30 @@ export default function App() {
 
   // Fetch live orderbook and real on-chain trades quietly without UI jitter
   const fetchData = async () => {
-    // 1. Fetch live trades from reset.much.fun
+    // 1. Fetch real live trades directly from reset.much.fun
     try {
       const tradeRes = await fetch('/api/live-trades?pair=RESET/USDC');
       if (tradeRes.ok) {
         const json = await tradeRes.json();
         const rows = json.rows || [];
         if (rows.length) {
-          setMarketTrades(prev => {
-            const mapped = rows.slice(0, 30).map((t, idx, arr) => {
+          setMarketTrades(() => {
+            return rows.slice(0, 30).map((t, idx, arr) => {
               const thisPrice = parseFloat(t.price || '40.00');
               const prevPrice = idx + 1 < arr.length ? parseFloat(arr[idx + 1].price || '40.00') : thisPrice;
               const inferredSide = t.side || (thisPrice >= prevPrice ? 'buy' : 'sell');
               const usdcVal = parseFloat(t.usdc || (parseFloat(t.amount || '0.1') * thisPrice).toFixed(2));
               return {
-                id: t.id || `tx-${idx}`,
+                id: t.id || `trade-${idx}`,
                 side: inferredSide,
                 price: thisPrice.toFixed(2),
                 amount: parseFloat(t.amount || '0.1').toFixed(4),
                 total: usdcVal.toFixed(2),
                 fee: (usdcVal * 0.01).toFixed(3),
                 blockTime: t.t,
-                sig: t.id ? t.id.slice(0, 64) : generateRealisticSig()
+                sig: t.id || ''
               };
             });
-            return mapped;
           });
         }
       }
@@ -652,56 +674,6 @@ export default function App() {
     const interval = setInterval(fetchData, 15000);
     return () => clearInterval(interval);
   }, [pair]);
-
-  // Solana On-Chain Poller: Pulls real Solana transactions from the platform collector
-  useEffect(() => {
-    const pollSolana = async () => {
-      try {
-        const res = await fetch('https://solana-rpc.publicnode.com', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            jsonrpc: '2.0',
-            id: 101,
-            method: 'getSignaturesForAddress',
-            params: ['161N33uKaKEzMEHKV2RaUkM68cLj6Wy9BdvV9rvNU6F', { limit: 10 }]
-          })
-        });
-        const json = await res.json();
-        if (json.result && json.result.length) {
-          setMarketTrades(prev => {
-            const existingSigs = new Set(prev.map(t => t.sig));
-            const newItems = [];
-            const lastKnownPrice = prev[0]?.price ? parseFloat(prev[0].price) : parseFloat(marketStats.price);
-            for (const item of json.result) {
-              if (!existingSigs.has(item.signature)) {
-                newItems.push({
-                  id: `sol-${item.signature.slice(0, 8)}`,
-                  side: item.err ? 'sell' : 'buy', // failed txns often sell-side
-                  price: lastKnownPrice.toFixed(2),
-                  amount: '0.0500',
-                  total: (lastKnownPrice * 0.05).toFixed(2),
-                  fee: (lastKnownPrice * 0.05 * 0.01).toFixed(3),
-                  blockTime: item.blockTime || Math.floor(Date.now() / 1000),
-                  sig: item.signature
-                });
-              }
-            }
-            if (newItems.length) {
-              return [...newItems, ...prev].slice(0, 25);
-            }
-            return prev;
-          });
-        }
-      } catch (err) {
-        // silent fallback
-      }
-    };
-
-    pollSolana();
-    const solInterval = setInterval(pollSolana, 25000);
-    return () => clearInterval(solInterval);
-  }, []);
 
   // Use real latest price: prefer latest on-chain trade, fallback to latest candle
   const latestTradePrice = marketTrades[0]?.price
@@ -1940,22 +1912,17 @@ export default function App() {
                         +${t.fee}
                       </td>
                       <td style={{ textAlign: 'right' }}>
-                        <a
-                          href={`https://solscan.io/tx/${t.sig}`}
-                          target="_blank"
-                          rel="noreferrer"
-                          style={{
-                            color: 'var(--accent)',
-                            textDecoration: 'none',
-                            fontSize: '11px',
-                            display: 'inline-flex',
-                            alignItems: 'center',
-                            gap: '3px'
-                          }}
-                        >
-                          <span>{t.sig.slice(0, 4)}...{t.sig.slice(-4)}</span>
-                          <ExternalLink size={10} />
-                        </a>
+                        {t.id ? (
+                          <span 
+                            className="mono" 
+                            style={{ color: 'var(--muted)', fontSize: '11px' }}
+                            title={t.id}
+                          >
+                            {t.id.slice(0, 6)}...{t.id.slice(-4)}
+                          </span>
+                        ) : (
+                          <span style={{ color: 'var(--muted)', fontSize: '11px' }}>-</span>
+                        )}
                       </td>
                     </tr>
                   );
