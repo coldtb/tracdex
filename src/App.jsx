@@ -434,7 +434,7 @@ export default function App() {
   useEffect(() => {
     const pollSolana = async () => {
       try {
-        const res = await fetch('https://api.mainnet-beta.solana.com', {
+        const res = await fetch('https://solana-rpc.publicnode.com', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
