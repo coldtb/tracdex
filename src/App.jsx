@@ -275,20 +275,7 @@ export default function App() {
     ];
   });
 
-  // Live on-chain RESET balance from contract (Round 569 state)
-  const LIVE_USER_TRAC = '6c098c07983817e6c984f09be414b162e25a272b3fa7deadb154c7f6ea977333';
-  const LIVE_RESET_FREE = '0.0887';
-  const LIVE_RESET_LOCKED = '0.1000';
-  const LIVE_RESET_TOTAL = '0.1887';
-
-  // Balances
-  const freeSol = data?.wallets?.balances?.SOL?.free 
-    ? (Number(data.wallets.balances.SOL.free) / 1e9).toFixed(4) : '0.0158';
-  const freeUsdc = (data?.wallets?.balances?.USDC?.free || data?.wallets?.balances?.USDC?.balance)
-    ? (Number(data.wallets.balances.USDC.free || data.wallets.balances.USDC.balance) / 1e6).toFixed(2) : '0.40';
-  const freeReset = LIVE_RESET_FREE;
-
-  // Fetch real on-chain balance whenever user connects their Solana wallet
+  // Dynamic wallet balance synchronization for any connected wallet
   useEffect(() => {
     if (!connectedSolanaWallet) {
       setVisitorUsdc(null);
@@ -297,28 +284,17 @@ export default function App() {
       return;
     }
 
-    const isPlatformWallet = connectedSolanaWallet.toLowerCase() === PLATFORM_COLLECTOR.toLowerCase();
-
-    // 0. Set Initial on-chain balances with persistence
+    // 0. Load wallet's persisted RESET balance from DEX ledger (per-wallet isolation)
     const savedBal = localStorage.getItem(`tracdex_reset_${connectedSolanaWallet}`);
-    if (savedBal !== null) {
-      setVisitorReset(savedBal);
-    } else if (isPlatformWallet) {
-      // 0.0887 (miner free) + 0.0089 (confirmed on-chain $0.40 swap)
-      setVisitorReset('0.0976');
-      localStorage.setItem(`tracdex_reset_${connectedSolanaWallet}`, '0.0976');
-    } else {
-      setVisitorReset('0.0000');
-    }
-
-    if (isPlatformWallet) {
-      setVisitorUsdc(freeUsdc || '0.40');
-      setVisitorSol(freeSol || '0.0158');
-    }
+    setVisitorReset(savedBal !== null ? savedBal : '0.0000');
 
     // Robust multi-endpoint Solana RPC query helper
     const querySolanaRpc = async (method, params) => {
-      const endpoints = ['/api/solana-rpc', 'https://api.mainnet-beta.solana.com', 'https://rpc.ankr.com/solana'];
+      const endpoints = [
+        'https://solana-rpc.publicnode.com',
+        '/api/solana-rpc',
+        'https://api.mainnet-beta.solana.com'
+      ];
       for (const ep of endpoints) {
         try {
           const res = await fetch(ep, {
@@ -335,14 +311,14 @@ export default function App() {
       return null;
     };
 
-    // 1. Fetch real SOL balance
+    // 1. Fetch real SOL balance on-chain
     querySolanaRpc('getBalance', [connectedSolanaWallet]).then(res => {
       if (res && res.value !== undefined) {
         setVisitorSol((res.value / 1e9).toFixed(3));
       }
     });
 
-    // 2. Fetch real USDC balance (SPL Token EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v)
+    // 2. Fetch real USDC balance on-chain (SPL Token EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v)
     querySolanaRpc('getTokenAccountsByOwner', [
       connectedSolanaWallet,
       { mint: 'EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v' },
@@ -355,11 +331,11 @@ export default function App() {
           return;
         }
       }
-      if (!isPlatformWallet) {
-        setVisitorUsdc('0.00');
-      }
+      setVisitorUsdc('0.00');
+    }).catch(() => {
+      setVisitorUsdc('0.00');
     });
-  }, [connectedSolanaWallet, freeReset, freeUsdc, freeSol]);
+  }, [connectedSolanaWallet]);
 
   const handleCopy = (text) => {
     navigator.clipboard.writeText(text);
@@ -925,18 +901,6 @@ export default function App() {
                       <span style={{ color: 'var(--muted)' }}>RESET Balance</span>
                       <span className="mono" style={{ color: '#fff', fontWeight: 'bold' }}>{visitorReset || '0.0000'} RESET</span>
                     </div>
-                    {connectedSolanaWallet && connectedSolanaWallet.toLowerCase() === PLATFORM_COLLECTOR.toLowerCase() && (
-                      <>
-                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: '11px' }}>
-                          <span style={{ color: 'var(--muted)' }}>RESET (Mining Locked)</span>
-                          <span className="mono" style={{ color: '#f7931a', fontWeight: '600' }}>0.1000 RESET</span>
-                        </div>
-                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: '11px', borderTop: '1px solid #1a222e', paddingTop: '4px' }}>
-                          <span style={{ color: 'var(--muted)' }}>Total RESET Owned</span>
-                          <span className="mono" style={{ color: '#20d6a5', fontWeight: 'bold' }}>{(parseFloat(visitorReset || '0') + 0.1000).toFixed(4)} RESET</span>
-                        </div>
-                      </>
-                    )}
                     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: '12px' }}>
                       <span style={{ color: 'var(--muted)' }}>USDC Balance</span>
                       <span className="mono" style={{ color: '#2ebd85', fontWeight: 'bold' }}>${visitorUsdc !== null ? visitorUsdc : '0.00'}</span>
