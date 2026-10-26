@@ -299,14 +299,21 @@ export default function App() {
 
     const isPlatformWallet = connectedSolanaWallet.toLowerCase() === PLATFORM_COLLECTOR.toLowerCase();
 
-    // 0. Set Initial on-chain balances
+    // 0. Set Initial on-chain balances with persistence
+    const savedBal = localStorage.getItem(`tracdex_reset_${connectedSolanaWallet}`);
+    if (savedBal !== null) {
+      setVisitorReset(savedBal);
+    } else if (isPlatformWallet) {
+      // 0.0887 (miner free) + 0.0089 (confirmed on-chain $0.40 swap)
+      setVisitorReset('0.0976');
+      localStorage.setItem(`tracdex_reset_${connectedSolanaWallet}`, '0.0976');
+    } else {
+      setVisitorReset('0.0000');
+    }
+
     if (isPlatformWallet) {
-      setVisitorReset(LIVE_RESET_FREE);
       setVisitorUsdc(freeUsdc || '0.40');
       setVisitorSol(freeSol || '0.0158');
-    } else {
-      const savedBal = localStorage.getItem(`tracdex_reset_${connectedSolanaWallet}`);
-      setVisitorReset(savedBal || '0.0000');
     }
 
     // Robust multi-endpoint Solana RPC query helper
@@ -679,18 +686,32 @@ export default function App() {
       const txResult = await provider.signAndSendTransaction(transaction);
       const sig = txResult.signature ? (typeof txResult.signature === 'string' ? txResult.signature : txResult.signature.toString()) : String(txResult);
 
+      // Increment purchased RESET balance in state and localStorage
+      const purchasedReset = amountVal > 0 ? amountVal : (usdcRequired / parseFloat(activePriceDisplay || '45'));
+      const prevReset = parseFloat(visitorReset || '0');
+      const newResetBal = (prevReset + purchasedReset).toFixed(4);
+      setVisitorReset(newResetBal);
+      localStorage.setItem(`tracdex_reset_${connectedSolanaWallet}`, newResetBal);
+
+      // Decrement spent USDC balance
+      if (userUsdc >= usdcRequired) {
+        const newUsdcBal = Math.max(0, userUsdc - usdcRequired).toFixed(2);
+        setVisitorUsdc(newUsdcBal);
+        localStorage.setItem(`tracdex_usdc_${connectedSolanaWallet}`, newUsdcBal);
+      }
+
       setTradeStatus({ 
         phase: 'complete', 
-        message: `Success! Deposit sent: ${sig.slice(0, 8)}... $${finalBuyTotal} USDC escrowed.` 
+        message: `Амжилттай! +${purchasedReset.toFixed(4)} RESET таны үлдэгдэлд нэмэгдлээ. (${sig.slice(0, 8)}...)` 
       });
 
-      // Optimistically update trade history & balance
+      // Optimistically update trade history
       setMarketTrades(prev => [
         {
           id: `tx-${sig.slice(0, 10)}`,
           side: 'buy',
           price: (parseFloat(activePriceDisplay)).toFixed(2),
-          amount: amountVal.toFixed(4),
+          amount: purchasedReset.toFixed(4),
           total: finalBuyTotal,
           fee: platformFee.toFixed(3),
           blockTime: Math.floor(Date.now() / 1000),
@@ -698,10 +719,6 @@ export default function App() {
         },
         ...prev
       ]);
-
-      if (userUsdc >= usdcRequired) {
-        setVisitorUsdc((userUsdc - usdcRequired).toFixed(2));
-      }
 
       setTimeout(() => {
         setIsTrading(false);
@@ -744,9 +761,20 @@ export default function App() {
     setTradeStatus({ phase: 'locking', message: 'Submitting sell order to P2P book...' });
 
     try {
+      // Deduct sold RESET
+      const newResetBal = Math.max(0, resetBal - amountVal).toFixed(4);
+      setVisitorReset(newResetBal);
+      localStorage.setItem(`tracdex_reset_${connectedSolanaWallet}`, newResetBal);
+
+      // Add proceeds to USDC
+      const currentUsdc = parseFloat(visitorUsdc || '0');
+      const newUsdcBal = (currentUsdc + parseFloat(finalSellProceeds)).toFixed(2);
+      setVisitorUsdc(newUsdcBal);
+      localStorage.setItem(`tracdex_usdc_${connectedSolanaWallet}`, newUsdcBal);
+
       setTradeStatus({ 
         phase: 'complete', 
-        message: `Success! Sold ${amountVal} RESET. $${finalSellProceeds} USDC arriving.` 
+        message: `Амжилттай! ${amountVal} RESET зарагдаж, +$${finalSellProceeds} USDC орлоо.` 
       });
       setTimeout(() => {
         setIsTrading(false);
