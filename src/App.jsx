@@ -34,6 +34,7 @@ import {
 import CandleChart from './components/CandleChart';
 import marketSnapshot from './data/market-snapshot.json';
 import liveOrderbook from './data/live-orderbook.json';
+import liveWalletState from './data/live-wallet-state.json';
 import { Connection, PublicKey, Transaction } from '@solana/web3.js';
 import { createTransferInstruction, getAssociatedTokenAddress } from '@solana/spl-token';
 
@@ -296,9 +297,47 @@ export default function App() {
       setMyOrders([]);
     }
 
-    // 0. Load wallet's persisted RESET balance from DEX ledger (per-wallet isolation)
-    const savedBal = localStorage.getItem(`tracdex_reset_${connectedSolanaWallet}`);
-    setVisitorReset(savedBal !== null ? savedBal : '0.0000');
+    // Sync real TRAC RESET and USDC balances from the live DEX node
+    const syncRealBalances = async () => {
+      try {
+        let stateData = null;
+        try {
+          const res = await fetch('/api/state');
+          if (res.ok) {
+            const json = await res.json();
+            const assets = json.wallets?.assets || [];
+            const resetAsset = assets.find(a => a.asset === 'RESET');
+            const usdcAsset = assets.find(a => a.asset === 'USDC');
+            const solAsset = assets.find(a => a.asset === 'SOL');
+            stateData = {
+              solanaAddress: usdcAsset?.address,
+              tracAddress: resetAsset?.address,
+              resetBalance: resetAsset?.free?.text,
+              usdcBalance: usdcAsset?.free?.text,
+              solBalance: solAsset?.free?.text
+            };
+          }
+        } catch (e) {}
+
+        if (!stateData) {
+          try {
+            const fallbackRes = await fetch('/live-wallet-state.json');
+            if (fallbackRes.ok) stateData = await fallbackRes.json();
+          } catch (e) {}
+        }
+        if (!stateData) stateData = liveWalletState;
+
+        if (stateData) {
+          if (stateData.solanaAddress && connectedSolanaWallet.toLowerCase() === stateData.solanaAddress.toLowerCase()) {
+            if (stateData.resetBalance) setVisitorReset(parseFloat(stateData.resetBalance).toFixed(4));
+            if (stateData.usdcBalance) setVisitorUsdc(parseFloat(stateData.usdcBalance).toFixed(2));
+            if (stateData.tracAddress && !tracAddress) setTracAddress(stateData.tracAddress);
+          }
+        }
+      } catch (err) {}
+    };
+
+    syncRealBalances();
 
     // Robust multi-endpoint Solana RPC query helper
     const querySolanaRpc = async (method, params) => {
@@ -449,6 +488,40 @@ export default function App() {
       }
     } catch (e) {
       // Quiet background check
+    }
+
+    // 4. Sync real on-chain wallet balance from DEX
+    if (connectedSolanaWallet) {
+      try {
+        let stateData = null;
+        try {
+          const res = await fetch('/api/state');
+          if (res.ok) {
+            const json = await res.json();
+            const assets = json.wallets?.assets || [];
+            const resetAsset = assets.find(a => a.asset === 'RESET');
+            const usdcAsset = assets.find(a => a.asset === 'USDC');
+            stateData = {
+              solanaAddress: usdcAsset?.address,
+              tracAddress: resetAsset?.address,
+              resetBalance: resetAsset?.free?.text,
+              usdcBalance: usdcAsset?.free?.text
+            };
+          }
+        } catch (e) {}
+        if (!stateData) {
+          try {
+            const fallbackRes = await fetch('/live-wallet-state.json');
+            if (fallbackRes.ok) stateData = await fallbackRes.json();
+          } catch (e) {}
+        }
+        if (!stateData) stateData = liveWalletState;
+        if (stateData && stateData.solanaAddress && connectedSolanaWallet.toLowerCase() === stateData.solanaAddress.toLowerCase()) {
+          if (stateData.resetBalance) setVisitorReset(parseFloat(stateData.resetBalance).toFixed(4));
+          if (stateData.usdcBalance) setVisitorUsdc(parseFloat(stateData.usdcBalance).toFixed(2));
+          if (stateData.tracAddress && !tracAddress) setTracAddress(stateData.tracAddress);
+        }
+      } catch (e) {}
     }
   };
 
@@ -995,6 +1068,12 @@ export default function App() {
                       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: '12px' }}>
                         <span style={{ color: 'var(--muted)' }}>SOL (Gas)</span>
                         <span className="mono" style={{ color: '#e7e9ec' }}>{visitorSol} SOL</span>
+                      </div>
+                    )}
+                    {tracAddress && (
+                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: '11px', borderTop: '1px solid #1a202c', paddingTop: '6px', marginTop: '2px' }}>
+                        <span style={{ color: '#f7931a', fontWeight: '600' }}>TRAC Native</span>
+                        <span className="mono" style={{ color: '#8899a6', fontSize: '10px' }}>{tracAddress.slice(0, 8)}...{tracAddress.slice(-6)}</span>
                       </div>
                     )}
                   </div>

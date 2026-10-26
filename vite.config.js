@@ -53,6 +53,15 @@ export default defineConfig({
           Origin: 'http://127.0.0.1:47202',
         },
       },
+      '/api/state': {
+        target: 'http://127.0.0.1:47202',
+        changeOrigin: true,
+        headers: {
+          Cookie: `dexdash47202=${dashToken}`,
+          Host: '127.0.0.1:47202',
+          Origin: 'http://127.0.0.1:47202',
+        },
+      },
       '/api/candles': {
         target: 'http://127.0.0.1:47202',
         changeOrigin: true,
