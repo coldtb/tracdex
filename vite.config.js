@@ -44,6 +44,15 @@ export default defineConfig({
         changeOrigin: true,
         rewrite: (path) => path.replace(/^\/api\/live-trades/, '/v1/market/trades'),
       },
+      '/api/book': {
+        target: 'http://127.0.0.1:47202',
+        changeOrigin: true,
+        headers: {
+          Cookie: `dexdash47202=${dashToken}`,
+          Host: '127.0.0.1:47202',
+          Origin: 'http://127.0.0.1:47202',
+        },
+      },
       '/api/candles': {
         target: 'http://127.0.0.1:47202',
         changeOrigin: true,
