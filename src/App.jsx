@@ -588,14 +588,25 @@ export default function App() {
     // 3. Fetch real live orderbook from Intercom-DEX network
     try {
       let bookRes = await fetch('/api/book?pair=RESET/USDC');
-      if (!bookRes.ok) {
-        bookRes = await fetch('/live-orderbook.json');
-      }
+      let bookJson = null;
       if (bookRes.ok) {
-        const bookJson = await bookRes.json();
-        if (bookJson && (bookJson.asks || bookJson.bids)) {
-          setLiveBook(bookJson);
-        }
+        try {
+          const contentType = bookRes.headers.get('content-type') || '';
+          if (contentType.includes('application/json')) {
+            bookJson = await bookRes.json();
+          }
+        } catch (e) {}
+      }
+      if (!bookJson || (!bookJson.asks && !bookJson.bids)) {
+        try {
+          const fallbackRes = await fetch('/live-orderbook.json?t=' + Date.now());
+          if (fallbackRes.ok) {
+            bookJson = await fallbackRes.json();
+          }
+        } catch (e) {}
+      }
+      if (bookJson && (bookJson.asks || bookJson.bids)) {
+        setLiveBook(bookJson);
       }
     } catch (e) {
       // Quiet background check

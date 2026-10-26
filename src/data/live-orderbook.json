@@ -1,10 +1,10 @@
 {
   "pair": "RESET/USDC",
   "base": "RESET",
-  "at": 1793008364,
+  "at": 1793008700,
   "asks": [
     {
-      "price": "69",
+      "price": "64",
       "amount": {
         "units": "2119698",
         "text": "0.02119698",
@@ -18,10 +18,33 @@
       "count": 1,
       "mine": null,
       "take": {
-        "offerId": "30bdd46d455cb05067f46254d047e7852704999ccbf8e67f90fffef22a476029",
+        "offerId": "992212cce20aebb7395dbe90585221301ce2c7471004796034b8a615793d280d",
         "amount": {
           "units": "2119698",
           "text": "0.02119698",
+          "unit": "RESET"
+        }
+      }
+    },
+    {
+      "price": "65",
+      "amount": {
+        "units": "10000000",
+        "text": "0.1",
+        "unit": "RESET"
+      },
+      "total": {
+        "units": "12119698",
+        "text": "0.12119698",
+        "unit": "RESET"
+      },
+      "count": 1,
+      "mine": null,
+      "take": {
+        "offerId": "7acf86ff3337783f2c47d24f82c76e67714263cc0f6633162aa8c9071c7fbdb0",
+        "amount": {
+          "units": "10000000",
+          "text": "0.1",
           "unit": "RESET"
         }
       }
@@ -34,8 +57,8 @@
         "unit": "RESET"
       },
       "total": {
-        "units": "34699698",
-        "text": "0.34699698",
+        "units": "44699698",
+        "text": "0.44699698",
         "unit": "RESET"
       },
       "count": 2,
@@ -57,8 +80,8 @@
         "unit": "RESET"
       },
       "total": {
-        "units": "44319533",
-        "text": "0.44319533",
+        "units": "54319533",
+        "text": "0.54319533",
         "unit": "RESET"
       },
       "count": 1,
@@ -77,8 +100,8 @@
         "unit": "RESET"
       },
       "total": {
-        "units": "144319533",
-        "text": "1.44319533",
+        "units": "154319533",
+        "text": "1.54319533",
         "unit": "RESET"
       },
       "count": 1,
@@ -100,8 +123,8 @@
         "unit": "RESET"
       },
       "total": {
-        "units": "145389533",
-        "text": "1.45389533",
+        "units": "155389533",
+        "text": "1.55389533",
         "unit": "RESET"
       },
       "count": 1,
@@ -123,8 +146,8 @@
         "unit": "RESET"
       },
       "total": {
-        "units": "245389533",
-        "text": "2.45389533",
+        "units": "255389533",
+        "text": "2.55389533",
         "unit": "RESET"
       },
       "count": 1,
@@ -146,8 +169,8 @@
         "unit": "RESET"
       },
       "total": {
-        "units": "335389533",
-        "text": "3.35389533",
+        "units": "345389533",
+        "text": "3.45389533",
         "unit": "RESET"
       },
       "count": 1,
@@ -169,8 +192,8 @@
         "unit": "RESET"
       },
       "total": {
-        "units": "425389533",
-        "text": "4.25389533",
+        "units": "435389533",
+        "text": "4.35389533",
         "unit": "RESET"
       },
       "count": 1,
@@ -185,29 +208,6 @@
       }
     },
     {
-      "price": "89",
-      "amount": {
-        "units": "30000000",
-        "text": "0.3",
-        "unit": "RESET"
-      },
-      "total": {
-        "units": "455389533",
-        "text": "4.55389533",
-        "unit": "RESET"
-      },
-      "count": 1,
-      "mine": null,
-      "take": {
-        "offerId": "b16db895fe571c7b2c416a2ab65c23d9a2c1caa924e836200ecaee8e6b72de90",
-        "amount": {
-          "units": "30000000",
-          "text": "0.3",
-          "unit": "RESET"
-        }
-      }
-    },
-    {
       "price": "92",
       "amount": {
         "units": "90000000",
@@ -215,8 +215,8 @@
         "unit": "RESET"
       },
       "total": {
-        "units": "545389533",
-        "text": "5.45389533",
+        "units": "525389533",
+        "text": "5.25389533",
         "unit": "RESET"
       },
       "count": 1,
@@ -231,29 +231,6 @@
       }
     },
     {
-      "price": "94",
-      "amount": {
-        "units": "30000000",
-        "text": "0.3",
-        "unit": "RESET"
-      },
-      "total": {
-        "units": "575389533",
-        "text": "5.75389533",
-        "unit": "RESET"
-      },
-      "count": 1,
-      "mine": null,
-      "take": {
-        "offerId": "0901e86d43825b3db2679cc76bf6a68a7648c3784620eb5aa5c37dbd457db99d",
-        "amount": {
-          "units": "30000000",
-          "text": "0.3",
-          "unit": "RESET"
-        }
-      }
-    },
-    {
       "price": "98",
       "amount": {
         "units": "80000000",
@@ -261,8 +238,8 @@
         "unit": "RESET"
       },
       "total": {
-        "units": "655389533",
-        "text": "6.55389533",
+        "units": "605389533",
+        "text": "6.05389533",
         "unit": "RESET"
       },
       "count": 1,
@@ -284,8 +261,8 @@
         "unit": "RESET"
       },
       "total": {
-        "units": "735389533",
-        "text": "7.35389533",
+        "units": "685389533",
+        "text": "6.85389533",
         "unit": "RESET"
       },
       "count": 1,
@@ -307,8 +284,8 @@
         "unit": "RESET"
       },
       "total": {
-        "units": "815389533",
-        "text": "8.15389533",
+        "units": "765389533",
+        "text": "7.65389533",
         "unit": "RESET"
       },
       "count": 1,
@@ -330,8 +307,8 @@
         "unit": "RESET"
       },
       "total": {
-        "units": "923439533",
-        "text": "9.23439533",
+        "units": "873439533",
+        "text": "8.73439533",
         "unit": "RESET"
       },
       "count": 2,
@@ -353,14 +330,14 @@
         "unit": "RESET"
       },
       "total": {
-        "units": "953439533",
-        "text": "9.53439533",
+        "units": "903439533",
+        "text": "9.03439533",
         "unit": "RESET"
       },
       "count": 1,
       "mine": null,
       "take": {
-        "offerId": "66ae9fcd64198edc5f0559856faf41789c1a6af441a21a84da5590037a4527be",
+        "offerId": "e6fd6684a89ae2a63b9b190118da05df55c9bd9dfd85264afd78e7faf44666e2",
         "amount": {
           "units": "30000000",
           "text": "0.3",
@@ -376,8 +353,8 @@
         "unit": "RESET"
       },
       "total": {
-        "units": "1023439533",
-        "text": "10.23439533",
+        "units": "973439533",
+        "text": "9.73439533",
         "unit": "RESET"
       },
       "count": 1,
@@ -392,6 +369,29 @@
       }
     },
     {
+      "price": "142",
+      "amount": {
+        "units": "30239023",
+        "text": "0.30239023",
+        "unit": "RESET"
+      },
+      "total": {
+        "units": "1003678556",
+        "text": "10.03678556",
+        "unit": "RESET"
+      },
+      "count": 1,
+      "mine": null,
+      "take": {
+        "offerId": "075f4c2de490078748090614cafc876c35d5c523ca1ee92c9c5f57d358ec93dc",
+        "amount": {
+          "units": "30239023",
+          "text": "0.30239023",
+          "unit": "RESET"
+        }
+      }
+    },
+    {
       "price": "145",
       "amount": {
         "units": "70000000",
@@ -399,8 +399,8 @@
         "unit": "RESET"
       },
       "total": {
-        "units": "1093439533",
-        "text": "10.93439533",
+        "units": "1073678556",
+        "text": "10.73678556",
         "unit": "RESET"
       },
       "count": 1,
@@ -422,8 +422,8 @@
         "unit": "RESET"
       },
       "total": {
-        "units": "1153439533",
-        "text": "11.53439533",
+        "units": "1133678556",
+        "text": "11.33678556",
         "unit": "RESET"
       },
       "count": 1,
@@ -445,8 +445,8 @@
         "unit": "RESET"
       },
       "total": {
-        "units": "1363439533",
-        "text": "13.63439533",
+        "units": "1343678556",
+        "text": "13.43678556",
         "unit": "RESET"
       },
       "count": 1,
@@ -468,8 +468,8 @@
         "unit": "RESET"
       },
       "total": {
-        "units": "1423439533",
-        "text": "14.23439533",
+        "units": "1403678556",
+        "text": "14.03678556",
         "unit": "RESET"
       },
       "count": 1,
@@ -491,8 +491,8 @@
         "unit": "RESET"
       },
       "total": {
-        "units": "1456269822",
-        "text": "14.56269822",
+        "units": "1436508845",
+        "text": "14.36508845",
         "unit": "RESET"
       },
       "count": 4,
@@ -514,8 +514,8 @@
         "unit": "RESET"
       },
       "total": {
-        "units": "1557601475",
-        "text": "15.57601475",
+        "units": "1537840498",
+        "text": "15.37840498",
         "unit": "RESET"
       },
       "count": 4,
@@ -532,6 +532,29 @@
   ],
   "bids": [
     {
+      "price": "55",
+      "amount": {
+        "units": "20000000",
+        "text": "0.2",
+        "unit": "RESET"
+      },
+      "total": {
+        "units": "20000000",
+        "text": "0.2",
+        "unit": "RESET"
+      },
+      "count": 1,
+      "mine": null,
+      "take": {
+        "offerId": "89ff3bf54fcd9dc3f65f7b9aaac97e43609a6e2ce671a01aa7231fbeb055adca",
+        "amount": {
+          "units": "20000000",
+          "text": "0.2",
+          "unit": "RESET"
+        }
+      }
+    },
+    {
       "price": "54.1",
       "amount": {
         "units": "30000000",
@@ -539,8 +562,8 @@
         "unit": "RESET"
       },
       "total": {
-        "units": "30000000",
-        "text": "0.3",
+        "units": "50000000",
+        "text": "0.5",
         "unit": "RESET"
       },
       "count": 1,
@@ -555,24 +578,116 @@
       }
     },
     {
-      "price": "52.9",
+      "price": "54",
       "amount": {
-        "units": "7516339",
-        "text": "0.07516339",
+        "units": "40000000",
+        "text": "0.4",
         "unit": "RESET"
       },
       "total": {
-        "units": "37516339",
-        "text": "0.37516339",
+        "units": "90000000",
+        "text": "0.9",
         "unit": "RESET"
       },
-      "count": 1,
+      "count": 2,
       "mine": null,
       "take": {
-        "offerId": "b3728ef035c89bde679a0f7b9e79033efa683223184f422aeb74662f6a9721e4",
+        "offerId": "ab79759f4e4cab936a80d9261b552a88dd010cb084ad8aa9ad82ce4f7ae9567b",
         "amount": {
-          "units": "7516339",
-          "text": "0.07516339",
+          "units": "20000000",
+          "text": "0.2",
+          "unit": "RESET"
+        }
+      }
+    },
+    {
+      "price": "53",
+      "amount": {
+        "units": "47502157",
+        "text": "0.47502157",
+        "unit": "RESET"
+      },
+      "total": {
+        "units": "137502157",
+        "text": "1.37502157",
+        "unit": "RESET"
+      },
+      "count": 3,
+      "mine": null,
+      "take": {
+        "offerId": "7bd17580ee2af2c3b285775e462d3bde73f4f77b960b45525ee8f20d58783a41",
+        "amount": {
+          "units": "20000000",
+          "text": "0.2",
+          "unit": "RESET"
+        }
+      }
+    },
+    {
+      "price": "52",
+      "amount": {
+        "units": "40000000",
+        "text": "0.4",
+        "unit": "RESET"
+      },
+      "total": {
+        "units": "177502157",
+        "text": "1.77502157",
+        "unit": "RESET"
+      },
+      "count": 2,
+      "mine": null,
+      "take": {
+        "offerId": "3bbf37c9297348050a719282279ee967be7a24e58839eb34150fa6470ad7fb57",
+        "amount": {
+          "units": "20000000",
+          "text": "0.2",
+          "unit": "RESET"
+        }
+      }
+    },
+    {
+      "price": "51",
+      "amount": {
+        "units": "40000000",
+        "text": "0.4",
+        "unit": "RESET"
+      },
+      "total": {
+        "units": "217502157",
+        "text": "2.17502157",
+        "unit": "RESET"
+      },
+      "count": 2,
+      "mine": null,
+      "take": {
+        "offerId": "2a9b233039d1f0e7dd661b8eaba191284fd13c318af2de7bb8ed491f88d272c8",
+        "amount": {
+          "units": "20000000",
+          "text": "0.2",
+          "unit": "RESET"
+        }
+      }
+    },
+    {
+      "price": "50",
+      "amount": {
+        "units": "40000000",
+        "text": "0.4",
+        "unit": "RESET"
+      },
+      "total": {
+        "units": "257502157",
+        "text": "2.57502157",
+        "unit": "RESET"
+      },
+      "count": 2,
+      "mine": null,
+      "take": {
+        "offerId": "2078b4db11a45e28eedc202cf9e646f2525bff9ef288bffe5d2c248f736b003b",
+        "amount": {
+          "units": "20000000",
+          "text": "0.2",
           "unit": "RESET"
         }
       }
@@ -580,19 +695,19 @@
     {
       "price": "49",
       "amount": {
-        "units": "20000000",
-        "text": "0.2",
+        "units": "40000000",
+        "text": "0.4",
         "unit": "RESET"
       },
       "total": {
-        "units": "57516339",
-        "text": "0.57516339",
+        "units": "297502157",
+        "text": "2.97502157",
         "unit": "RESET"
       },
-      "count": 1,
+      "count": 2,
       "mine": null,
       "take": {
-        "offerId": "9576547c89afc053e2db8d3abcbce4f691b9a3e2abfd9ec6065aa297be3d262a",
+        "offerId": "3ac094cbb0f5ab77587844e9ad16fe5b3b3ac6ea60e67321586ce6d0a40e246e",
         "amount": {
           "units": "20000000",
           "text": "0.2",
@@ -603,19 +718,19 @@
     {
       "price": "48",
       "amount": {
-        "units": "28283632",
-        "text": "0.28283632",
+        "units": "40000000",
+        "text": "0.4",
         "unit": "RESET"
       },
       "total": {
-        "units": "85799971",
-        "text": "0.85799971",
+        "units": "337502157",
+        "text": "3.37502157",
         "unit": "RESET"
       },
       "count": 2,
       "mine": null,
       "take": {
-        "offerId": "8a30cc94530ce055afc7a99c8b752a5398781197d8119655117c11ef25af91e4",
+        "offerId": "f683f4f68d877f6859e23fdc7685f97e6d25e8f2331a76d8f3df16f85b05fac4",
         "amount": {
           "units": "20000000",
           "text": "0.2",
@@ -626,19 +741,19 @@
     {
       "price": "47",
       "amount": {
-        "units": "20000000",
-        "text": "0.2",
+        "units": "40000000",
+        "text": "0.4",
         "unit": "RESET"
       },
       "total": {
-        "units": "105799971",
-        "text": "1.05799971",
+        "units": "377502157",
+        "text": "3.77502157",
         "unit": "RESET"
       },
-      "count": 1,
+      "count": 2,
       "mine": null,
       "take": {
-        "offerId": "681cc27229769de654c28c0eddd1072c6524fabd9038e8b8d0dc95826c620c4b",
+        "offerId": "d060d4da762f90a43f4ff175bc3ad62ae517f5598494eefa3f46191d3882b978",
         "amount": {
           "units": "20000000",
           "text": "0.2",
@@ -647,21 +762,44 @@
       }
     },
     {
-      "price": "46",
+      "price": "46.64",
       "amount": {
-        "units": "20000000",
-        "text": "0.2",
+        "units": "8525178",
+        "text": "0.08525178",
         "unit": "RESET"
       },
       "total": {
-        "units": "125799971",
-        "text": "1.25799971",
+        "units": "386027335",
+        "text": "3.86027335",
         "unit": "RESET"
       },
       "count": 1,
       "mine": null,
       "take": {
-        "offerId": "7133e7166c286c4f0b8f7bcae3d935b1202e239c666e40d03677943a8e988a5c",
+        "offerId": "6705f86422773f79cf7caebe864ad853c0abb9eebc39399914e6403729bb819f",
+        "amount": {
+          "units": "8525178",
+          "text": "0.08525178",
+          "unit": "RESET"
+        }
+      }
+    },
+    {
+      "price": "46",
+      "amount": {
+        "units": "40000000",
+        "text": "0.4",
+        "unit": "RESET"
+      },
+      "total": {
+        "units": "426027335",
+        "text": "4.26027335",
+        "unit": "RESET"
+      },
+      "count": 2,
+      "mine": null,
+      "take": {
+        "offerId": "aa195bb48ba774543beddd0fb64d6c683121956e9d3d62448cf339bfb8d308fb",
         "amount": {
           "units": "20000000",
           "text": "0.2",
@@ -677,14 +815,14 @@
         "unit": "RESET"
       },
       "total": {
-        "units": "145799971",
-        "text": "1.45799971",
+        "units": "446027335",
+        "text": "4.46027335",
         "unit": "RESET"
       },
       "count": 1,
       "mine": null,
       "take": {
-        "offerId": "c3711e51b527e85acb93a7c2314110f4ad96645150ee7122bac8f94e11f73465",
+        "offerId": "7bda8e21f31905c535d5950cf629d16d73552fd32d34cda02081605be1519e3f",
         "amount": {
           "units": "20000000",
           "text": "0.2",
@@ -700,8 +838,8 @@
         "unit": "RESET"
       },
       "total": {
-        "units": "195799971",
-        "text": "1.95799971",
+        "units": "496027335",
+        "text": "4.96027335",
         "unit": "RESET"
       },
       "count": 1,
@@ -723,8 +861,8 @@
         "unit": "RESET"
       },
       "total": {
-        "units": "249796902",
-        "text": "2.49796902",
+        "units": "550024266",
+        "text": "5.50024266",
         "unit": "RESET"
       },
       "count": 1,
@@ -739,24 +877,24 @@
       }
     },
     {
-      "price": "38.33",
+      "price": "39.34",
       "amount": {
-        "units": "10373449",
-        "text": "0.10373449",
+        "units": "10107125",
+        "text": "0.10107125",
         "unit": "RESET"
       },
       "total": {
-        "units": "260170351",
-        "text": "2.60170351",
+        "units": "560131391",
+        "text": "5.60131391",
         "unit": "RESET"
       },
       "count": 1,
       "mine": null,
       "take": {
-        "offerId": "0e809af32ff8a8a8612b7467c58d3e36ad1edd2b867c6f1efa8ba4a6fef8b949",
+        "offerId": "800e714e220f81d8150f5a92c8951a79bfd1372da1652c306af16b5205fbba85",
         "amount": {
-          "units": "10373449",
-          "text": "0.10373449",
+          "units": "10107125",
+          "text": "0.10107125",
           "unit": "RESET"
         }
       }
@@ -769,8 +907,8 @@
         "unit": "RESET"
       },
       "total": {
-        "units": "460170351",
-        "text": "4.60170351",
+        "units": "760131391",
+        "text": "7.60131391",
         "unit": "RESET"
       },
       "count": 1,
@@ -792,8 +930,8 @@
         "unit": "RESET"
       },
       "total": {
-        "units": "1763672394",
-        "text": "17.63672394",
+        "units": "2063633434",
+        "text": "20.63633434",
         "unit": "RESET"
       },
       "count": 2,
@@ -815,8 +953,8 @@
         "unit": "RESET"
       },
       "total": {
-        "units": "1843837361",
-        "text": "18.43837361",
+        "units": "2143798401",
+        "text": "21.43798401",
         "unit": "RESET"
       },
       "count": 1,
@@ -838,8 +976,8 @@
         "unit": "RESET"
       },
       "total": {
-        "units": "2376239404",
-        "text": "23.76239404",
+        "units": "2676200444",
+        "text": "26.76200444",
         "unit": "RESET"
       },
       "count": 1,
@@ -861,8 +999,8 @@
         "unit": "RESET"
       },
       "total": {
-        "units": "2908641447",
-        "text": "29.08641447",
+        "units": "3208602487",
+        "text": "32.08602487",
         "unit": "RESET"
       },
       "count": 1,
@@ -884,8 +1022,8 @@
         "unit": "RESET"
       },
       "total": {
-        "units": "2935641447",
-        "text": "29.35641447",
+        "units": "3235602487",
+        "text": "32.35602487",
         "unit": "RESET"
       },
       "count": 1,
@@ -907,8 +1045,8 @@
         "unit": "RESET"
       },
       "total": {
-        "units": "3030280644",
-        "text": "30.30280644",
+        "units": "3330241684",
+        "text": "33.30241684",
         "unit": "RESET"
       },
       "count": 1,
@@ -930,8 +1068,8 @@
         "unit": "RESET"
       },
       "total": {
-        "units": "3330280644",
-        "text": "33.30280644",
+        "units": "3630241684",
+        "text": "36.30241684",
         "unit": "RESET"
       },
       "count": 1,
@@ -953,8 +1091,8 @@
         "unit": "RESET"
       },
       "total": {
-        "units": "3570280644",
-        "text": "35.70280644",
+        "units": "3870241684",
+        "text": "38.70241684",
         "unit": "RESET"
       },
       "count": 1,
@@ -976,8 +1114,8 @@
         "unit": "RESET"
       },
       "total": {
-        "units": "3720280644",
-        "text": "37.20280644",
+        "units": "4020241684",
+        "text": "40.20241684",
         "unit": "RESET"
       },
       "count": 1,
@@ -999,8 +1137,8 @@
         "unit": "RESET"
       },
       "total": {
-        "units": "3870280644",
-        "text": "38.70280644",
+        "units": "4170241684",
+        "text": "41.70241684",
         "unit": "RESET"
       },
       "count": 1,
@@ -1022,8 +1160,8 @@
         "unit": "RESET"
       },
       "total": {
-        "units": "4220280644",
-        "text": "42.20280644",
+        "units": "4520241684",
+        "text": "45.20241684",
         "unit": "RESET"
       },
       "count": 2,
@@ -1045,8 +1183,8 @@
         "unit": "RESET"
       },
       "total": {
-        "units": "4356561088",
-        "text": "43.56561088",
+        "units": "4656522128",
+        "text": "46.56522128",
         "unit": "RESET"
       },
       "count": 1,
@@ -1068,8 +1206,8 @@
         "unit": "RESET"
       },
       "total": {
-        "units": "4506561088",
-        "text": "45.06561088",
+        "units": "4806522128",
+        "text": "48.06522128",
         "unit": "RESET"
       },
       "count": 1,
@@ -1091,8 +1229,8 @@
         "unit": "RESET"
       },
       "total": {
-        "units": "4656561088",
-        "text": "46.56561088",
+        "units": "4956522128",
+        "text": "49.56522128",
         "unit": "RESET"
       },
       "count": 1,
@@ -1114,8 +1252,8 @@
         "unit": "RESET"
       },
       "total": {
-        "units": "4806561088",
-        "text": "48.06561088",
+        "units": "5106522128",
+        "text": "51.06522128",
         "unit": "RESET"
       },
       "count": 1,
@@ -1137,8 +1275,8 @@
         "unit": "RESET"
       },
       "total": {
-        "units": "4824201475",
-        "text": "48.24201475",
+        "units": "5124162515",
+        "text": "51.24162515",
         "unit": "RESET"
       },
       "count": 1,
@@ -1160,8 +1298,8 @@
         "unit": "RESET"
       },
       "total": {
-        "units": "4974201475",
-        "text": "49.74201475",
+        "units": "5274162515",
+        "text": "52.74162515",
         "unit": "RESET"
       },
       "count": 1,
@@ -1183,8 +1321,8 @@
         "unit": "RESET"
       },
       "total": {
-        "units": "4992423946",
-        "text": "49.92423946",
+        "units": "5292384986",
+        "text": "52.92384986",
         "unit": "RESET"
       },
       "count": 1,
@@ -1206,8 +1344,8 @@
         "unit": "RESET"
       },
       "total": {
-        "units": "5010891866",
-        "text": "50.10891866",
+        "units": "5310852906",
+        "text": "53.10852906",
         "unit": "RESET"
       },
       "count": 1,
@@ -1229,8 +1367,8 @@
         "unit": "RESET"
       },
       "total": {
-        "units": "5160891866",
-        "text": "51.60891866",
+        "units": "5460852906",
+        "text": "54.60852906",
         "unit": "RESET"
       },
       "count": 1,
@@ -1252,8 +1390,8 @@
         "unit": "RESET"
       },
       "total": {
-        "units": "5210891866",
-        "text": "52.10891866",
+        "units": "5510852906",
+        "text": "55.10852906",
         "unit": "RESET"
       },
       "count": 1,
@@ -1275,8 +1413,8 @@
         "unit": "RESET"
       },
       "total": {
-        "units": "5360891866",
-        "text": "53.60891866",
+        "units": "5660852906",
+        "text": "56.60852906",
         "unit": "RESET"
       },
       "count": 1,
@@ -1298,8 +1436,8 @@
         "unit": "RESET"
       },
       "total": {
-        "units": "5510891866",
-        "text": "55.10891866",
+        "units": "5810852906",
+        "text": "58.10852906",
         "unit": "RESET"
       },
       "count": 1,
@@ -1321,8 +1459,8 @@
         "unit": "RESET"
       },
       "total": {
-        "units": "5660891866",
-        "text": "56.60891866",
+        "units": "5960852906",
+        "text": "59.60852906",
         "unit": "RESET"
       },
       "count": 1,
@@ -1338,7 +1476,7 @@
     }
   ],
   "spread": {
-    "price": "14.9",
-    "pct": "27.541589648798"
+    "price": "9",
+    "pct": "16.363636363636"
   }
 }
