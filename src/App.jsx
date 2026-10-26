@@ -280,6 +280,117 @@ export default function App() {
   });
 
   // Dynamic wallet balance synchronization for any connected wallet
+  // Extracted sync function for reuse (e.g., manual refresh)
+  const syncRealBalances = async () => {
+    try {
+      let stateData = null;
+      try {
+        const res = await fetch('/api/state');
+        if (res.ok) {
+          const json = await res.json();
+          const assets = json.wallets?.assets || [];
+          const resetAsset = assets.find(a => a.asset === 'RESET');
+          const usdcAsset = assets.find(a => a.asset === 'USDC');
+          const solAsset = assets.find(a => a.asset === 'SOL');
+          stateData = {
+            solanaAddress: usdcAsset?.address,
+            tracAddress: resetAsset?.address,
+            resetBalance: resetAsset?.free?.text,
+            usdcBalance: usdcAsset?.free?.text,
+            solBalance: solAsset?.free?.text
+          };
+        }
+      } catch (e) {}
+
+      if (!stateData) {
+        try {
+          const fallbackRes = await fetch('/live-wallet-state.json');
+          if (fallbackRes.ok) stateData = await fallbackRes.json();
+        } catch (e) {}
+      }
+      if (!stateData) stateData = liveWalletState;
+
+      if (stateData && stateData.solanaAddress && connectedSolanaWallet &&
+          connectedSolanaWallet.toLowerCase() === stateData.solanaAddress.toLowerCase()) {
+        if (stateData.resetBalance) setVisitorReset(parseFloat(stateData.resetBalance).toFixed(4));
+        if (stateData.usdcBalance) setVisitorUsdc(parseFloat(stateData.usdcBalance).toFixed(2));
+        if (stateData.tracAddress && !tracAddress) setTracAddress(stateData.tracAddress);
+      }
+    } catch (err) {
+      // silently ignore errors
+    }
+  };
+
+  // Sync on wallet connect/disconnect and when Solana address changes
+  useEffect(() => {
+    if (!connectedSolanaWallet) {
+      setVisitorUsdc(null);
+      setVisitorSol(null);
+      setVisitorReset('0.0000');
+      setMyOrders([]);
+      setTracAddress('');
+      return;
+    }
+
+    // Load persisted orders for this wallet
+    try {
+      const savedOrders = localStorage.getItem(`tracdex_orders_${connectedSolanaWallet}`);
+      setMyOrders(savedOrders ? JSON.parse(savedOrders) : []);
+    } catch (e) {
+      setMyOrders([]);
+    }
+
+    // Initial sync of balances
+    syncRealBalances();
+
+    // Robust multi-endpoint Solana RPC query helper
+    const querySolanaRpc = async (method, params) => {
+      const endpoints = [
+        'https://solana-rpc.publicnode.com',
+        '/api/solana-rpc',
+        'https://api.mainnet-beta.solana.com'
+      ];
+      for (const ep of endpoints) {
+        try {
+          const res = await fetch(ep, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ jsonrpc: '2.0', id: Date.now(), method, params })
+          });
+          if (res.ok) {
+            const json = await res.json();
+            if (json.result !== undefined) return json.result;
+          }
+        } catch (e) {}
+      }
+      return null;
+    };
+
+    // 1. Fetch real SOL balance on-chain
+    querySolanaRpc('getBalance', [connectedSolanaWallet]).then(res => {
+      if (res && res.value !== undefined) {
+        setVisitorSol((res.value / 1e9).toFixed(3));
+      }
+    });
+
+    // 2. Fetch real USDC balance on-chain (SPL Token EPjFW...)
+    querySolanaRpc('getTokenAccountsByOwner', [
+      connectedSolanaWallet,
+      { mint: 'EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v' },
+      { encoding: 'jsonParsed' }
+    ]).then(res => {
+      if (res && res.value && res.value.length) {
+        const amtStr = res.value[0].account?.data?.parsed?.info?.tokenAmount?.uiAmountString;
+        if (amtStr !== undefined) {
+          setVisitorUsdc(parseFloat(amtStr).toFixed(2));
+          return;
+        }
+      }
+      setVisitorUsdc('0.00');
+    }).catch(() => {
+      setVisitorUsdc('0.00');
+    });
+  }, [connectedSolanaWallet]);
   useEffect(() => {
     if (!connectedSolanaWallet) {
       setVisitorUsdc(null);
