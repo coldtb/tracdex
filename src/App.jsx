@@ -1092,6 +1092,8 @@ export default function App() {
                   <div className="terminal-input-group">
                     <span className="lbl">Price</span>
                     <input
+                      id="limit-price-input"
+                      name="limitPrice"
                       type="number"
                       step="any"
                       value={customPrice}
@@ -1108,6 +1110,8 @@ export default function App() {
                 <div className="terminal-input-group">
                   <span className="lbl">Size</span>
                   <input
+                    id="trade-amount-input"
+                    name="tradeAmount"
                     type="number"
                     step="any"
                     value={tradeAmount}
@@ -1121,6 +1125,8 @@ export default function App() {
               {/* Interactive Percentage Slider & Notches */}
               <div className="terminal-slider-box">
                 <input
+                  id="trade-slider-input"
+                  name="sliderPct"
                   type="range"
                   min="0"
                   max="100"
@@ -1251,6 +1257,8 @@ export default function App() {
                   </div>
                   <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '8px' }}>
                     <input
+                      id="swap-pay-usdc-input"
+                      name="swapPayUsdc"
                       type="number"
                       step="any"
                       value={tradeAmount ? finalBuyTotal : ''}
@@ -1300,6 +1308,8 @@ export default function App() {
                   </div>
                   <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '8px' }}>
                     <input
+                      id="swap-receive-reset-input"
+                      name="swapReceiveReset"
                       type="number"
                       step="any"
                       value={tradeAmount}
@@ -1414,6 +1424,8 @@ export default function App() {
                   </div>
                   <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '8px' }}>
                     <input 
+                      id="swap-pay-reset-input"
+                      name="swapPayReset"
                       type="number"
                       step="any"
                       value={tradeAmount}
@@ -1455,6 +1467,8 @@ export default function App() {
                   </div>
                   <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '8px' }}>
                     <input
+                      id="swap-receive-usdc-input"
+                      name="swapReceiveUsdc"
                       type="number"
                       step="any"
                       value={tradeAmount ? finalSellProceeds : ''}
